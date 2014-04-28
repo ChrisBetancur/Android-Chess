@@ -37,8 +37,8 @@ public class Move {
      */
     public Move(Piece piece, Square square) {
         this.piece = piece;
-        this.row = square.getRow();
-        this.col = square.getCol();
+        this.row = square.row();
+        this.col = square.col();
     }
 
     /**

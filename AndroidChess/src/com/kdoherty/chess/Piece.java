@@ -12,6 +12,10 @@ import java.util.ArrayList;
  *
  */
 public abstract class Piece {
+	
+	Square square;
+	
+	// TODO: Make Pieces singleton and not know their location
 
     /** The row where this Piece is located */
     int row;
@@ -21,6 +25,11 @@ public abstract class Piece {
 
     /** The color of this Piece */
     final Color color;
+    
+    public Piece(Color color, Square square) {
+    	this.color = color;
+    	this.square = square;
+    }
 
     /**
      * The constructor for Piece
@@ -186,7 +195,7 @@ public abstract class Piece {
      */
     public boolean isBlocked(Board b, int r, int c) {
         for (Square square : Board.getBtwnSqs(this.getSq(), new Square(r, c))) {
-            if (b.isOccupied(square.getRow(), square.getCol())) {
+            if (b.isOccupied(square.row(), square.col())) {
                 return true;
             }
         }

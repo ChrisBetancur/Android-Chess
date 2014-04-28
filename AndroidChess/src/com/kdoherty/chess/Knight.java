@@ -112,7 +112,7 @@ public class Knight extends Piece {
     public ArrayList<Move> getMoves(Board b){
         ArrayList<Move> moves = new ArrayList<Move>();
         for(Square s : getPossibleSqs()){
-            if(canMove(b, s.getRow(), s.getCol()))
+            if(canMove(b, s.row(), s.col()))
                 moves.add(new Move (this, s));
         }
         return moves;

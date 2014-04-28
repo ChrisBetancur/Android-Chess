@@ -91,8 +91,8 @@ public class Pawn extends Piece {
         int finalRow = this.color == Color.WHITE ? 0 : 7;
         ArrayList<Move> moves = new ArrayList<Move>();
         for (Square s : getPossibleSqs()) {
-            if (this.canMove(b, s.getRow(), s.getCol())) {
-                if (s.getRow() != finalRow) {
+            if (this.canMove(b, s.row(), s.col())) {
+                if (s.row() != finalRow) {
                     moves.add(new Move(this, s));
                 }
                 else {
