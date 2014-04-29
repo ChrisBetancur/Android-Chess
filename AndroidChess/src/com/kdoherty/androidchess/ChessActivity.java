@@ -4,11 +4,16 @@ import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.Menu;
+import android.widget.Toast;
 
-import com.example.androidchess.R;
+import com.kdoherty.androidchess.R;
 import com.kdoherty.chess.Board;
+import com.kdoherty.chess.Color;
 
-public class MainActivity extends Activity {
+public class ChessActivity extends Activity {
+	
+	// TODO: Pawn Promotion
+	// TODO: Better than refreshing adapter?
 
 	private SquareAdapter adapter;
 
@@ -17,8 +22,8 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		setContentView(R.layout.activity_main);
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		setContentView(R.layout.activity_chess);
 		initBoard();
 	}
 
@@ -34,8 +39,24 @@ public class MainActivity extends Activity {
 		boardView = (SquareGridView) findViewById(R.id.chessboard);
 		boardView.setAdapter(adapter);
 	}
-	
+
 	public void refreshAdapter(Board board) {
-		boardView.setAdapter(new SquareAdapter(this, board));
+		adapter = new SquareAdapter(this, board);
+		boardView.setAdapter(adapter);
+	}
+	
+//	public String askPawnPromotion() {
+//		
+//	}
+
+	public void showGameOver() {
+		Board board = adapter.getBoard();
+		Color sideToMove = board.getSideToMove();
+		if (board.isCheckMate(sideToMove)) {
+			Toast.makeText(this, "CHECKMATE! " + sideToMove.opp() + " WINS", Toast.LENGTH_LONG).show();
+		} else {
+			Toast.makeText(this, "DRAW!", Toast.LENGTH_LONG).show();
+		}
+		
 	}
 }
