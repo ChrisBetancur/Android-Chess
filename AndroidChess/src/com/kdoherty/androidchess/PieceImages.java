@@ -1,6 +1,7 @@
 package com.kdoherty.androidchess;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import com.example.androidchess.R;
 import com.kdoherty.chess.Piece;
@@ -34,5 +35,14 @@ public final class PieceImages {
 			return R.color.transparent;
 		}
 		return instance.get(piece.toString());
+	}
+	
+	public static String getPieceString(int id) {
+		for (Map.Entry<String, Integer> entry : instance.entrySet()) {
+			if (entry.getValue().equals(id)) {
+				return entry.getKey();
+			}
+		}
+		throw new IllegalArgumentException("Key " + id + " not found");
 	}
 }

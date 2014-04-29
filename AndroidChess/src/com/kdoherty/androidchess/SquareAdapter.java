@@ -3,12 +3,10 @@ package com.kdoherty.androidchess;
 import java.util.ArrayList;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 
 import com.example.androidchess.R;
 import com.kdoherty.chess.Board;
@@ -22,10 +20,13 @@ public class SquareAdapter extends BaseAdapter {
 	private ArrayList<Integer> mPieceIds;
 
 	public SquareAdapter(Context mContext) {
+		this(mContext, Board.defaultBoard());
+	}
+	
+	public SquareAdapter(Context mContext, Board board) {
 		this.mContext = mContext;
-		board = new Board();
+		this.board = board;
 		mPieceIds = new ArrayList<Integer>();
-		board.fillWithDefaultPieces();
 		for (Piece p : board.getAllPieces()) {
 			mPieceIds.add(PieceImages.getId(p));
 		}
@@ -48,12 +49,10 @@ public class SquareAdapter extends BaseAdapter {
 
 	class ViewHolder {
 
-		ImageView piece;
-		ImageView square;
+		PieceImageView square;
 
 		ViewHolder(View v) {
-			piece = (ImageView) v.findViewById(R.id.piece);
-			square = (ImageView) v.findViewById(R.id.square_background);
+			square = (PieceImageView) v.findViewById(R.id.square_background);
 		}
 	}
 
@@ -66,17 +65,25 @@ public class SquareAdapter extends BaseAdapter {
 			final LayoutInflater layoutInflater = (LayoutInflater) mContext
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			squareContainerView = layoutInflater.inflate(R.layout.square, null);
-
 			// Background
-			final ImageView squareView = (ImageView) squareContainerView
+			final PieceImageView squareView = (PieceImageView) squareContainerView
 					.findViewById(R.id.square_background);
-			
-			Piece piece = board.getOccupant(position / 8, position % 8);
-			if (piece != null) {
-				squareView.setImageResource(PieceImages.getId(piece));
-				squareView.setOnTouchListener(new MainActivity());
+			int row = position / 8;
+			int col = position % 8;
+			squareView.setRow(row);
+			squareView.setCol(col);
+			Piece piece = board.getOccupant(row, col);
+			// Checker the board
+			if (!((row % 2 == 0 && col % 2 == 0) || (row % 2 == 1 && col % 2 == 1))) {
+				squareContainerView.setBackgroundResource(R.color.light_grey);
 			}
-			//squareView.setOnDragListener(new MainActivity());
+			if (piece != null) {
+				int id = PieceImages.getId(piece);
+				squareView.setImageResource(id);
+				squareView.setId(id);
+				squareView.setOnTouchListener(OnPieceTouch.INSTANCE);
+			}
+			squareContainerView.setOnDragListener(new OnPieceDrag(mContext, board, row, col));
 		}
 		return squareContainerView;
 	}

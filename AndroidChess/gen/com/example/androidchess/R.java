@@ -61,10 +61,9 @@ public final class R {
         public static final int whiterook=0x7f02000f;
     }
     public static final class id {
-        public static final int action_settings=0x7f090005;
+        public static final int action_settings=0x7f090004;
         public static final int chessboard=0x7f090000;
         public static final int imageView=0x7f090001;
-        public static final int piece=0x7f090004;
         public static final int square=0x7f090002;
         public static final int square_background=0x7f090003;
     }

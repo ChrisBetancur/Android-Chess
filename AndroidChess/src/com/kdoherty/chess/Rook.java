@@ -118,12 +118,14 @@ public class Rook extends Piece {
      * Overridden moveTo method so we know if the rook has moved yet.
      * 
      */
-    public void moveTo(Board b, int r, int c) {
+    @Override
+    public boolean moveTo(Board b, int r, int c) {
         if (this.canMove(b, r, c)) {
             b.movePiece(this.row, this.col, r, c);
             this.hasMoved = true;
             b.setEnPoissantSq(null);  
+            return true;
         }
-        
+        return false;
     }
 }

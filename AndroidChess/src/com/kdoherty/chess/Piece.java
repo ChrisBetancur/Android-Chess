@@ -118,10 +118,12 @@ public abstract class Piece {
      * @param c The column we are moving this Piece to
      */
 
-    public void moveTo(Board b, int r, int c) {
+    public boolean moveTo(Board b, int r, int c) {
         if (this.canMove(b, r, c)) {
             b.movePiece(this.row, this.col, r, c);
+            return true;
         }
+        return false;
     }
     
     /**

@@ -8,14 +8,9 @@
     android:gravity="center_horizontal"
     android:background="#d3d3d3">
   
- <ImageView android:id="@+id/square_background"
+ <com.kdoherty.androidchess.PieceImageView android:id="@+id/square_background"
     android:layout_height="30dp"
     android:layout_width="30dp"
  />
- 
- <ImageView android:id="@+id/piece"
-    android:layout_height="30dp"
-    android:layout_width="30dp"
-    android:scaleType="center"
- />
+
 </FrameLayout>

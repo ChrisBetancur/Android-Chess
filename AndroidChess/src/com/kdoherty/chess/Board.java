@@ -29,6 +29,8 @@ public class Board {
 	 * Keeps track of squares where a pawn can be captured by enPoissant
 	 */
 	private Square enPoissantSq;
+	
+	private Color sideToMove = Color.WHITE;
 
 	/**
 	 * Constructor for Board Initially sets all squares to null
@@ -37,6 +39,12 @@ public class Board {
 		pieces = new Piece[NUMROWS][NUMCOLS];
 		// TODO: Is this needed?
 		clearBoard();
+	}
+	
+	public static Board defaultBoard() {
+		Board b = new Board();
+		b.fillWithDefaultPieces();
+		return b;
 	}
 
 	/**
@@ -233,6 +241,10 @@ public class Board {
 	public Square getEnPoissantSq() {
 		return enPoissantSq;
 	}
+	
+	public Color getSideToMove() {
+		return sideToMove;
+	}
 
 	/**
 	 * Gets the Piece at the input coordinate
@@ -352,6 +364,16 @@ public class Board {
 		remove(r, c);
 		return setPiece(r2, c2, p);
 	}
+	
+	public Piece movePieceSetColor(int r, int c, int r2, int c2) {
+		if (isEmpty(r, c)) {
+			throw new RuntimeException("No piece found at: " + new Square(r, c));
+		}
+		Piece p = getOccupant(r, c);
+		sideToMove = p.getColor().opp();
+		remove(r, c);
+		return setPiece(r2, c2, p);
+	}
 
 	/**
 	 * EFFECT: Removes all pieces on the board if there were any
@@ -371,6 +393,10 @@ public class Board {
 	public void reset() {
 		clearBoard();
 		fillWithDefaultPieces();
+	}
+	
+	public void toggleSideToMove() {
+		this.sideToMove = sideToMove.opp();
 	}
 
 	/**

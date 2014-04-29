@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<GridView xmlns:android="http://schemas.android.com/apk/res/android" 
+<com.kdoherty.androidchess.SquareGridView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/chessboard"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:padding="5dp"
-    android:verticalSpacing="1dp"
+    android:background="#ffffff"
+    android:gravity="center_horizontal"
     android:horizontalSpacing="1dp"
     android:numColumns="8"
-    android:gravity="center_horizontal"
-    android:background="#ffffff"
-/>
+    android:padding="5dp"
+    android:verticalSpacing="1dp" />

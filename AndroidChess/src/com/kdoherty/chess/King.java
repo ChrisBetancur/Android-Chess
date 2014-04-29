@@ -88,8 +88,11 @@ public class King extends Piece {
      * @param r The row we are moving this Piece to
      * @param c The column we are moving this Piece to
      */
-    public void moveTo(Board b, int r, int c) {
+    @Override
+    public boolean moveTo(Board b, int r, int c) {
         if (this.canMove(b, r, c)) {
+        	if (!hasMoved)
+                this.hasMoved = true;
             if (Board.isNeighbor(this.row, this.col, r, c)) {
                 b.movePiece(this.row, this.col, r, c);
             }
@@ -100,10 +103,11 @@ public class King extends Piece {
                 else {
                     this.castle(b, false);
                 }
+                
             }
-            if (!hasMoved)
-                this.hasMoved = true;
+            return true;
         }
+        return false;
     }
 
     /**
