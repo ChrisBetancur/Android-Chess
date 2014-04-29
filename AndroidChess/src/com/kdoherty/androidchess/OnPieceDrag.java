@@ -40,29 +40,8 @@ public class OnPieceDrag implements OnDragListener {
 			break;
 		case DragEvent.ACTION_DROP:
 			Piece piece = board.getOccupant(startingRow, startingCol);
-			// if (piece == null) {
-			// throw new RuntimeException("There is no piece on " + new
-			// Square(startingRow, startingCol));
-			// }
-			// if (piece.getColor() != board.getSideToMove() ||
-			// !piece.canMove(board, targetRow, targetCol)) {
-			// view.setVisibility(View.VISIBLE);
-			// return false;
-			// }
-			//
-			// int id = view.getId();
-			// view.setId(R.id.square_background);
-			//
-			// FrameLayout target = (FrameLayout) v;
-			// PieceImageView container = (PieceImageView) target.getChildAt(0);
-			// container.setRow(targetRow);
-			// container.setCol(targetCol);
-			// container.setImageResource(id);
-			// container.setId(id);
-			// container.setOnTouchListener(new OnPieceTouch(targetRow,
-			// targetCol));
-			// container.setVisibility(View.VISIBLE);
-			if (piece.getColor() == board.getSideToMove() && piece.moveTo(board, targetRow, targetCol)) {
+			if (piece.getColor() == board.getSideToMove()
+					&& piece.moveTo(board, targetRow, targetCol)) {
 				board.toggleSideToMove();
 				MainActivity mainContext = (MainActivity) context;
 				mainContext.refreshAdapter(board);
