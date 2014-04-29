@@ -9,7 +9,7 @@ import com.kdoherty.chess.Board;
 import com.kdoherty.chess.Piece;
 
 public class OnPieceDrag implements OnDragListener {
-
+	
 	private Board board;
 	private int targetRow;
 	private int targetCol;
@@ -35,8 +35,10 @@ public class OnPieceDrag implements OnDragListener {
 		case DragEvent.ACTION_DRAG_ENTERED:
 			break;
 		case DragEvent.ACTION_DRAG_ENDED:
+			view.setVisibility(View.VISIBLE);
 			break;
 		case DragEvent.ACTION_DRAG_EXITED:
+			//view.setVisibility(View.VISIBLE);
 			break;
 		case DragEvent.ACTION_DROP:
 			Piece piece = board.getOccupant(startingRow, startingCol);
