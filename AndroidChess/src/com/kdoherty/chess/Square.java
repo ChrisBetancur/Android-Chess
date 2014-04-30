@@ -160,4 +160,8 @@ public final class Square {
 		s += (8 - row);
 		return s;
 	}
+	
+	public int toNum() {
+		return row * 8 + col;
+	}
 }

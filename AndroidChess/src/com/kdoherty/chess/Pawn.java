@@ -3,9 +3,9 @@ package com.kdoherty.chess;
 
 import java.util.ArrayList;
 
+import com.kdoherty.engine.PawnEval;
 
-
-public class Pawn extends Piece {
+public class Pawn extends AbstractPiece {
 
     /** The starting row for pawns */
     private int homeRow;
@@ -34,11 +34,11 @@ public class Pawn extends Piece {
      */
     public boolean canMove(Board b, int r, int c) {
         return Board.isInbounds(r, c) &&
-                (this.canMoveOne(b, r, c) ||
-                        this.canMoveTwo(b, r, c) ||
-                        this.canTakeNormally(b, r, c) ||
-                        this.canEnPoissant(b, r, c)) &&
-                        !this.stillInCheck(b, r, c);
+                (canMoveOne(b, r, c) ||
+                        canMoveTwo(b, r, c) ||
+                        canTakeNormally(b, r, c) ||
+                        canEnPoissant(b, r, c)) &&
+                        !stillInCheck(b, r, c);
     }
 
     /**
@@ -52,8 +52,8 @@ public class Pawn extends Piece {
      * input Board and false otherwise
      */
     public boolean isAttacking(Board b, int r, int c) {
-        return this.row + forward == r && (this.col + 1 == c || this.col - 1 == c) 
-                && (b.isEmpty(r, c) || this.isTaking(b, r, c));
+        return row + forward == r && (col + 1 == c || col - 1 == c) 
+                && (b.isEmpty(r, c) || isTaking(b, r, c));
     }
 
     /**
@@ -68,8 +68,8 @@ public class Pawn extends Piece {
      * Board and false otherwise
      */
     public boolean isDefending(Board b, int r, int c) {
-        return this.row + forward == r && (this.col + 1 == c || this.col - 1 == c) 
-                && !this.isTaking(b, r, c) && !this.stillInCheck(b, r, c);
+        return row + forward == r && (col + 1 == c || col - 1 == c) 
+                && !isTaking(b, r, c) && !stillInCheck(b, r, c);
     }
 
     /**
@@ -79,7 +79,7 @@ public class Pawn extends Piece {
      * @return A String representation of this Piece
      */
     public String toString() {
-        return this.color == Color.WHITE ? "p" : "P";
+        return color == Color.WHITE ? "p" : "P";
     }
 
     /**
@@ -88,16 +88,16 @@ public class Pawn extends Piece {
      * @return All moves this Piece can make on the input Board
      */
     public ArrayList<Move> getMoves(Board b) {
-        int finalRow = this.color == Color.WHITE ? 0 : 7;
+        int finalRow = color == Color.WHITE ? 0 : 7;
         ArrayList<Move> moves = new ArrayList<Move>();
         for (Square s : getPossibleSqs()) {
-            if (this.canMove(b, s.row(), s.col())) {
+            if (canMove(b, s.row(), s.col())) {
                 if (s.row() != finalRow) {
                     moves.add(new Move(this, s));
                 }
                 else {
-                    moves.add(new Move(new Queen(this.color), s));
-                    moves.add(new Move(new Knight(this.color), s)); 
+                    moves.add(new Move(new Queen(color), s));
+                    moves.add(new Move(new Knight(color), s)); 
                 }
             }
 
@@ -112,10 +112,10 @@ public class Pawn extends Piece {
      */
     private ArrayList<Square> getPossibleSqs() {
         ArrayList<Square> posSqs = new ArrayList<Square>();
-        posSqs.add(new Square(this.row + this.forward, this.col));
-        posSqs.add(new Square(this.row + 2 * this.forward, this.col));
-        posSqs.add(new Square(this.row + this.forward, this.col + 1));
-        posSqs.add(new Square(this.row + this.forward, this.col - 1));
+        posSqs.add(new Square(row + forward, col));
+        posSqs.add(new Square(row + 2 * forward, col));
+        posSqs.add(new Square(row + forward, col + 1));
+        posSqs.add(new Square(row + forward, col - 1));
         return posSqs;
     }
 
@@ -127,9 +127,9 @@ public class Pawn extends Piece {
      * @return true if this Pawn canMove one space and be at the input row/column
      */
     private boolean canMoveOne(Board b, int r, int c) {
-        return this.row + this.forward == r &&
-                this.col == c &&
-                b.isEmpty(this.row + this.forward, this.col); 
+        return row + forward == r &&
+                col == c &&
+                b.isEmpty(row + forward, col); 
     }
 
     /**
@@ -140,10 +140,10 @@ public class Pawn extends Piece {
      * @return true if this Pawn canMove two spaces and be at the input row/column
      */
     private boolean canMoveTwo(Board b, int r, int c) {
-        return this.row + 2 * this.forward == r && this.col == c &&
-                b.isEmpty(this.row + this.forward, this.col) &&
-                b.isEmpty(this.row + 2 * this.forward, this.col) &&
-                this.row == this.homeRow;
+        return row + 2 * forward == r && col == c &&
+                b.isEmpty(row + forward, col) &&
+                b.isEmpty(row + 2 * forward, col) &&
+                row == homeRow;
     }
 
     /**
@@ -154,9 +154,9 @@ public class Pawn extends Piece {
      * @return true if this Pawn can enPoissant to the input row/column
      */
     private boolean canEnPoissant(Board b, int r, int c) {
-        int enPoissantRow = this.color == Color.WHITE ? 3 : 4;
-        return this.row == enPoissantRow && new Square(r, c).equals(b.getEnPoissantSq())
-                && this.row + this.forward == r && (this.col + 1 == c || this.col - 1 == c);      
+        int enPoissantRow = color == Color.WHITE ? 3 : 4;
+        return row == enPoissantRow && new Square(r, c).equals(b.getEnPoissantSq())
+                && row + forward == r && (col + 1 == c || col - 1 == c);      
     }
 
     /**
@@ -167,8 +167,8 @@ public class Pawn extends Piece {
      * @return true if this Pawn can take a piece on the input row/column
      */
     private boolean canTakeNormally(Board b, int r, int c) {
-        return this.row + this.forward == r && (this.col + 1 == c || this.col - 1 == c)
-                && this.isTaking(b, r, c);
+        return row + forward == r && (col + 1 == c || col - 1 == c)
+                && isTaking(b, r, c);
     }
 
     /**
@@ -179,18 +179,18 @@ public class Pawn extends Piece {
      */
     @Override
     public boolean moveTo(Board b, int r, int c) {
-        if (this.canMove(b, r, c)) {
-            if (this.row + 2 * forward == r) {
-                b.setEnPoissantSq(new Square(this.row + forward, this.col));
+        if (canMove(b, r, c)) {
+            if (row + 2 * forward == r) {
+                b.setEnPoissantSq(new Square(row + forward, col));
             }
-            if (this.canEnPoissant(b, r, c) && this.row + forward == r && (this.col + 1 == c || this.col - 1 == c)) {
-                b.movePiece(this.row, this.col, r, c);
+            if (canEnPoissant(b, r, c) && row + forward == r && (col + 1 == c || col - 1 == c)) {
+                b.movePiece(row, col, r, c);
                 b.remove(r - forward, c);
             }
             else {
-                b.movePiece(this.row, this.col, r, c);
+                b.movePiece(row, col, r, c);
             }
-            if (this.isPromoting()) {
+            if (isPromoting()) {
                 //TODO
             }
             return true;
@@ -202,9 +202,9 @@ public class Pawn extends Piece {
      * Has this Pawn reached the final rank?
      * @return true if this Pawn has reached the final rank
      */
-    private boolean isPromoting() {
-        int finalRank = this.color == Color.WHITE ? 0 : 7;
-        return this.row == finalRank;
+    public boolean isPromoting() {
+        int finalRank = color == Color.WHITE ? 0 : 7;
+        return row == finalRank;
     }
 
     /**
@@ -213,8 +213,8 @@ public class Pawn extends Piece {
      * @param b The Board to promote this Pawn to a Queen on
      */
     public void promoteToQueen(Board b) {
-        b.remove(this.row, this.col);
-        b.setPiece(this.row, this.col, new Queen(this.color));
+        b.remove(row, col);
+        b.setPiece(row, col, new Queen(color));
     }
 
     /**
@@ -223,7 +223,12 @@ public class Pawn extends Piece {
      * @param b The Board to promote this Pawn to a Knight on
      */
     public void promoteToKnight(Board b) {
-        b.remove(this.row, this.col);
-        b.setPiece(this.row, this.col, new Knight(this.color));
+        b.remove(row, col);
+        b.setPiece(row, col, new Knight(color));
     }
+    
+    @Override
+   	public int evaluate(Board board) {
+   		return PawnEval.eval(board, this);
+   	}
 }

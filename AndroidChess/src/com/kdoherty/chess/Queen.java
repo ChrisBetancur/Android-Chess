@@ -3,6 +3,8 @@ package com.kdoherty.chess;
 
 import java.util.ArrayList;
 
+import com.kdoherty.engine.QueenEval;
+
 
 /**
  * This class represents a Queen.
@@ -11,7 +13,7 @@ import java.util.ArrayList;
  * @version 10/14/2013
  *
  */
-public class Queen extends Piece {
+public class Queen extends AbstractPiece {
 
     /**
      * Constructor for Queen
@@ -31,11 +33,11 @@ public class Queen extends Piece {
      */
     public boolean canMove(Board b, int r, int c) {
         return Board.isInbounds(r, c) &&
-                ((this.row == r ^ this.col == c) ||
-                        Board.sameDiagonal(this.row, this.col, r, c)) &&
-                        (b.isEmpty(r, c) || this.isTaking(b, r, c)) &&
-                        !this.isBlocked(b, r, c) &&
-                        !this.stillInCheck(b, r, c);
+                ((row == r ^ col == c) ||
+                        Board.sameDiagonal(row, col, r, c)) &&
+                        (b.isEmpty(r, c) || isTaking(b, r, c)) &&
+                        !isBlocked(b, r, c) &&
+                        !stillInCheck(b, r, c);
     }
 
     /**
@@ -50,10 +52,10 @@ public class Queen extends Piece {
      */
     public boolean isAttacking(Board b, int r, int c) {
         return Board.isInbounds(r, c) &&
-                ((this.row == r ^ this.col == c) ||
-                        Board.sameDiagonal(this.row, this.col, r, c)) &&
-                        (b.isEmpty(r, c) || this.isTaking(b, r, c)) &&
-                        !this.isBlocked(b, r, c);
+                ((row == r ^ col == c) ||
+                        Board.sameDiagonal(row, col, r, c)) &&
+                        (b.isEmpty(r, c) || isTaking(b, r, c)) &&
+                        !isBlocked(b, r, c);
     }
 
     /**
@@ -69,11 +71,11 @@ public class Queen extends Piece {
      */
     public boolean isDefending(Board b, int r, int c) {
         return Board.isInbounds(r, c) &&
-                ((this.row == r ^ this.col == c) ||
-                        Board.sameDiagonal(this.row, this.col, r, c)) &&
-                        !this.isTaking(b, r, c) &&
-                        !this.isBlocked(b, r, c) &&
-                        !this.stillInCheck(b, r, c);
+                ((row == r ^ col == c) ||
+                        Board.sameDiagonal(row, col, r, c)) &&
+                        !isTaking(b, r, c) &&
+                        !isBlocked(b, r, c) &&
+                        !stillInCheck(b, r, c);
     }
 
     /**
@@ -83,7 +85,7 @@ public class Queen extends Piece {
      * @return A String representation of this Piece
      */
     public String toString() {
-        return this.color == Color.WHITE ? "q" : "Q";
+        return color == Color.WHITE ? "q" : "Q";
     }
 
     /**
@@ -95,8 +97,8 @@ public class Queen extends Piece {
         ArrayList<Move> moves = new ArrayList<Move>();
         for (int i = 0; i < Board.NUMROWS; i++) {
             for (int j = 0; j < Board.NUMCOLS; j++) {
-                if (((this.row == i ^ this.col == j) 
-                        || Board.sameDiagonal(this.row, this.col, i, j))
+                if (((row == i ^ col == j) 
+                        || Board.sameDiagonal(row, col, i, j))
                         && canMove(b, i, j)) {
                     moves.add(new Move (this, i, j));
                 }   
@@ -104,4 +106,9 @@ public class Queen extends Piece {
         }
         return moves;
     }
+    
+    @Override
+   	public int evaluate(Board board) {
+   		return QueenEval.eval(board, this);
+   	}
 }

@@ -2,6 +2,8 @@ package com.kdoherty.chess;
 
 import java.util.ArrayList;
 
+import com.kdoherty.engine.KnightEval;
+
 /** 
  * This class contains the representation of a Knight chess piece.
  * A Knight can move in an "L" in any direction.
@@ -13,7 +15,7 @@ import java.util.ArrayList;
  * 
  *
  */
-public class Knight extends Piece {
+public class Knight extends AbstractPiece {
 
     /**
      * Constructor for a Knight
@@ -33,9 +35,9 @@ public class Knight extends Piece {
      */
     public boolean canMove(Board b, int r, int c) {
         return Board.isInbounds(r, c) &&
-                (b.isEmpty(r, c) || this.isTaking(b, r, c)) &&
-                this.getPossibleSqs().contains(new Square(r, c)) &&
-                !this.stillInCheck(b, r, c);
+                (b.isEmpty(r, c) || isTaking(b, r, c)) &&
+                getPossibleSqs().contains(new Square(r, c)) &&
+                !stillInCheck(b, r, c);
     }
 
     /**
@@ -50,8 +52,8 @@ public class Knight extends Piece {
      */
     public boolean isAttacking(Board b, int r, int c) {
         return Board.isInbounds(r, c) &&
-                (b.isEmpty(r, c) || this.isTaking(b, r, c)) &&
-                this.getPossibleSqs().contains(new Square(r, c));
+                (b.isEmpty(r, c) || isTaking(b, r, c)) &&
+                getPossibleSqs().contains(new Square(r, c));
     }
 
     /**
@@ -67,9 +69,9 @@ public class Knight extends Piece {
      */
     public boolean isDefending(Board b, int r, int c) {
         return Board.isInbounds(r, c) &&
-                !this.isTaking(b, r, c) &&
-                this.getPossibleSqs().contains(new Square(r, c)) &&
-                !this.stillInCheck(b, r, c);
+                !isTaking(b, r, c) &&
+                getPossibleSqs().contains(new Square(r, c)) &&
+                !stillInCheck(b, r, c);
     }
 
     /**
@@ -79,7 +81,7 @@ public class Knight extends Piece {
      * @return A String representation of this Piece
      */
     public String toString() {
-        return this.color == Color.WHITE ? "n" : "N";
+        return color == Color.WHITE ? "n" : "N";
     }
 
     /**
@@ -117,4 +119,9 @@ public class Knight extends Piece {
         }
         return moves;
     }
+    
+    @Override
+   	public int evaluate(Board board) {
+   		return KnightEval.eval(board, this);
+   	}
 }

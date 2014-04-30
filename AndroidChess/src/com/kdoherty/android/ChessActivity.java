@@ -1,4 +1,4 @@
-package com.kdoherty.androidchess;
+package com.kdoherty.android;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
@@ -9,9 +9,11 @@ import android.widget.Toast;
 import com.kdoherty.androidchess.R;
 import com.kdoherty.chess.Board;
 import com.kdoherty.chess.Color;
+import com.kdoherty.chess.AbstractPiece;
+import com.kdoherty.chess.Queen;
 
 public class ChessActivity extends Activity {
-	
+
 	// TODO: Pawn Promotion
 	// TODO: Better than refreshing adapter?
 
@@ -44,19 +46,21 @@ public class ChessActivity extends Activity {
 		adapter = new SquareAdapter(this, board);
 		boardView.setAdapter(adapter);
 	}
-	
-//	public String askPawnPromotion() {
-//		
-//	}
+
+	public AbstractPiece askPromotion(Color color) {
+		//TODO: Need pop up to determine type of Piece to promote to
+		return new Queen(color);
+	}
 
 	public void showGameOver() {
 		Board board = adapter.getBoard();
 		Color sideToMove = board.getSideToMove();
 		if (board.isCheckMate(sideToMove)) {
-			Toast.makeText(this, "CHECKMATE! " + sideToMove.opp() + " WINS", Toast.LENGTH_LONG).show();
+			Toast.makeText(this, "CHECKMATE! " + sideToMove.opp() + " WINS",
+					Toast.LENGTH_LONG).show();
 		} else {
 			Toast.makeText(this, "DRAW!", Toast.LENGTH_LONG).show();
 		}
-		
+
 	}
 }

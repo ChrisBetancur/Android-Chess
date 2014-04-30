@@ -1,14 +1,14 @@
-package com.kdoherty.androidchess;
+package com.kdoherty.android;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import com.example.androidchess.R;
-import com.kdoherty.chess.Piece;
+import com.kdoherty.androidchess.R;
+import com.kdoherty.chess.AbstractPiece;
 
 public final class PieceImages {
 
-	private static HashMap<String, Integer> instance = new HashMap<String, Integer>();
+	private static final HashMap<String, Integer> instance = new HashMap<String, Integer>();
 
 	private PieceImages() {
 	}
@@ -30,7 +30,7 @@ public final class PieceImages {
 		instance.put("Q", R.drawable.blackqueen);
 	}
 
-	public static Integer getId(Piece piece) {
+	public static Integer getId(AbstractPiece piece) {
 		if (piece == null) {
 			return R.color.transparent;
 		}
@@ -43,6 +43,6 @@ public final class PieceImages {
 				return entry.getKey();
 			}
 		}
-		throw new IllegalArgumentException("Key " + id + " not found");
+		throw new IllegalArgumentException("Key " + id + " not found in PieceImages");
 	}
 }

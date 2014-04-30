@@ -3,6 +3,9 @@ package com.kdoherty.chess;
 
 import java.util.ArrayList;
 
+import com.kdoherty.engine.Evaluable;
+
+
 /**
  * This class represents a Chess Piece
  * This is a superClass for Pawn, Knight, Bishop,
@@ -11,7 +14,7 @@ import java.util.ArrayList;
  * @version 10/14/2013
  *
  */
-public abstract class Piece {
+public abstract class AbstractPiece implements Evaluable {
 	
 	Square square;
 	
@@ -26,7 +29,7 @@ public abstract class Piece {
     /** The color of this Piece */
     final Color color;
     
-    public Piece(Color color, Square square) {
+    public AbstractPiece(Color color, Square square) {
     	this.color = color;
     	this.square = square;
     }
@@ -37,7 +40,7 @@ public abstract class Piece {
      * note: Does not set row and column so we can make a piece
      * this is done when the Piece is set on a Board
      */
-    public Piece(Color color) {
+    public AbstractPiece(Color color) {
         this.color = color;
     }
 
@@ -62,7 +65,7 @@ public abstract class Piece {
      * @return The row coordinate of this Piece
      */
     public int getRow() {
-        return this.row;
+        return row;
     }
 
     /**
@@ -70,7 +73,7 @@ public abstract class Piece {
      * @return The column coordinate of this Piece
      */
     public int getCol() {
-        return this.col;
+        return col;
     }
 
     /**
@@ -78,7 +81,7 @@ public abstract class Piece {
      * @return The Square which this Piece is on
      */
     public Square getSq() {
-        return new Square(this.row, this.col);
+        return new Square(row, col);
     }
 
     /**
@@ -86,7 +89,7 @@ public abstract class Piece {
      * @return The Color of this Piece
      */
     public Color getColor() {
-        return this.color;
+        return color;
     }
 
     /**
@@ -119,8 +122,8 @@ public abstract class Piece {
      */
 
     public boolean moveTo(Board b, int r, int c) {
-        if (this.canMove(b, r, c)) {
-            b.movePiece(this.row, this.col, r, c);
+        if (canMove(b, r, c)) {
+            b.movePiece(row, col, r, c);
             return true;
         }
         return false;
@@ -157,10 +160,10 @@ public abstract class Piece {
      */
     public boolean equals(Object o) {
         return o != null && 
-                o.getClass() == this.getClass() &&
-                color == ((Piece)o).getColor() &&
-                row == ((Piece)o).getRow() &&
-                col == ((Piece)o).getCol();
+                o.getClass() == getClass() &&
+                color == ((AbstractPiece)o).getColor() &&
+                row == ((AbstractPiece)o).getRow() &&
+                col == ((AbstractPiece)o).getCol();
     }
     
     public int hashCode() {
@@ -185,7 +188,7 @@ public abstract class Piece {
      * @return true if this Piece would take a piece if it moved to the coordinate
      */
     public boolean isTaking(Board b, int r, int c) {
-        return b.isOccupied(r, c) && b.getOccupant(r, c).getColor() != this.color;   
+        return b.isOccupied(r, c) && b.getOccupant(r, c).getColor() != color;   
     }
 
     /**
@@ -196,7 +199,7 @@ public abstract class Piece {
      * @return true if this piece is blocked going from its current square to the input square
      */
     public boolean isBlocked(Board b, int r, int c) {
-        for (Square square : Board.getBtwnSqs(this.getSq(), new Square(r, c))) {
+        for (Square square : Board.getBtwnSqs(getSq(), new Square(r, c))) {
             if (b.isOccupied(square.row(), square.col())) {
                 return true;
             }
@@ -215,10 +218,10 @@ public abstract class Piece {
     public boolean stillInCheck(Board b, int r, int c) {
         boolean stillInCheck = true;
         Move m = new Move(this, r, c);
-        int oldRow = this.row;
-        int oldCol = this.col;
-        Piece taken = m.makeMove(b);
-        if (!(b.kingInCheck(this.color))) {
+        int oldRow = row;
+        int oldCol = col;
+        AbstractPiece taken = m.makeMove(b);
+        if (!(b.kingInCheck(color))) {
             stillInCheck = false;
         }
         m.undo(b, oldRow, oldCol, taken);

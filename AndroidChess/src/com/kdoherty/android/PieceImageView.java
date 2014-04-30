@@ -1,4 +1,4 @@
-package com.kdoherty.androidchess;
+package com.kdoherty.android;
 
 import android.content.Context;
 import android.util.AttributeSet;

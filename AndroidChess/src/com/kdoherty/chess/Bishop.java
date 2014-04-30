@@ -2,6 +2,8 @@ package com.kdoherty.chess;
 
 import java.util.ArrayList;
 
+import com.kdoherty.engine.BishopEval;
+
 
 /**
  * @author Kevin Doherty
@@ -10,7 +12,7 @@ import java.util.ArrayList;
  * Bishops can only move diagonally 
  *
  */
-public class Bishop extends Piece {
+public class Bishop extends AbstractPiece {
 
     /**
      * Constructor for Bishop
@@ -30,9 +32,9 @@ public class Bishop extends Piece {
      */
     public boolean canMove(Board b, int r, int c) {
         return Board.isInbounds(r, c) &&
-                Board.sameDiagonal(this.row, this.col, r, c) &&
+                Board.sameDiagonal(row, col, r, c) &&
                 (b.isEmpty(r, c) || isTaking(b, r, c)) &&
-                !this.isBlocked(b, r, c) && !this.stillInCheck(b, r, c);
+                !isBlocked(b, r, c) && !stillInCheck(b, r, c);
     }
 
     /**
@@ -47,9 +49,9 @@ public class Bishop extends Piece {
      */
     public boolean isAttacking(Board b, int r, int c) {
         return Board.isInbounds(r, c) &&
-                Board.sameDiagonal(this.row, this.col, r, c) &&
+                Board.sameDiagonal(row, col, r, c) &&
                 (b.isEmpty(r, c) || isTaking(b, r, c)) &&
-                !this.isBlocked(b, r, c);
+                !isBlocked(b, r, c);
     }
 
     /**
@@ -65,10 +67,10 @@ public class Bishop extends Piece {
      */
     public boolean isDefending(Board b, int r, int c) {
         return Board.isInbounds(r, c) &&
-                Board.sameDiagonal(this.row, this.col, r, c) &&
-                !this.isTaking(b, r, c) &&
-                !this.isBlocked(b, r, c) &&
-                !this.stillInCheck(b, r, c);
+                Board.sameDiagonal(row, col, r, c) &&
+                !isTaking(b, r, c) &&
+                !isBlocked(b, r, c) &&
+                !stillInCheck(b, r, c);
     }
 
     /**
@@ -78,7 +80,7 @@ public class Bishop extends Piece {
      * @return A String representation of this Piece
      */
     public String toString() {
-        return this.color == Color.WHITE ? "b" : "B";
+        return color == Color.WHITE ? "b" : "B";
     }
 
     /**
@@ -90,11 +92,16 @@ public class Bishop extends Piece {
         ArrayList <Move> moves = new ArrayList<Move>();
         for(int i = 0; i < Board.NUMROWS; i++) {
             for(int j = 0; j < Board.NUMCOLS; j++) {
-                if(Board.sameDiagonal(this.row, this.col, i, j) && canMove(b, i, j)) {
+                if(Board.sameDiagonal(row, col, i, j) && canMove(b, i, j)) {
                     moves.add(new Move (this, i, j));
                 }   
             }
         }
         return moves;
     }
+
+	@Override
+	public int evaluate(Board board) {
+		return BishopEval.eval(board, this);
+	}
 }

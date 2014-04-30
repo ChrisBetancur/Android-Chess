@@ -9,7 +9,7 @@ package com.kdoherty.chess;
 public class Move {
 
     /** The Piece that is moving */
-    private Piece piece;
+    private AbstractPiece piece;
     
     /** The row this piece is moving to */
     private int row;
@@ -23,7 +23,7 @@ public class Move {
      * @param row The row this piece is moving to
      * @param col The column this Piece is moving to
      */
-    public Move(Piece piece, int row, int col) {
+    public Move(AbstractPiece piece, int row, int col) {
         this.piece = piece;
         this.row = row;
         this.col = col;
@@ -35,7 +35,7 @@ public class Move {
      * @param piece The Piece that is moving
      * @param square The Square this Move's Piece is moving to
      */
-    public Move(Piece piece, Square square) {
+    public Move(AbstractPiece piece, Square square) {
         this.piece = piece;
         this.row = square.row();
         this.col = square.col();
@@ -45,7 +45,7 @@ public class Move {
      * Gets the piece from this Move
      * @return The Piece that is moving 
      */
-    public Piece getPiece() {
+    public AbstractPiece getPiece() {
         return piece;
     }
 
@@ -66,8 +66,8 @@ public class Move {
      * @return true if this Move equals the input object
      */
     public boolean equals(Object obj) {      
-            return obj instanceof Move && (((Move)obj).getSq()).equals(this.getSq()) && 
-                    ((Move)obj).getPiece().equals(this.piece);
+            return obj instanceof Move && (((Move)obj).getSq()).equals(getSq()) && 
+                    ((Move)obj).getPiece().equals(piece);
     }
     
     /**
@@ -75,7 +75,7 @@ public class Move {
      * @return An integer representation of this Move
      */
     public int hashCode() {
-        return this.piece.hashCode() + this.getSq().hashCode();
+        return piece.hashCode() + getSq().hashCode();
     }
  
     /**
@@ -84,24 +84,24 @@ public class Move {
      * @return The piece captured by making this move if there was one
      * otherwise null
      */
-    public Piece makeMove(Board b) {
-        b.remove(this.piece.getRow(), this.piece.getCol());
-        return b.setPiece(this.row, this.col, this.piece);
+    public AbstractPiece makeMove(Board b) {
+        b.remove(piece.getRow(), piece.getCol());
+        return b.setPiece(row, col, piece);
     }
 
     /**
      * EFFECT:
      * Takes back this move
      * @param b The Board to undo this Move on
-     * @param prevRow The row from which this.Piece came from
-     * @param prevCol The column from which this.Piece came from
+     * @param prevRow The row from which Piece came from
+     * @param prevCol The column from which Piece came from
      * @param taken The Piece which was taken after this Move was made
      */
-    public void undo(Board b, int prevRow, int prevCol, Piece taken) {
-        b.remove(this.row, this.col);
-        b.setPiece(prevRow, prevCol, this.getPiece());
+    public void undo(Board b, int prevRow, int prevCol, AbstractPiece taken) {
+        b.remove(row, col);
+        b.setPiece(prevRow, prevCol, getPiece());
         if (taken != null) {
-            b.setPiece(this.row, this.col, taken);
+            b.setPiece(row, col, taken);
         }
     }
 
@@ -111,17 +111,17 @@ public class Move {
      * @return A String representation of this Move
      */
     public String toString() {
-        if (this.piece instanceof King) {
-            if ((this.getSq().equals(new Square(7,6)) ||
-                    this.getSq().equals(new Square(0,6)))) {
+        if (piece instanceof King) {
+            if ((getSq().equals(new Square(7,6)) ||
+                    getSq().equals(new Square(0,6)))) {
                 return "0-0";
             }
-            if ((this.getSq().equals(new Square(7,2)) || 
-                    this.getSq().equals(new Square(0,2)))) {
+            if ((getSq().equals(new Square(7,2)) || 
+                    getSq().equals(new Square(0,2)))) {
                 return "0-0-0 ";
             }   
         }
 
-        return piece.toString()+ this.getSq(); 
+        return piece.toString()+ getSq(); 
     }
 }

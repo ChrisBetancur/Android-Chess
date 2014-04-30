@@ -1,4 +1,4 @@
-package com.kdoherty.androidchess;
+package com.kdoherty.android;
 
 import android.content.Context;
 import android.view.DragEvent;
@@ -6,7 +6,8 @@ import android.view.View;
 import android.view.View.OnDragListener;
 
 import com.kdoherty.chess.Board;
-import com.kdoherty.chess.Piece;
+import com.kdoherty.chess.Pawn;
+import com.kdoherty.chess.AbstractPiece;
 
 public class OnPieceDrag implements OnDragListener {
 	
@@ -38,15 +39,24 @@ public class OnPieceDrag implements OnDragListener {
 			view.setVisibility(View.VISIBLE);
 			break;
 		case DragEvent.ACTION_DRAG_EXITED:
-			//view.setVisibility(View.VISIBLE);
 			break;
 		case DragEvent.ACTION_DROP:
-			Piece piece = board.getOccupant(startingRow, startingCol);
+			AbstractPiece piece = board.getOccupant(startingRow, startingCol);
 			if (piece.getColor() == board.getSideToMove()
 					&& piece.moveTo(board, targetRow, targetCol)) {
 				board.toggleSideToMove();
-				MainActivity mainContext = (MainActivity) context;
-				mainContext.refreshAdapter(board);
+				ChessActivity chessContext = (ChessActivity) context;
+				chessContext.refreshAdapter(board);
+				if (piece instanceof Pawn) {
+					Pawn pawn = (Pawn) piece;
+					if (pawn.isPromoting()) {
+						AbstractPiece promotedTo = chessContext.askPromotion(piece.getColor());
+						board.setPiece(targetRow, targetCol, promotedTo);
+					}
+				}
+				if (board.isGameOver()) {
+					chessContext.showGameOver();
+				}
 				return true;
 			} else {
 				view.setVisibility(View.VISIBLE);

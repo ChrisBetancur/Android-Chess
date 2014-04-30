@@ -3,48 +3,33 @@ package com.kdoherty.chess;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Kevin Doherty
- * @version 10/14/2013
- * 
- *          This class represents a ChessBoard using a 2D array of Pieces. An
- *          empty Square on the Board is represented by a null Piece.
- * 
- */
-public class Board {
+public class ChessBoard {
 
 	/**
 	 * A board is represented as a 2D array of Pieces An empty Square is
 	 * represented by null
 	 */
 	private final AbstractPiece[][] pieces;
-
+	
 	/**
 	 * dimensions of the chessBoard are 8 rows by 8 columns
 	 */
 	public final static int NUMROWS = 8;
 	public final static int NUMCOLS = 8;
-	
+
 	/**
 	 * Keeps track of squares where a pawn can be captured by enPoissant
 	 */
 	private Square enPoissantSq;
-	
-	private Color sideToMove = Color.WHITE;
 
 	/**
 	 * Constructor for Board Initially sets all squares to null
 	 */
-	public Board() {
+	public ChessBoard() {
+		
 		pieces = new AbstractPiece[NUMROWS][NUMCOLS];
 		// TODO: Is this needed?
 		clearBoard();
-	}
-	
-	public static Board defaultBoard() {
-		Board b = new Board();
-		b.fillWithDefaultPieces();
-		return b;
 	}
 
 	/**
@@ -241,10 +226,6 @@ public class Board {
 	public Square getEnPoissantSq() {
 		return enPoissantSq;
 	}
-	
-	public Color getSideToMove() {
-		return sideToMove;
-	}
 
 	/**
 	 * Gets the Piece at the input coordinate
@@ -364,16 +345,6 @@ public class Board {
 		remove(r, c);
 		return setPiece(r2, c2, p);
 	}
-	
-	public AbstractPiece movePieceSetColor(int r, int c, int r2, int c2) {
-		if (isEmpty(r, c)) {
-			throw new RuntimeException("No piece found at: " + new Square(r, c));
-		}
-		AbstractPiece p = getOccupant(r, c);
-		sideToMove = p.getColor().opp();
-		remove(r, c);
-		return setPiece(r2, c2, p);
-	}
 
 	/**
 	 * EFFECT: Removes all pieces on the board if there were any
@@ -393,10 +364,6 @@ public class Board {
 	public void reset() {
 		clearBoard();
 		fillWithDefaultPieces();
-	}
-	
-	public void toggleSideToMove() {
-		this.sideToMove = sideToMove.opp();
 	}
 
 	/**
@@ -438,17 +405,17 @@ public class Board {
 	 *            the color of the pieces whose moves we will return
 	 * @return A List of all moves pieces of the input color can make
 	 */
-	public List<Move> getMoves(Color color) {
-		List<Move> moves = new ArrayList<Move>();
-		List<Move> pMoves;
-		for (AbstractPiece p : getPieces(color)) {
-			pMoves = p.getMoves(this);
-			if (pMoves != null && pMoves.size() != 0 && pMoves.get(0) != null) {
-				moves.addAll(pMoves);
-			}
-		}
-		return moves;
-	}
+	// public List<Move> getMoves(Color color) {
+	// List<Move> moves = new ArrayList<Move>();
+	// List<Move> pMoves;
+	// for (Piece p : getPieces(color)) {
+	// pMoves = p.getMoves(this);
+	// if (pMoves != null && pMoves.size() != 0 && pMoves.get(0) != null) {
+	// moves.addAll(pMoves);
+	// }
+	// }
+	// return moves;
+	// }
 
 	/**
 	 * Is the input square being attacked by a piece of the input color?
@@ -465,14 +432,14 @@ public class Board {
 	 * @return true if the input square is attacked by a piece of the input
 	 *         color
 	 */
-	public boolean isAttacked(int r, int c, Color color) {
-		for (AbstractPiece p : getPieces(color)) {
-			if (p.isAttacking(this, r, c)) {
-				return true;
-			}
-		}
-		return false;
-	}
+	// public boolean isAttacked(int r, int c, Color color) {
+	// for (Piece p : getPieces(color)) {
+	// if (p.isAttacking(this, r, c)) {
+	// return true;
+	// }
+	// }
+	// return false;
+	// }
 
 	/**
 	 * Finds the king of the input color
@@ -501,9 +468,9 @@ public class Board {
 	 *            The Color of the king we want to find if its in check
 	 * @return true if the input Color's King is in check
 	 */
-	public boolean kingInCheck(Color color) {
-		return findKing(color).isInCheck(this);
-	}
+	// public boolean kingInCheck(Color color) {
+	// return findKing(color).isInCheck(this);
+	// }
 
 	/**
 	 * Is the input color in checkMate?
@@ -512,9 +479,9 @@ public class Board {
 	 *            The color to check if they are in checkMate
 	 * @return true if the input color is in checkMate
 	 */
-	public boolean isCheckMate(Color color) {
-		return kingInCheck(color) && getMoves(color).size() == 0;
-	}
+	// public boolean isCheckMate(Color color) {
+	// return kingInCheck(color) && getMoves(color).size() == 0;
+	// }
 
 	/**
 	 * Is it a draw because the input color can't move
@@ -523,9 +490,9 @@ public class Board {
 	 *            The color of the side to check if they are causing a draw
 	 * @return true if the input color is causing a draw
 	 */
-	public boolean isDraw(Color color) {
-		return !kingInCheck(color) && getMoves(color).size() == 0;
-	}
+	// public boolean isDraw(Color color) {
+	// return !kingInCheck(color) && getMoves(color).size() == 0;
+	// }
 
 	/**
 	 * Is this game over? A game is over if there is checkMate or a draw for
@@ -533,15 +500,15 @@ public class Board {
 	 * 
 	 * @return true if the game is over
 	 */
-	public boolean isGameOver() {
-		if (isCheckMate(Color.WHITE) || isCheckMate(Color.BLACK)) {
-			return true;
-		}
-		if (isDraw(Color.WHITE) || isDraw(Color.BLACK)) {
-			return true;
-		}
-		return false;
-	}
+	// public boolean isGameOver() {
+	// if (isCheckMate(Color.WHITE) || isCheckMate(Color.BLACK)) {
+	// return true;
+	// }
+	// if (isDraw(Color.WHITE) || isDraw(Color.BLACK)) {
+	// return true;
+	// }
+	// return false;
+	// }
 
 	/**
 	 * EFFECT: fills the board with the pieces in their starting position

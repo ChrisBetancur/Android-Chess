@@ -2,6 +2,8 @@ package com.kdoherty.chess;
 
 import java.util.ArrayList;
 
+import com.kdoherty.engine.RookEval;
+
 
 
 /**
@@ -11,7 +13,7 @@ import java.util.ArrayList;
  * @version 10/14/2013
  *
  */
-public class Rook extends Piece {
+public class Rook extends AbstractPiece {
 
     /** Has this Rook moved yet? */
     private boolean hasMoved;
@@ -31,7 +33,7 @@ public class Rook extends Piece {
      * @return true if this rook has moved
      */
     public boolean hasMoved() {
-        return this.hasMoved;
+        return hasMoved;
     }
 
     /**
@@ -43,10 +45,10 @@ public class Rook extends Piece {
      */
     public boolean canMove(Board b, int r, int c) {
         return Board.isInbounds(r, c) &&
-                this.row == r ^ this.col == c &&
+                row == r ^ col == c &&
                 (b.isEmpty(r, c) || isTaking(b, r, c)) &&
-                !this.isBlocked(b, r, c) && 
-                !this.stillInCheck(b, r, c);
+                !isBlocked(b, r, c) && 
+                !stillInCheck(b, r, c);
     }
 
     /**
@@ -61,9 +63,9 @@ public class Rook extends Piece {
      */
     public boolean isAttacking(Board b, int r, int c) {
         return Board.isInbounds(r, c) &&
-                this.row == r ^ this.col == c &&
+                row == r ^ col == c &&
                 (b.isEmpty(r, c) || isTaking(b, r, c)) &&
-                !this.isBlocked(b, r, c);
+                !isBlocked(b, r, c);
     }
 
     /**
@@ -79,10 +81,10 @@ public class Rook extends Piece {
      */
     public boolean isDefending(Board b, int r, int c) {
         return Board.isInbounds(r, c) &&
-                this.row == r ^ this.col == c &&
+                row == r ^ col == c &&
                 !isTaking(b, r, c) &&
-                !this.isBlocked(b, r, c) &&
-                !this.stillInCheck(b, r, c);
+                !isBlocked(b, r, c) &&
+                !stillInCheck(b, r, c);
     }
 
     /**
@@ -92,7 +94,7 @@ public class Rook extends Piece {
      * @return A String representation of this Piece
      */
     public String toString() {
-        return this.color == Color.WHITE ? "r" : "R";
+        return color == Color.WHITE ? "r" : "R";
     }
 
     /**
@@ -120,12 +122,17 @@ public class Rook extends Piece {
      */
     @Override
     public boolean moveTo(Board b, int r, int c) {
-        if (this.canMove(b, r, c)) {
-            b.movePiece(this.row, this.col, r, c);
-            this.hasMoved = true;
+        if (canMove(b, r, c)) {
+            b.movePiece(row, col, r, c);
+            hasMoved = true;
             b.setEnPoissantSq(null);  
             return true;
         }
         return false;
     }
+    
+    @Override
+   	public int evaluate(Board board) {
+   		return RookEval.eval(board, this);
+   	}
 }
