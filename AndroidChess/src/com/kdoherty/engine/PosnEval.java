@@ -7,7 +7,7 @@ import com.kdoherty.chess.Board;
 import com.kdoherty.chess.Color;
 import com.kdoherty.chess.King;
 import com.kdoherty.chess.Knight;
-import com.kdoherty.chess.AbstractPiece;
+import com.kdoherty.chess.Piece;
 import com.kdoherty.chess.Queen;
 import com.kdoherty.chess.Rook;
 import com.kdoherty.chess.Square;
@@ -24,8 +24,11 @@ public class PosnEval {
 	// TODO;
 	// private static int QUEEN_CLOSE_TO_KING_MATE_DEPTH = 4;
 
-	// evaluates placement of pieces, does not care about side to move
-	public static int evalBoard(Board b, Color color) {
+	// evaluates placement of pieces
+	public static int evaluate(Board b, Color color) {
+		if (b.isCheckMate(color.opp())) {
+			return Integer.MAX_VALUE;
+		}
 		int value = 0;
 		if (color == Color.WHITE) {
 			if (WHITE_CASTLED && !isEndGame(b)) {
@@ -36,7 +39,6 @@ public class PosnEval {
 			// System.out.println("black get castled bonus");
 			value += CASTLED_BONUS;
 		}
-
 		if (queenCloseToKing(b, color)) {
 			// System.out.println(color + " gets queen close to king bonus");
 			value += QUEEN_CLOSE_TO_KING_BONUS;
@@ -47,16 +49,12 @@ public class PosnEval {
 			// System.out.println(color + " gets bishop pair bonus");
 			value += BISHOP_PAIR_BONUS;
 		}
-
 		if (b.getSideToMove() == color) {
 			// System.out.println(color + " gets side to move bonus");
 			value += SIDE_TO_MOVE_BONUS;
 		}
-		// value += getNumSqsCtrl(b,color)
-		// * 1.5;
-		// value += ((getHangingPieceValue(b,color) * -1) + 10);
-		// System.out.println(color + " gets hanging piece penalty of " +
-		// (getHangingPieceValue(b,color) * -1));
+		value += (getNumMoves(b, color) - getNumMoves(b, color.opp()));
+		value += getMaterialCount(b, color);
 		return value;
 	}
 
@@ -84,13 +82,13 @@ public class PosnEval {
 	/*
 	 * returns a list of pieces of color color which are in the opp King's zone
 	 */
-	public static ArrayList<AbstractPiece> getPiecesInOppKingZone(Board b,
+	public static ArrayList<Piece> getPiecesInOppKingZone(Board b,
 			Color color) {
 		King kingOfColor = b.findKing(color.opp());
 		ArrayList<Square> kingZone = kingZone(b, kingOfColor);
-		ArrayList<AbstractPiece> piecesInZone = new ArrayList<AbstractPiece>();
+		ArrayList<Piece> piecesInZone = new ArrayList<Piece>();
 		for (Square s : kingZone) {
-			AbstractPiece p = b.getOccupant(s.row(), s.col());
+			Piece p = b.getOccupant(s.row(), s.col());
 			if (p != null && p.getColor() == color)
 				piecesInZone.add(p);
 		}
@@ -102,16 +100,16 @@ public class PosnEval {
 	 * is color's queen close to oppColor's King
 	 */
 	public static boolean queenCloseToKing(Board b, Color color) {
-		for (AbstractPiece p : getPiecesInOppKingZone(b, color)) {
+		for (Piece p : getPiecesInOppKingZone(b, color)) {
 			if (p instanceof Queen)
 				return true;
 		}
 		return false;
 	}
 
-	public static int getMinVal(Board b, ArrayList<AbstractPiece> pieces) {
+	public static int getMinVal(Board b, ArrayList<Piece> pieces) {
 		int min = 10001;
-		for (AbstractPiece p : pieces) {
+		for (Piece p : pieces) {
 			int eval = p.evaluate(b);
 			if (eval < min)
 				min = eval;
@@ -123,7 +121,7 @@ public class PosnEval {
 	public static boolean stillQueens(Board b) {
 		for (int i = 0; i < Board.NUMROWS; i++) {
 			for (int j = 0; j < Board.NUMCOLS; j++) {
-				AbstractPiece p = b.getOccupant(i, j);
+				Piece p = b.getOccupant(i, j);
 				if (p != null && p instanceof Queen)
 					return true;
 			}
@@ -134,17 +132,17 @@ public class PosnEval {
 	/*
 	 * returns an ArrayList of pieces which canMove to a square
 	 */
-	public static ArrayList<AbstractPiece> getTakingPieces(Board b, int row,
+	public static ArrayList<Piece> getTakingPieces(Board b, int row,
 			int col, Color color) {
-		ArrayList<AbstractPiece> pieces = new ArrayList<AbstractPiece>();
-		for (AbstractPiece p : b.getPieces(color)) {
+		ArrayList<Piece> pieces = new ArrayList<Piece>();
+		for (Piece p : b.getPieces(color)) {
 			if (p != null && p.canMove(b, row, col))
 				pieces.add(p);
 		}
 		return pieces;
 	}
 
-	public static boolean isHanging(Board b, AbstractPiece p) {
+	public static boolean isHanging(Board b, Piece p) {
 		int r = p.getRow();
 		int c = p.getCol();
 		int pVal = p.evaluate(b);
@@ -153,9 +151,9 @@ public class PosnEval {
 		return false;
 	}
 
-	public static ArrayList<AbstractPiece> getHangingPieces(Board b, Color color) {
-		ArrayList<AbstractPiece> hangingPieces = new ArrayList<AbstractPiece>();
-		for (AbstractPiece p : b.getPieces(color)) {
+	public static ArrayList<Piece> getHangingPieces(Board b, Color color) {
+		ArrayList<Piece> hangingPieces = new ArrayList<Piece>();
+		for (Piece p : b.getPieces(color)) {
 			if (isHanging(b, p)) {
 				hangingPieces.add(p);
 			}
@@ -164,9 +162,9 @@ public class PosnEval {
 	}
 
 	// gets the total value of all pieces in the list
-	public static int getListVal(Board b, ArrayList<AbstractPiece> pieces) {
+	public static int getListVal(Board b, ArrayList<Piece> pieces) {
 		int total = 0;
-		for (AbstractPiece p : pieces) {
+		for (Piece p : pieces) {
 			total += p.evaluate(b);
 		}
 		return total;
@@ -179,7 +177,7 @@ public class PosnEval {
 	public static boolean stillMinorPieces(Board b) {
 		for (int i = 0; i < Board.NUMROWS; i++) {
 			for (int j = 0; j < Board.NUMCOLS; j++) {
-				AbstractPiece p = b.getOccupant(i, j);
+				Piece p = b.getOccupant(i, j);
 				if (p != null && (p instanceof Knight || p instanceof Bishop))
 					return true;
 			}
@@ -190,7 +188,7 @@ public class PosnEval {
 	public static boolean stillRooks(Board b) {
 		for (int i = 0; i < Board.NUMROWS; i++) {
 			for (int j = 0; j < Board.NUMCOLS; j++) {
-				AbstractPiece p = b.getOccupant(i, j);
+				Piece p = b.getOccupant(i, j);
 				if (p != null && p instanceof Rook)
 					return true;
 			}
@@ -207,7 +205,7 @@ public class PosnEval {
 		int bishopCount = 0;
 		for (int i = 0; i < Board.NUMROWS; i++) {
 			for (int j = 0; j < Board.NUMCOLS; j++) {
-				AbstractPiece p = b.getOccupant(i, j);
+				Piece p = b.getOccupant(i, j);
 				if (p != null && p.getColor() == color && p instanceof Bishop)
 					bishopCount++;
 			}
@@ -222,10 +220,10 @@ public class PosnEval {
 	/*
 	 * returns an ArrayList of pieces which are defending a square
 	 */
-	public static ArrayList<AbstractPiece> getDefendingPieces(Board b, int row,
+	public static ArrayList<Piece> getDefendingPieces(Board b, int row,
 			int col, Color color) {
-		ArrayList<AbstractPiece> pieces = new ArrayList<AbstractPiece>();
-		for (AbstractPiece p : b.getPieces(color)) {
+		ArrayList<Piece> pieces = new ArrayList<Piece>();
+		for (Piece p : b.getPieces(color)) {
 			if (p != null && p.isDefending(b, row, col))
 				pieces.add(p);
 		}
@@ -256,16 +254,34 @@ public class PosnEval {
 	 */
 	public static double getLeastValofDefending(Board b, int row, int col,
 			Color color) {
-		ArrayList<AbstractPiece> defendingPieces = getDefendingPieces(b, row,
+		ArrayList<Piece> defendingPieces = getDefendingPieces(b, row,
 				col, color);
 		double lowestVal = 101;
 		if (defendingPieces == null)
 			return 0;
-		for (AbstractPiece p : defendingPieces) {
+		for (Piece p : defendingPieces) {
 			if (p.evaluate(b) < lowestVal)
 				lowestVal = p.evaluate(b);
 		}
 		return lowestVal;
 	}
-
+	
+    /*
+     * returns the sum of values of pieces of the input color
+     */
+    public static int getTotalPieceValue(Board board, Color color) {
+        int total = 0;
+        for (Piece p : board.getPieces(color)) {
+            total += p.evaluate(board);
+        }
+        return total;
+    }
+    
+    /*
+     * returns the difference in material count 
+     * by subtracting oppColor's count from color's count
+     */
+    public static int getMaterialCount(Board board, Color color) {
+        return getTotalPieceValue(board, color) - getTotalPieceValue(board, color.opp());
+    }
 }

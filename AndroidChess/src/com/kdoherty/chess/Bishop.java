@@ -12,7 +12,7 @@ import com.kdoherty.engine.BishopEval;
  * Bishops can only move diagonally 
  *
  */
-public class Bishop extends AbstractPiece {
+public class Bishop extends Piece {
 
     /**
      * Constructor for Bishop

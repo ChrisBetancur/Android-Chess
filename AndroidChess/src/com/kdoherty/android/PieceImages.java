@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.kdoherty.androidchess.R;
-import com.kdoherty.chess.AbstractPiece;
+import com.kdoherty.chess.Piece;
 
 public final class PieceImages {
 
@@ -30,7 +30,7 @@ public final class PieceImages {
 		instance.put("Q", R.drawable.blackqueen);
 	}
 
-	public static Integer getId(AbstractPiece piece) {
+	public static Integer getId(Piece piece) {
 		if (piece == null) {
 			return R.color.transparent;
 		}

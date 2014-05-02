@@ -11,7 +11,7 @@ import android.widget.BaseAdapter;
 
 import com.kdoherty.androidchess.R;
 import com.kdoherty.chess.Board;
-import com.kdoherty.chess.AbstractPiece;
+import com.kdoherty.chess.Piece;
 
 public class SquareAdapter extends BaseAdapter {
 
@@ -28,7 +28,7 @@ public class SquareAdapter extends BaseAdapter {
 		this.mContext = mContext;
 		this.board = board;
 		mPieceIds = new ArrayList<Integer>();
-		for (AbstractPiece p : board.getAllPieces()) {
+		for (Piece p : board.getAllPieces()) {
 			mPieceIds.add(PieceImages.getId(p));
 		}
 	}
@@ -76,7 +76,7 @@ public class SquareAdapter extends BaseAdapter {
 		int col = position % 8;
 		pieceView.setRow(row);
 		pieceView.setCol(col);
-		AbstractPiece piece = board.getOccupant(row, col);
+		Piece piece = board.getOccupant(row, col);
 		// Checker the board
 		if (!((row % 2 == 0 && col % 2 == 0) || (row % 2 == 1 && col % 2 == 1))) {
 			convertView.setBackgroundResource(R.color.light_grey);

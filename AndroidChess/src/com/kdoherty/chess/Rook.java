@@ -13,7 +13,7 @@ import com.kdoherty.engine.RookEval;
  * @version 10/14/2013
  *
  */
-public class Rook extends AbstractPiece {
+public class Rook extends Piece {
 
     /** Has this Rook moved yet? */
     private boolean hasMoved;

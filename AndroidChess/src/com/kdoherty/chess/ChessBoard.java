@@ -9,7 +9,7 @@ public class ChessBoard {
 	 * A board is represented as a 2D array of Pieces An empty Square is
 	 * represented by null
 	 */
-	private final AbstractPiece[][] pieces;
+	private final Piece[][] pieces;
 	
 	/**
 	 * dimensions of the chessBoard are 8 rows by 8 columns
@@ -27,7 +27,7 @@ public class ChessBoard {
 	 */
 	public ChessBoard() {
 		
-		pieces = new AbstractPiece[NUMROWS][NUMCOLS];
+		pieces = new Piece[NUMROWS][NUMCOLS];
 		// TODO: Is this needed?
 		clearBoard();
 	}
@@ -237,7 +237,7 @@ public class ChessBoard {
 	 * @return The Piece at the input coordinate if there is one and null
 	 *         otherwise
 	 */
-	public AbstractPiece getOccupant(int r, int c) {
+	public Piece getOccupant(int r, int c) {
 		return pieces[r][c];
 	}
 
@@ -276,8 +276,8 @@ public class ChessBoard {
 	 *            The column coordinate of where to remove
 	 * @return The removed piece if there was one and otherwise null
 	 */
-	public AbstractPiece remove(int r, int c) {
-		AbstractPiece removed = getOccupant(r, c);
+	public Piece remove(int r, int c) {
+		Piece removed = getOccupant(r, c);
 		pieces[r][c] = null;
 		return removed;
 	}
@@ -294,8 +294,8 @@ public class ChessBoard {
 	 * @return The piece previously at this coordinate if there was one
 	 *         otherwise null
 	 */
-	public AbstractPiece setPiece(int r, int c, AbstractPiece p) {
-		AbstractPiece removed = remove(r, c);
+	public Piece setPiece(int r, int c, Piece p) {
+		Piece removed = remove(r, c);
 		pieces[r][c] = p;
 		p.setRow(r);
 		p.setCol(c);
@@ -315,7 +315,7 @@ public class ChessBoard {
 	 * @return The Piece previously at the input square if there was one
 	 *         otherwise null
 	 */
-	public AbstractPiece setPiece(char c, int row, AbstractPiece p) {
+	public Piece setPiece(char c, int row, Piece p) {
 		Square s = new Square(c, row);
 		return setPiece(s.row(), s.col(), p);
 	}
@@ -337,11 +337,11 @@ public class ChessBoard {
 	 *         there was no piece at the first input square, an exception will
 	 *         be thrown.
 	 */
-	public AbstractPiece movePiece(int r, int c, int r2, int c2) {
+	public Piece movePiece(int r, int c, int r2, int c2) {
 		if (isEmpty(r, c)) {
 			throw new RuntimeException("No piece found at: " + new Square(r, c));
 		}
-		AbstractPiece p = getOccupant(r, c);
+		Piece p = getOccupant(r, c);
 		remove(r, c);
 		return setPiece(r2, c2, p);
 	}
@@ -373,11 +373,11 @@ public class ChessBoard {
 	 *            The color of the pieces we are trying to get
 	 * @return An List of all pieces of the input color
 	 */
-	public List<AbstractPiece> getPieces(Color color) {
-		List<AbstractPiece> pieces = new ArrayList<AbstractPiece>();
+	public List<Piece> getPieces(Color color) {
+		List<Piece> pieces = new ArrayList<Piece>();
 		for (int i = 0; i < NUMROWS; i++) {
 			for (int j = 0; j < NUMCOLS; j++) {
-				AbstractPiece p = getOccupant(i, j);
+				Piece p = getOccupant(i, j);
 				if (p != null && p.getColor() == color) {
 					pieces.add(p);
 				}
@@ -386,8 +386,8 @@ public class ChessBoard {
 		return pieces;
 	}
 
-	public List<AbstractPiece> getAllPieces() {
-		List<AbstractPiece> pieces = new ArrayList<AbstractPiece>();
+	public List<Piece> getAllPieces() {
+		List<Piece> pieces = new ArrayList<Piece>();
 		for (int i = 0; i < NUMROWS; i++) {
 			for (int j = 0; j < NUMCOLS; j++) {
 				// if (isOccupied(i, j)) {
@@ -452,7 +452,7 @@ public class ChessBoard {
 	public King findKing(Color color) {
 		for (int i = 0; i < NUMROWS; i++) {
 			for (int j = 0; j < NUMCOLS; j++) {
-				AbstractPiece p = getOccupant(i, j);
+				Piece p = getOccupant(i, j);
 				if (p != null && p.getColor() == color && p instanceof King) {
 					return (King) p;
 				}

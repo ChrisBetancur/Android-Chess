@@ -18,7 +18,7 @@ import com.kdoherty.engine.KingEval;
  * this King's color moves.
  */
 
-public class King extends AbstractPiece {
+public class King extends Piece {
 
     /** Has this King moved yet */
     private boolean hasMoved;
@@ -97,7 +97,7 @@ public class King extends AbstractPiece {
                 hasMoved = true;
             if (Board.isNeighbor(row, col, r, c)) {
                 b.movePiece(row, col, r, c);
-            }
+            }//
             else {
                 if (c == 6) {
                     castle(b, true);
@@ -128,7 +128,15 @@ public class King extends AbstractPiece {
                 }
             }
         }
-        return moves;
+		if (canCastle(b, 7, 6))
+			moves.add(new Move(this, 7, 6, Move.Castle.WHITE_SHORT));
+		else if (canCastle(b, 7, 2))
+			moves.add(new Move(this, 7, 2, Move.Castle.WHITE_LONG));
+		else if (canCastle(b, 0, 6))
+			moves.add(new Move(this, 0, 6, Move.Castle.BLACK_SHORT));
+		else if (canCastle(b, 0, 2))
+			moves.add(new Move(this, 0, 2, Move.Castle.BLACK_LONG));
+		return moves;
     }
 
     /**
@@ -172,7 +180,7 @@ public class King extends AbstractPiece {
         // are already checked in canCastle
         int col = 6;
         int rookCol = 7;
-        AbstractPiece rook = b.getOccupant(homeRow, rookCol);
+        Piece rook = b.getOccupant(homeRow, rookCol);
         return rook instanceof Rook && !((Rook)rook).hasMoved()
                 && b.isEmpty(homeRow, col) && b.isEmpty(homeRow, 5) 
                 && !b.isAttacked(homeRow, col, color.opp())
@@ -188,7 +196,7 @@ public class King extends AbstractPiece {
     private boolean canCastleLong(Board b) {
         int col = 2;
         int rookCol = 0;
-        AbstractPiece rook = b.getOccupant(homeRow, rookCol);
+        Piece rook = b.getOccupant(homeRow, rookCol);
         return rook instanceof Rook && !((Rook)rook).hasMoved()
                 && b.isEmpty(homeRow, col) && b.isEmpty(homeRow, 3) && b.isEmpty(homeRow, 1)
                 && !b.isAttacked(homeRow, col, color.opp())
@@ -208,8 +216,7 @@ public class King extends AbstractPiece {
             rookTo = 5; // where to move the rook
             kingTo = 6; // where to move the king
             rookFrom = 7; // where the rook used to be
-        }
-        else {
+        } else {
             rookTo = 3; // where to move the rook
             kingTo = 2; // where to move the king
             rookFrom = 0; // where the rook used to be
@@ -231,4 +238,8 @@ public class King extends AbstractPiece {
 	public int evaluate(Board board) {
 		return KingEval.eval(board, this);
 	}
+    
+    public void setHasMoved(boolean hasMoved) {
+    	this.hasMoved = hasMoved;
+    }
 }

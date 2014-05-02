@@ -3,7 +3,7 @@ package com.kdoherty.engine;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.kdoherty.chess.AbstractPiece;
+import com.kdoherty.chess.Piece;
 import com.kdoherty.chess.Board;
 import com.kdoherty.chess.Color;
 import com.kdoherty.chess.Move;
@@ -18,8 +18,8 @@ public class MateSolver {
 	 * check-mate it returns that move, otherwise returns null
 	 */
 	public static Move findMate1(Board b, Color color) {
-		AbstractPiece cur = null;
-		AbstractPiece taken = null;
+		Piece cur = null;
+		Piece taken = null;
 		List<Move> moves = new ArrayList<Move>();
 		moves = b.getMoves(color);
 		for (Move firstMove : moves) {
@@ -45,7 +45,7 @@ public class MateSolver {
 		List<Move> nextMateMoves = new ArrayList<Move>();
 		List<Move> moves = new ArrayList<Move>();
 		List<Move> nextMoves = new ArrayList<Move>();
-		AbstractPiece cur, nextCur, taken, nextTaken;
+		Piece cur, nextCur, taken, nextTaken;
 		boolean soonerMate = false;
 		if (depth == 1) {
 			mateMoves.add(findMate1(b, color));

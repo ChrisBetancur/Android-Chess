@@ -3,8 +3,6 @@ package com.kdoherty.chess;
 
 import java.util.ArrayList;
 
-import com.kdoherty.engine.Evaluable;
-
 
 /**
  * This class represents a Chess Piece
@@ -14,7 +12,7 @@ import com.kdoherty.engine.Evaluable;
  * @version 10/14/2013
  *
  */
-public abstract class AbstractPiece implements Evaluable {
+public abstract class Piece {
 	
 	Square square;
 	
@@ -29,7 +27,7 @@ public abstract class AbstractPiece implements Evaluable {
     /** The color of this Piece */
     final Color color;
     
-    public AbstractPiece(Color color, Square square) {
+    public Piece(Color color, Square square) {
     	this.color = color;
     	this.square = square;
     }
@@ -40,7 +38,7 @@ public abstract class AbstractPiece implements Evaluable {
      * note: Does not set row and column so we can make a piece
      * this is done when the Piece is set on a Board
      */
-    public AbstractPiece(Color color) {
+    public Piece(Color color) {
         this.color = color;
     }
 
@@ -112,6 +110,8 @@ public abstract class AbstractPiece implements Evaluable {
      * input Board and false otherwise
      */
     public abstract boolean isAttacking(Board b, int r, int c);
+    
+    public abstract int evaluate(Board b);
 
     /**
      * EFFECT:
@@ -161,9 +161,9 @@ public abstract class AbstractPiece implements Evaluable {
     public boolean equals(Object o) {
         return o != null && 
                 o.getClass() == getClass() &&
-                color == ((AbstractPiece)o).getColor() &&
-                row == ((AbstractPiece)o).getRow() &&
-                col == ((AbstractPiece)o).getCol();
+                color == ((Piece)o).getColor() &&
+                row == ((Piece)o).getRow() &&
+                col == ((Piece)o).getCol();
     }
     
     public int hashCode() {
@@ -220,7 +220,7 @@ public abstract class AbstractPiece implements Evaluable {
         Move m = new Move(this, r, c);
         int oldRow = row;
         int oldCol = col;
-        AbstractPiece taken = m.makeMove(b);
+        Piece taken = m.makeMove(b);
         if (!(b.kingInCheck(color))) {
             stillInCheck = false;
         }

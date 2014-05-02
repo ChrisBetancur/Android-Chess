@@ -6,5 +6,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="desc">Piece Image</string>
     <string name="title_activity_home">HomeActivity</string>
+    <string name="undo_button_text">undo</string>
 
 </resources>

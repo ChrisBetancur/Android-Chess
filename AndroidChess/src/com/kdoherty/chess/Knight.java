@@ -15,7 +15,7 @@ import com.kdoherty.engine.KnightEval;
  * 
  *
  */
-public class Knight extends AbstractPiece {
+public class Knight extends Piece {
 
     /**
      * Constructor for a Knight

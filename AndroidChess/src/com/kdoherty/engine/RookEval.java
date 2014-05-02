@@ -1,6 +1,6 @@
 package com.kdoherty.engine;
 
-import com.kdoherty.chess.AbstractPiece;
+import com.kdoherty.chess.Piece;
 import com.kdoherty.chess.Board;
 import com.kdoherty.chess.Color;
 import com.kdoherty.chess.Pawn;
@@ -18,10 +18,15 @@ public class RookEval {
 	private static int SEVENTH_RANK_BONUS = 55;
 	private static int DOUBLED_SEVENTH_RANK_BONUS = 10;
 	private static int SAME_FILE_AS_OPP_QUEEN_BONUS = 10;
-	private static int[] BOARD_VALS = { 0, 0, 0, 0, 0, 0, 0, 0, -5, 0, 0,
-			0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0,
-			-5, -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, -5, 5, 10,
-			10, 10, 10, 10, 10, 5, 0, 0, 0, 0, 0, 0, 0, 0 };
+	private static int[] BOARD_VALS = {
+										0, 0, 0, 0, 0, 0, 0, 0,
+									   -5, 0, 0, 0, 0, 0, 0, -5,
+									   -5, 0, 0, 0, 0, 0, 0, -5,
+									   -5, 0, 0, 0, 0, 0, 0, -5,
+									   -5, 0, 0, 0, 0, 0, 0, -5,
+									   -5, 0, 0, 0, 0, 0, 0, -5,
+									    5, 10, 10, 10, 10, 10, 10,
+									    5, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 	public static int eval(Board b, Rook r) {
 		int value = START_VALUE;
@@ -56,7 +61,7 @@ public class RookEval {
 	public static boolean isOnOpenFile(Board b, Rook r) {
 		int col = r.getCol();
 		for (int i = 0; i < Board.NUMROWS; i++) {
-			AbstractPiece p = b.getOccupant(i, col);
+			Piece p = b.getOccupant(i, col);
 			if (p != null && p instanceof Pawn)
 				return false;
 		}
@@ -70,7 +75,7 @@ public class RookEval {
 	public static boolean isOnSemiOpenFile(Board b, Rook r) {
 		int col = r.getCol();
 		for (int i = 0; i < Board.NUMROWS; i++) {
-			AbstractPiece p = b.getOccupant(i, col);
+			Piece p = b.getOccupant(i, col);
 			if (p != null && p instanceof Pawn
 					&& p.getColor() == r.getColor())
 				return false;
@@ -84,7 +89,7 @@ public class RookEval {
 	public static boolean isDoubledOnFile(Board b, Rook r) {
 		int col = r.getCol();
 		for (int i = 0; i < Board.NUMROWS; i++) {
-			AbstractPiece p = b.getOccupant(i, col);
+			Piece p = b.getOccupant(i, col);
 			if (p != null && (p instanceof Rook || p instanceof Queen)
 					&& p.getColor() == r.getColor())
 				return true;
@@ -98,7 +103,7 @@ public class RookEval {
 	public static boolean isOnSameFileAsQueen(Board b, Rook r) {
 		int col = r.getCol();
 		for (int i = 0; i < Board.NUMROWS; i++) {
-			AbstractPiece p = b.getOccupant(i, col);
+			Piece p = b.getOccupant(i, col);
 			if (p != null && p instanceof Queen
 					&& p.getColor() != r.getColor())
 				return true;
@@ -112,12 +117,11 @@ public class RookEval {
 	public static boolean isDoubledOnRank(Board b, Rook r) {
 		int row = r.getRow();
 		for (int i = 0; i < Board.NUMCOLS; i++) {
-			AbstractPiece p = b.getOccupant(row, i);
+			Piece p = b.getOccupant(row, i);
 			if (p != null && (p instanceof Rook || p instanceof Queen)
 					&& p.getColor() == r.getColor())
 				return true;
 		}
 		return false;
 	}
-
 }

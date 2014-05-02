@@ -2,6 +2,7 @@ package com.kdoherty.chess;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 
 /**
  * @author Kevin Doherty
@@ -11,13 +12,13 @@ import java.util.List;
  *          empty Square on the Board is represented by a null Piece.
  * 
  */
-public class Board {
-
+public class Board extends Observable {
+	
 	/**
 	 * A board is represented as a 2D array of Pieces An empty Square is
 	 * represented by null
 	 */
-	private final AbstractPiece[][] pieces;
+	private final Piece[][] pieces;
 
 	/**
 	 * dimensions of the chessBoard are 8 rows by 8 columns
@@ -31,12 +32,40 @@ public class Board {
 	private Square enPoissantSq;
 	
 	private Color sideToMove = Color.WHITE;
+	private Move lastMove = null;
+	
+	private int moveCount;
+	
+	public int getMoveCount() {
+		return moveCount;
+	}
+	
+	public void setMoveCount(int moveCount) {
+		this.moveCount = moveCount;
+	}
+	
+	public void setLastMove(Move lastMove) {
+		this.lastMove = lastMove;
+	}
+	
+	public Move getLastMove() {
+		return lastMove;
+	}
+	
+	public void undoLastMove() {
+		if (lastMove == null) {
+			throw new NullPointerException("Last move has not been set");
+		}
+		lastMove.undo(this);
+		toggleSideToMoveUpdate();
+		
+	}
 
 	/**
 	 * Constructor for Board Initially sets all squares to null
 	 */
 	public Board() {
-		pieces = new AbstractPiece[NUMROWS][NUMCOLS];
+		pieces = new Piece[NUMROWS][NUMCOLS];
 		// TODO: Is this needed?
 		clearBoard();
 	}
@@ -256,7 +285,7 @@ public class Board {
 	 * @return The Piece at the input coordinate if there is one and null
 	 *         otherwise
 	 */
-	public AbstractPiece getOccupant(int r, int c) {
+	public Piece getOccupant(int r, int c) {
 		return pieces[r][c];
 	}
 
@@ -295,8 +324,8 @@ public class Board {
 	 *            The column coordinate of where to remove
 	 * @return The removed piece if there was one and otherwise null
 	 */
-	public AbstractPiece remove(int r, int c) {
-		AbstractPiece removed = getOccupant(r, c);
+	public Piece remove(int r, int c) {
+		Piece removed = getOccupant(r, c);
 		pieces[r][c] = null;
 		return removed;
 	}
@@ -313,8 +342,8 @@ public class Board {
 	 * @return The piece previously at this coordinate if there was one
 	 *         otherwise null
 	 */
-	public AbstractPiece setPiece(int r, int c, AbstractPiece p) {
-		AbstractPiece removed = remove(r, c);
+	public Piece setPiece(int r, int c, Piece p) {
+		Piece removed = remove(r, c);
 		pieces[r][c] = p;
 		p.setRow(r);
 		p.setCol(c);
@@ -334,7 +363,7 @@ public class Board {
 	 * @return The Piece previously at the input square if there was one
 	 *         otherwise null
 	 */
-	public AbstractPiece setPiece(char c, int row, AbstractPiece p) {
+	public Piece setPiece(char c, int row, Piece p) {
 		Square s = new Square(c, row);
 		return setPiece(s.row(), s.col(), p);
 	}
@@ -356,20 +385,20 @@ public class Board {
 	 *         there was no piece at the first input square, an exception will
 	 *         be thrown.
 	 */
-	public AbstractPiece movePiece(int r, int c, int r2, int c2) {
+	public Piece movePiece(int r, int c, int r2, int c2) {
 		if (isEmpty(r, c)) {
 			throw new RuntimeException("No piece found at: " + new Square(r, c));
 		}
-		AbstractPiece p = getOccupant(r, c);
+		Piece p = getOccupant(r, c);
 		remove(r, c);
 		return setPiece(r2, c2, p);
 	}
 	
-	public AbstractPiece movePieceSetColor(int r, int c, int r2, int c2) {
+	public Piece movePieceSetColor(int r, int c, int r2, int c2) {
 		if (isEmpty(r, c)) {
 			throw new RuntimeException("No piece found at: " + new Square(r, c));
 		}
-		AbstractPiece p = getOccupant(r, c);
+		Piece p = getOccupant(r, c);
 		sideToMove = p.getColor().opp();
 		remove(r, c);
 		return setPiece(r2, c2, p);
@@ -398,6 +427,12 @@ public class Board {
 	public void toggleSideToMove() {
 		this.sideToMove = sideToMove.opp();
 	}
+	
+	public void toggleSideToMoveUpdate() {
+		this.sideToMove = sideToMove.opp();
+		setChanged();
+		notifyObservers(sideToMove);
+	}
 
 	/**
 	 * Gets all pieces of the input color on this board
@@ -406,11 +441,11 @@ public class Board {
 	 *            The color of the pieces we are trying to get
 	 * @return An List of all pieces of the input color
 	 */
-	public List<AbstractPiece> getPieces(Color color) {
-		List<AbstractPiece> pieces = new ArrayList<AbstractPiece>();
+	public List<Piece> getPieces(Color color) {
+		List<Piece> pieces = new ArrayList<Piece>();
 		for (int i = 0; i < NUMROWS; i++) {
 			for (int j = 0; j < NUMCOLS; j++) {
-				AbstractPiece p = getOccupant(i, j);
+				Piece p = getOccupant(i, j);
 				if (p != null && p.getColor() == color) {
 					pieces.add(p);
 				}
@@ -419,8 +454,8 @@ public class Board {
 		return pieces;
 	}
 
-	public List<AbstractPiece> getAllPieces() {
-		List<AbstractPiece> pieces = new ArrayList<AbstractPiece>();
+	public List<Piece> getAllPieces() {
+		List<Piece> pieces = new ArrayList<Piece>();
 		for (int i = 0; i < NUMROWS; i++) {
 			for (int j = 0; j < NUMCOLS; j++) {
 				// if (isOccupied(i, j)) {
@@ -441,7 +476,7 @@ public class Board {
 	public List<Move> getMoves(Color color) {
 		List<Move> moves = new ArrayList<Move>();
 		List<Move> pMoves;
-		for (AbstractPiece p : getPieces(color)) {
+		for (Piece p : getPieces(color)) {
 			pMoves = p.getMoves(this);
 			if (pMoves != null && pMoves.size() != 0 && pMoves.get(0) != null) {
 				moves.addAll(pMoves);
@@ -466,7 +501,7 @@ public class Board {
 	 *         color
 	 */
 	public boolean isAttacked(int r, int c, Color color) {
-		for (AbstractPiece p : getPieces(color)) {
+		for (Piece p : getPieces(color)) {
 			if (p.isAttacking(this, r, c)) {
 				return true;
 			}
@@ -485,7 +520,7 @@ public class Board {
 	public King findKing(Color color) {
 		for (int i = 0; i < NUMROWS; i++) {
 			for (int j = 0; j < NUMCOLS; j++) {
-				AbstractPiece p = getOccupant(i, j);
+				Piece p = getOccupant(i, j);
 				if (p != null && p.getColor() == color && p instanceof King) {
 					return (King) p;
 				}
@@ -583,5 +618,30 @@ public class Board {
 		setPiece('g', 7, new Pawn(Color.BLACK));
 		setPiece('h', 7, new Pawn(Color.BLACK));
 
+	}
+	
+    public String toString() {
+        String b = "";
+        String colNum = "  ";
+        // number cols
+        for (int j = 0; j < NUMCOLS; j++) {
+            colNum += j + " ";
+        }
+        colNum += "\n";
+        // numbers rows
+        for (int i = 0; i < NUMROWS; i++) {
+            b = b + i + "|";
+            for (int j = 0; j < NUMCOLS; j++) {
+                if (pieces[i][j] != null)
+                    b = b + pieces[i][j];
+                else
+                    b = b + " ";
+                b = b + "|";
+            }
+            b = b + "\n";
+        }
+        b = b + "\n";
+        b = colNum + b;
+        return b;	
 	}
 }

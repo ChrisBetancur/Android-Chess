@@ -13,7 +13,7 @@ import com.kdoherty.engine.QueenEval;
  * @version 10/14/2013
  *
  */
-public class Queen extends AbstractPiece {
+public class Queen extends Piece {
 
     /**
      * Constructor for Queen

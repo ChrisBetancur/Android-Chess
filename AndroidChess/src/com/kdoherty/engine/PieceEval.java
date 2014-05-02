@@ -1,13 +1,13 @@
 package com.kdoherty.engine;
 
-import com.kdoherty.chess.AbstractPiece;
+import com.kdoherty.chess.Piece;
 import com.kdoherty.chess.Board;
 import com.kdoherty.chess.Color;
 import com.kdoherty.chess.Pawn;
 
 public class PieceEval {
 
-	public static boolean isBlockingCenterPawn(Board b, AbstractPiece p) {
+	public static boolean isBlockingCenterPawn(Board b, Piece p) {
 		int pawnRow = (p.getColor() == Color.WHITE) ? 6 : 1;
 		int blockingRow = (p.getColor() == Color.WHITE) ? pawnRow - 1
 				: pawnRow + 1;

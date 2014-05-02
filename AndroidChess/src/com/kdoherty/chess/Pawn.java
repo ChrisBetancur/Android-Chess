@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import com.kdoherty.engine.PawnEval;
 
-public class Pawn extends AbstractPiece {
+public class Pawn extends Piece {
 
     /** The starting row for pawns */
     private int homeRow;

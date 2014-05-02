@@ -1,6 +1,6 @@
 package com.kdoherty.engine;
 
-import com.kdoherty.chess.AbstractPiece;
+import com.kdoherty.chess.Piece;
 import com.kdoherty.chess.Board;
 import com.kdoherty.chess.Color;
 import com.kdoherty.chess.Pawn;
@@ -47,12 +47,15 @@ public class PawnEval {
 	public static boolean isIsolated(Board b, Pawn p) {
 		int adjCol1 = p.getCol() + 1;
 		int adjCol2 = p.getCol() - 1;
+
 		for (int r = 0; r < Board.NUMROWS; r++) {
-			if (b.getOccupant(r, adjCol1) != null
+			if (Board.isInbounds(r, adjCol1)
+					&& b.getOccupant(r, adjCol1) != null
 					&& b.getOccupant(r, adjCol1) instanceof Pawn
 					&& b.getOccupant(r, adjCol1).getColor() == p.getColor())
 				return false;
-			if (b.getOccupant(r, adjCol2) != null
+			if (Board.isInbounds(r, adjCol2)
+					&& b.getOccupant(r, adjCol2) != null
 					&& b.getOccupant(r, adjCol2) instanceof Pawn
 					&& b.getOccupant(r, adjCol2).getColor() == p.getColor())
 				return false;
@@ -63,7 +66,7 @@ public class PawnEval {
 	public static boolean isDoubled(Board b, Pawn p) {
 		int col = p.getCol();
 		for (int i = 0; i < Board.NUMROWS; i++) {
-			AbstractPiece piece = b.getOccupant(i, col);
+			Piece piece = b.getOccupant(i, col);
 			if (piece != null && piece instanceof Pawn
 					&& piece.getColor() == p.getColor())
 				return true;
@@ -100,14 +103,14 @@ public class PawnEval {
 			adjCol = p.getCol() - 1;
 		if (p.getColor() == Color.WHITE) {
 			for (int r = 0; r < Board.NUMROWS; r++) {
-				AbstractPiece piece = b.getOccupant(r, adjCol);
+				Piece piece = b.getOccupant(r, adjCol);
 				if (piece != null && piece instanceof Pawn
 						&& piece.getColor() == p.getColor())
 					return (Pawn) piece;
 			}
 		} else {
 			for (int r = Board.NUMROWS - 1; r >= 0; r--) {
-				AbstractPiece piece = b.getOccupant(r, adjCol);
+				Piece piece = b.getOccupant(r, adjCol);
 				if (piece != null && piece instanceof Pawn
 						&& piece.getColor() == p.getColor())
 					return (Pawn) p;
