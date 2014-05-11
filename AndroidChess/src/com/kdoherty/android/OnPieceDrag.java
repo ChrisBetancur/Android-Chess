@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.View.OnDragListener;
 
 import com.kdoherty.chess.Board;
-import com.kdoherty.chess.Move;
 import com.kdoherty.chess.Pawn;
 import com.kdoherty.chess.Piece;
 
@@ -41,6 +40,7 @@ public class OnPieceDrag implements OnDragListener {
 		case DragEvent.ACTION_DRAG_ENDED:
 			view.setVisibility(View.VISIBLE);
 			if (moved) {
+				// TODO: Just get chessActivity Context and make computer move
 				board.toggleSideToMoveUpdate();
 				Log.d("kdoherty", "Toggling side to move");
 			}
@@ -49,11 +49,9 @@ public class OnPieceDrag implements OnDragListener {
 			break;
 		case DragEvent.ACTION_DROP:
 			Piece piece = board.getOccupant(startingRow, startingCol);
-			Move move = new Move(piece, targetRow, targetCol);
 			if (piece.getColor() == board.getSideToMove()
 					&& piece.moveTo(board, targetRow, targetCol)) {
 				ChessActivity chessContext = (ChessActivity) context;
-				board.setLastMove(move);
 				if (piece instanceof Pawn) {
 					Pawn pawn = (Pawn) piece;
 					if (pawn.isPromoting()) {
@@ -62,7 +60,6 @@ public class OnPieceDrag implements OnDragListener {
 						board.setPiece(targetRow, targetCol, promotedTo);
 					}
 				}
-				board.setLastMove(new Move(piece, targetRow, targetCol));
 				if (board.isGameOver()) {
 					chessContext.showGameOver();
 				}

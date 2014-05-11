@@ -19,10 +19,14 @@ public class Move {
 	private int startingRow;
 	private int startingCol;
 	private Piece taken;
-	private Castle castle;
+	private Type type;
 
-	public enum Castle {
-		WHITE_LONG, WHITE_SHORT, BLACK_LONG, BLACK_SHORT;
+	public enum Type {
+		NORMAL, WHITE_LONG, WHITE_SHORT, BLACK_LONG, BLACK_SHORT, PAWN_PROMOTION, EN_POISSANT;
+		
+		public boolean isCastling() {
+			return this != NORMAL && this != PAWN_PROMOTION && this != EN_POISSANT;
+		}
 	}
 
 	/**
@@ -36,7 +40,7 @@ public class Move {
 	 *            The column this Piece is moving to
 	 */
 	public Move(Piece piece, int row, int col) {
-		this(piece, row, col, null);
+		this(piece, row, col, Type.NORMAL);
 	}
 
 	/**
@@ -52,13 +56,13 @@ public class Move {
 		this(piece, square.row(), square.col());
 	}
 
-	public Move(Piece piece, int row, int col, Castle castle) {
+	public Move(Piece piece, int row, int col, Type type) {
 		this.piece = piece;
 		this.startingRow = piece.getRow();
 		this.startingCol = piece.getCol();
 		this.row = row;
 		this.col = col;
-		this.castle = castle;
+		this.type = type;
 	}
 
 	/**
@@ -117,7 +121,7 @@ public class Move {
 	 *         null
 	 */
 	public Piece makeMove(Board b) {
-		if (castle != null) {
+		if (type.isCastling()) {
 			((King) piece).moveTo(b, row, col);
 			return null;
 		}
@@ -147,25 +151,41 @@ public class Move {
 	}
 
 	public void undo(Board b) {
-		if (castle == null) {
+		switch (type) {
+		case NORMAL:
 			b.remove(row, col);
 			b.setPiece(startingRow, startingCol, piece);
 			if (taken != null) {
 				b.setPiece(row, col, taken);
 			}
-		} else {
+			break;
+		case PAWN_PROMOTION:
+			b.remove(row, col);
+			b.setPiece(startingRow, startingCol, new Pawn(piece.getColor()));
+			if (taken != null) {
+				b.setPiece(row, col, taken);
+			}
+			break;
+		case EN_POISSANT:
+			int direction = piece.getColor() == Color.WHITE ? 1 : -1;
+			b.remove(row, col);
+			b.setPiece(startingRow,  startingCol, piece);
+			b.setPiece(row + direction, col, new Pawn(piece.getColor().opp()));
+			break;
+		default:
 			undoCastling(b);
 		}
 	}
 
 	public void undoCastling(Board b) {
-		if (castle == null) {
-			throw new NullPointerException("Can't undo castling because this move was not castling");
+		if (type == null) {
+			throw new NullPointerException(
+					"Can't undo castling because this move was not castling");
 		}
-		b.setPiece(startingRow, startingCol, b.remove(row, col)); // Remove white king and put it back
-		switch (castle) {
+		b.setPiece(startingRow, startingCol, b.remove(row, col));
+		switch (type) {
 		case WHITE_LONG:
-			b.setPiece(7, 0, b.remove(row, col + 1)); // Remove rook and put it back
+			b.setPiece(7, 0, b.remove(row, col + 1));
 			break;
 		case WHITE_SHORT:
 			b.setPiece(7, 7, b.remove(row, col - 1));
@@ -176,8 +196,14 @@ public class Move {
 		case BLACK_SHORT:
 			b.setPiece(0, 7, b.remove(row, col - 1));
 			break;
+		default:
+			throw new IllegalStateException(
+					"Undo castling should only be used on a Castling move not a "
+							+ type + " move");
 		}
-		((King) piece).setHasMoved(false);
+		King king = (King) piece;
+		king.setHasMoved(false);
+		king.setHasCastled(false);
 	}
 
 	/**
