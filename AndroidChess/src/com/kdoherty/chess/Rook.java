@@ -1,6 +1,7 @@
 package com.kdoherty.chess;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.kdoherty.engine.RookEval;
 
@@ -102,10 +103,11 @@ public class Rook extends Piece {
      * @param b The Board on which we are getting all moves of this Piece
      * @return All moves this Piece can make on the input Board
      */
-    public ArrayList<Move> getMoves(Board b) {
-        ArrayList <Move> moves = new ArrayList<Move>();
-        for (int i = 0; i < Board.NUMROWS; i++) {
-            for (int j = 0; j < Board.NUMCOLS; j++) {
+    public List<Move> getMoves(Board b) {
+        List <Move> moves = new ArrayList<Move>();
+        // TODO: Don't iterate through all 64 squares
+        for (int i = 0; i < Board.NUM_ROWS; i++) {
+            for (int j = 0; j < Board.NUM_COLS; j++) {
                 if ((i == getRow() || j == getCol()) && canMove(b, i, j)) {
                     moves.add(new Move (this, i, j));
                 }   

@@ -2,6 +2,7 @@ package com.kdoherty.chess;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.kdoherty.engine.QueenEval;
 
@@ -24,7 +25,11 @@ public class Queen extends Piece {
         super(color);
     }
 
-    /**
+    public Queen(Color color, int row, int col) {
+		super(color, row, col);
+	}
+
+	/**
      * Can this piece move on the input board to the input square?
      * @param b The Board the piece is checking if it can move on
      * @param r The row we are checking if the piece can move to
@@ -93,10 +98,10 @@ public class Queen extends Piece {
      * @param b The Board on which we are getting all moves of this Piece
      * @return All moves this Piece can make on the input Board
      */
-    public ArrayList<Move> getMoves(Board b) {
-        ArrayList<Move> moves = new ArrayList<Move>();
-        for (int i = 0; i < Board.NUMROWS; i++) {
-            for (int j = 0; j < Board.NUMCOLS; j++) {
+    public List<Move> getMoves(Board b) {
+        List<Move> moves = new ArrayList<Move>();
+        for (int i = 0; i < Board.NUM_ROWS; i++) {
+            for (int j = 0; j < Board.NUM_COLS; j++) {
                 if (((row == i ^ col == j) 
                         || Board.sameDiagonal(row, col, i, j))
                         && canMove(b, i, j)) {

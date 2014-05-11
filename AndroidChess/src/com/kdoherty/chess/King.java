@@ -2,6 +2,7 @@ package com.kdoherty.chess;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.kdoherty.engine.KingEval;
 
@@ -25,6 +26,8 @@ public class King extends Piece {
 
     /** The home row of this King */
     private int homeRow;
+    
+    private boolean hasCastled;
 
     /**
      * Constructor for King 
@@ -35,6 +38,7 @@ public class King extends Piece {
     public King(Color color) {
         super(color);
         hasMoved = false;
+        hasCastled = false;
         homeRow = color == Color.WHITE ? 7 : 0;
     }
 
@@ -97,7 +101,7 @@ public class King extends Piece {
                 hasMoved = true;
             if (Board.isNeighbor(row, col, r, c)) {
                 b.movePiece(row, col, r, c);
-            }//
+            }
             else {
                 if (c == 6) {
                     castle(b, true);
@@ -117,8 +121,9 @@ public class King extends Piece {
      * @param b The Board on which we are getting all moves of this Piece
      * @return All moves this Piece can make on the input Board
      */
-    public ArrayList<Move> getMoves(Board b) {
-        ArrayList<Move> moves = new ArrayList<Move>();
+    @Override
+    public List<Move> getMoves(Board b) {
+        List<Move> moves = new ArrayList<Move>();
         for (int i = row - 1; i < row + 2; i++) { 
             for (int j = col - 1; j < col + 2; j++) { 
                 if (!(i == row && j == col)) {
@@ -129,13 +134,13 @@ public class King extends Piece {
             }
         }
 		if (canCastle(b, 7, 6))
-			moves.add(new Move(this, 7, 6, Move.Castle.WHITE_SHORT));
+			moves.add(new Move(this, 7, 6, Move.Type.WHITE_SHORT));
 		else if (canCastle(b, 7, 2))
-			moves.add(new Move(this, 7, 2, Move.Castle.WHITE_LONG));
+			moves.add(new Move(this, 7, 2, Move.Type.WHITE_LONG));
 		else if (canCastle(b, 0, 6))
-			moves.add(new Move(this, 0, 6, Move.Castle.BLACK_SHORT));
+			moves.add(new Move(this, 0, 6, Move.Type.BLACK_SHORT));
 		else if (canCastle(b, 0, 2))
-			moves.add(new Move(this, 0, 2, Move.Castle.BLACK_LONG));
+			moves.add(new Move(this, 0, 2, Move.Type.BLACK_LONG));
 		return moves;
     }
 
@@ -223,6 +228,7 @@ public class King extends Piece {
         }
         b.movePiece(row, col, homeRow, kingTo); // move the king
         b.movePiece(homeRow, rookFrom, homeRow, rookTo); // move the rook
+        hasCastled = true;
     }
 
     /**
@@ -241,5 +247,13 @@ public class King extends Piece {
     
     public void setHasMoved(boolean hasMoved) {
     	this.hasMoved = hasMoved;
+    }
+    
+    public void setHasCastled(boolean hasCastled) {
+    	this.hasCastled = hasCastled;
+    }
+    
+    public boolean hasCastled() {
+    	return hasCastled;
     }
 }

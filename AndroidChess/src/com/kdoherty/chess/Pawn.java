@@ -2,6 +2,7 @@ package com.kdoherty.chess;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.kdoherty.engine.PawnEval;
 
@@ -12,6 +13,8 @@ public class Pawn extends Piece {
 
     /** The forward direction for this Pawn */
     private int forward;
+    
+    private List<Move> moves;
 
     /**
      * Constructor for a Pawn
@@ -87,17 +90,27 @@ public class Pawn extends Piece {
      * @param b The Board on which we are getting all moves of this Piece
      * @return All moves this Piece can make on the input Board
      */
-    public ArrayList<Move> getMoves(Board b) {
+    @Override
+    public List<Move> getMoves(Board b) {
+    	if (moves != null) {
+    		return moves;
+    	}
         int finalRow = color == Color.WHITE ? 0 : 7;
-        ArrayList<Move> moves = new ArrayList<Move>();
+        List<Move> moves = new ArrayList<Move>();
         for (Square s : getPossibleSqs()) {
-            if (canMove(b, s.row(), s.col())) {
-                if (s.row() != finalRow) {
+        	int sRow = s.row();
+        	int sCol = s.col();
+            if (canMove(b, sRow, sCol)) {
+                if (s.col() != col && b.isEmpty(sRow, sCol)) {
+                	// En Poissant
+                	moves.add(new Move(this, sRow, sCol, Move.Type.EN_POISSANT));
+                } else if (s.row() != finalRow) {
+                	// Normal Move
                     moves.add(new Move(this, s));
-                }
-                else {
-                    moves.add(new Move(new Queen(color), s));
-                    moves.add(new Move(new Knight(color), s)); 
+                } else {
+                	// Pawn Promotion
+                    moves.add(new Move(new Queen(color, row, col), sRow, sCol, Move.Type.PAWN_PROMOTION));
+                    moves.add(new Move(new Knight(color, row, col), sRow, sCol, Move.Type.PAWN_PROMOTION)); 
                 }
             }
 
