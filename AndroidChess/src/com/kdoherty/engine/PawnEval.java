@@ -48,7 +48,7 @@ public class PawnEval {
 		int adjCol1 = p.getCol() + 1;
 		int adjCol2 = p.getCol() - 1;
 
-		for (int r = 0; r < Board.NUMROWS; r++) {
+		for (int r = 0; r < Board.NUM_ROWS; r++) {
 			if (Board.isInbounds(r, adjCol1)
 					&& b.getOccupant(r, adjCol1) != null
 					&& b.getOccupant(r, adjCol1) instanceof Pawn
@@ -65,7 +65,7 @@ public class PawnEval {
 
 	public static boolean isDoubled(Board b, Pawn p) {
 		int col = p.getCol();
-		for (int i = 0; i < Board.NUMROWS; i++) {
+		for (int i = 0; i < Board.NUM_ROWS; i++) {
 			Piece piece = b.getOccupant(i, col);
 			if (piece != null && piece instanceof Pawn
 					&& piece.getColor() == p.getColor())
@@ -76,7 +76,7 @@ public class PawnEval {
 
 	public static boolean isProtectedPassed(Board b, Pawn p) {
 		return isPassed(b, p)
-				&& PosnEval.getLeastValofDefending(b, p.getRow(), p.getCol(),
+				&& Evaluate.getLeastValofDefending(b, p.getRow(), p.getCol(),
 						p.getColor()) == 1;
 	}
 
@@ -102,14 +102,14 @@ public class PawnEval {
 		else
 			adjCol = p.getCol() - 1;
 		if (p.getColor() == Color.WHITE) {
-			for (int r = 0; r < Board.NUMROWS; r++) {
+			for (int r = 0; r < Board.NUM_ROWS; r++) {
 				Piece piece = b.getOccupant(r, adjCol);
 				if (piece != null && piece instanceof Pawn
 						&& piece.getColor() == p.getColor())
 					return (Pawn) piece;
 			}
 		} else {
-			for (int r = Board.NUMROWS - 1; r >= 0; r--) {
+			for (int r = Board.NUM_ROWS - 1; r >= 0; r--) {
 				Piece piece = b.getOccupant(r, adjCol);
 				if (piece != null && piece instanceof Pawn
 						&& piece.getColor() == p.getColor())

@@ -27,7 +27,7 @@ public class KingEval {
 		Square s = k.getSq();
 		int index = k.getColor() == Color.WHITE ? s.toNum() : 63 - s
 				.toNum();
-		value += PosnEval.isEndGame(b) ? ENDGAME_BOARD_VALUES[index]
+		value += Evaluate.isEndGame(b) ? ENDGAME_BOARD_VALUES[index]
 				: MIDDLEGAME_BOARD_VALUES[index];
 		return value;
 	}

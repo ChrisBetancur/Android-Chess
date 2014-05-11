@@ -21,7 +21,7 @@ public class KnightEval {
 		Square s = n.getSq();
 		int index = n.getColor() == Color.WHITE ? s.toNum() : 63 - s
 				.toNum();
-		if (PosnEval.isEndGame(b))
+		if (Evaluate.isEndGame(b))
 			value += ENDGAME_PENALTY;
 		value += BOARD_VALUES[index];
 		if (PieceEval.isBlockingCenterPawn(b, n))

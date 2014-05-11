@@ -58,9 +58,9 @@ public class RookEval {
 	/*
 	 * Is the rook on a file with no pawns on it?
 	 */
-	public static boolean isOnOpenFile(Board b, Rook r) {
+	private static boolean isOnOpenFile(Board b, Rook r) {
 		int col = r.getCol();
-		for (int i = 0; i < Board.NUMROWS; i++) {
+		for (int i = 0; i < Board.NUM_ROWS; i++) {
 			Piece p = b.getOccupant(i, col);
 			if (p != null && p instanceof Pawn)
 				return false;
@@ -72,9 +72,9 @@ public class RookEval {
 	 * Is the rook on a semi-open file?
 	 */
 
-	public static boolean isOnSemiOpenFile(Board b, Rook r) {
+	private static boolean isOnSemiOpenFile(Board b, Rook r) {
 		int col = r.getCol();
-		for (int i = 0; i < Board.NUMROWS; i++) {
+		for (int i = 0; i < Board.NUM_ROWS; i++) {
 			Piece p = b.getOccupant(i, col);
 			if (p != null && p instanceof Pawn
 					&& p.getColor() == r.getColor())
@@ -86,9 +86,9 @@ public class RookEval {
 	/*
 	 * Is there a rook or queen of the same color on the same file?
 	 */
-	public static boolean isDoubledOnFile(Board b, Rook r) {
+	private static boolean isDoubledOnFile(Board b, Rook r) {
 		int col = r.getCol();
-		for (int i = 0; i < Board.NUMROWS; i++) {
+		for (int i = 0; i < Board.NUM_ROWS; i++) {
 			Piece p = b.getOccupant(i, col);
 			if (p != null && (p instanceof Rook || p instanceof Queen)
 					&& p.getColor() == r.getColor())
@@ -100,9 +100,9 @@ public class RookEval {
 	/*
 	 * Is there a queen of the opposite color on the same file?
 	 */
-	public static boolean isOnSameFileAsQueen(Board b, Rook r) {
+	private static boolean isOnSameFileAsQueen(Board b, Rook r) {
 		int col = r.getCol();
-		for (int i = 0; i < Board.NUMROWS; i++) {
+		for (int i = 0; i < Board.NUM_ROWS; i++) {
 			Piece p = b.getOccupant(i, col);
 			if (p != null && p instanceof Queen
 					&& p.getColor() != r.getColor())
@@ -114,9 +114,9 @@ public class RookEval {
 	/*
 	 * Is there a rook or queen of the same color on the same rank?
 	 */
-	public static boolean isDoubledOnRank(Board b, Rook r) {
+	private static boolean isDoubledOnRank(Board b, Rook r) {
 		int row = r.getRow();
-		for (int i = 0; i < Board.NUMCOLS; i++) {
+		for (int i = 0; i < Board.NUM_COLS; i++) {
 			Piece p = b.getOccupant(row, i);
 			if (p != null && (p instanceof Rook || p instanceof Queen)
 					&& p.getColor() == r.getColor())
