@@ -1,7 +1,7 @@
 package com.kdoherty.chess;
 
 
-import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -16,7 +16,8 @@ public abstract class Piece {
 	
 	Square square;
 	
-	// TODO: Make Pieces singleton and not know their location
+	// TODO: Make Pieces singleton and not know their location or change the board to a list of pieces
+	// TODO: Cache moves
 
     /** The row where this Piece is located */
     int row;
@@ -27,9 +28,17 @@ public abstract class Piece {
     /** The color of this Piece */
     final Color color;
     
+    List<Move> moves;
+    
     public Piece(Color color, Square square) {
     	this.color = color;
     	this.square = square;
+    }
+    
+    public Piece(Color color, int row, int col) {
+    	this.color = color;
+    	this.row = row;
+    	this.col = col;
     }
 
     /**
@@ -147,7 +156,7 @@ public abstract class Piece {
      * @param b The Board on which we are getting all moves of this Piece
      * @return All moves this Piece can make on the input Board
      */
-    public abstract ArrayList<Move> getMoves(Board b);
+    public abstract List<Move> getMoves(Board b);
 
     /**
      * A piece equals another Object if they are:
@@ -206,6 +215,14 @@ public abstract class Piece {
         }
         return false;
     }
+    
+//    public List<Move> getMoves(Board b) {
+//    	if (moves != null) {
+//    		return moves;
+//    	}
+//    	moves = getPieceMoves(b);
+//    	return moves;
+//    }
 
     /**
      * Can this Piece move to the input coordinate without putting its King in check?
@@ -218,13 +235,11 @@ public abstract class Piece {
     public boolean stillInCheck(Board b, int r, int c) {
         boolean stillInCheck = true;
         Move m = new Move(this, r, c);
-        int oldRow = row;
-        int oldCol = col;
-        Piece taken = m.makeMove(b);
+        m.makeMove(b);
         if (!(b.kingInCheck(color))) {
             stillInCheck = false;
         }
-        m.undo(b, oldRow, oldCol, taken);
+        m.undo(b);
         return stillInCheck;
     }
 }
