@@ -10,10 +10,10 @@ import android.view.Menu;
 import android.widget.Toast;
 
 import com.kdoherty.androidchess.R;
-import com.kdoherty.chess.Piece;
 import com.kdoherty.chess.Board;
 import com.kdoherty.chess.Color;
 import com.kdoherty.chess.Move;
+import com.kdoherty.chess.Piece;
 import com.kdoherty.chess.Queen;
 import com.kdoherty.engine.CpuPlayer;
 
@@ -99,6 +99,8 @@ public class ChessActivity extends Activity implements Observer {
 		move.makeMove(board);
 		refreshAdapter(board);
 		board.toggleSideToMove();
-		board.setLastMove(move);
+		if (board.isGameOver()) {
+			showGameOver();
+		}
 	}
 }
