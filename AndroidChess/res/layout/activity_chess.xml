@@ -17,10 +17,4 @@
         android:padding="5dp"
         android:verticalSpacing="1dp" />
 
-    <TextView
-        android:id="@+id/centerPoint"
-        android:layout_width="0dip"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true" />
-
 </RelativeLayout>
