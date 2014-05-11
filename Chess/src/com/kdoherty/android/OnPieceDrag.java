@@ -50,7 +50,8 @@ public class OnPieceDrag implements OnDragListener {
 		case DragEvent.ACTION_DROP:
 			Piece piece = board.getOccupant(startingRow, startingCol);
 			if (piece.getColor() == board.getSideToMove()
-					&& piece.moveTo(board, targetRow, targetCol)) {
+					&& piece.canMove(board, targetRow, targetCol)) {
+				piece.moveTo(board, targetRow, targetCol);
 				ChessActivity chessContext = (ChessActivity) context;
 				if (piece instanceof Pawn) {
 					Pawn pawn = (Pawn) piece;

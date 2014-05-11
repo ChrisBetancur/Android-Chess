@@ -191,8 +191,7 @@ public class Pawn extends Piece {
      * account for situations like enPoissant, promotions, 
      */
     @Override
-    public boolean moveTo(Board b, int r, int c) {
-        if (canMove(b, r, c)) {
+    public void moveTo(Board b, int r, int c) {
             if (row + 2 * forward == r) {
                 b.setEnPoissantSq(new Square(row + forward, col));
             }
@@ -206,9 +205,6 @@ public class Pawn extends Piece {
             if (isPromoting()) {
                 //TODO
             }
-            return true;
-        }
-        return false;
     }
 
     /**

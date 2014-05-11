@@ -96,7 +96,7 @@ public class ChessActivity extends Activity implements Observer {
 					Toast.LENGTH_LONG).show();
 			return;
 		}
-		move.makeMove(board);
+		move.make(board);
 		refreshAdapter(board);
 		board.toggleSideToMove();
 		if (board.isGameOver()) {

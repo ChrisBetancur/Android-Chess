@@ -95,7 +95,7 @@ public final class Square {
 	 * Does this square equal that object? A square is equal to an object if 1.
 	 * The object is a square 2. They contain the same chess board coordinate
 	 * 
-	 * @return true if this square equals the input object
+	 * @return true if this Square equals the input object
 	 */
 	@Override
 	public boolean equals(Object obj) {

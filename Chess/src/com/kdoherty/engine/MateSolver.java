@@ -21,12 +21,12 @@ public class MateSolver {
 		List<Move> moves = new ArrayList<Move>();
 		moves = b.getMoves(color);
 		for (Move move : moves) {
-			move.makeMove(b);
+			move.make(b);
 			if (b.isCheckMate(color.opp())) {
-				move.undo(b);
+				move.unmake(b);
 				return move;
 			} else {
-				move.undo(b);
+				move.unmake(b);
 			}
 		}
 		return null;
@@ -48,12 +48,12 @@ public class MateSolver {
 		} else {
 			for (Move m : b.getMoves(color)) {
 				mateMoves.add(m);
-				m.makeMove(b);
+				m.make(b);
 				if (mateMoves.size() != 0) {
 					for (Move mo : b.getMoves(color.opp())) {
 						nextMateMoves = null;
 						soonerMate = false;
-						mo.makeMove(b);
+						mo.make(b);
 						// make sure a sooner mate can't be found
 						for (int i = 1; i < depth - 1; i++) {
 							List<Move> test = new ArrayList<Move>();
@@ -69,15 +69,15 @@ public class MateSolver {
 								mateMoves.clear();
 							}
 						}
-						mo.undo(b);
+						mo.unmake(b);
 					}
 				}
 				if (!(nextMateMoves == null || nextMateMoves.size() == 0)) {
-					m.undo(b);
+					m.unmake(b);
 					mateMoves.addAll(nextMateMoves);
 					return mateMoves;
 				}
-				m.undo(b);
+				m.unmake(b);
 			}
 		}
 		// No mate was found... Return the empty list of moves

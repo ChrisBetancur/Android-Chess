@@ -43,6 +43,9 @@ public class Board extends Observable {
 	/** Keeps track of the Square where a pawn can be captured by enPoissant */
 	private Square enPoissantSq;
 
+	private King whiteKing;
+	private King blackKing;
+
 	/** The number of moves that have been played so far */
 	private int moveCount;
 
@@ -226,6 +229,21 @@ public class Board extends Observable {
 	}
 
 	/**
+	 * Deep clones a List
+	 * 
+	 * @param list
+	 *            The List to clone
+	 * @return An ArrayList containing all the same elements as the input list
+	 */
+	private static <T> List<T> cloneList(List<? extends T> list) {
+		List<T> clone = new ArrayList<T>();
+		for (T t : list) {
+			clone.add(t);
+		}
+		return clone;
+	}
+
+	/**
 	 * Gets the number of moves played on this Board
 	 * 
 	 * @return The number of moves that have been played so far
@@ -347,6 +365,9 @@ public class Board extends Observable {
 	 *         otherwise null
 	 */
 	public Piece setPiece(int r, int c, Piece p) {
+		if (p == null) {
+			throw new NullPointerException("Can't set a null piece");
+		}
 		Piece removed = remove(r, c);
 		pieces[r][c] = p;
 		p.setRow(r);
@@ -355,6 +376,13 @@ public class Board extends Observable {
 			whitePieces.add(p);
 		} else {
 			blackPieces.add(p);
+		}
+		if (p instanceof King) {
+			if (p.getColor() == Color.WHITE) {
+				whiteKing = (King) p;
+			} else {
+				blackKing = (King) p;
+			}
 		}
 		return removed;
 	}
@@ -448,21 +476,6 @@ public class Board extends Observable {
 	}
 
 	/**
-	 * Deep clones a List
-	 * 
-	 * @param list
-	 *            The List to clone
-	 * @return An ArrayList containing all the same elements as the input list
-	 */
-	private static <T> List<T> cloneList(List<? extends T> list) {
-		List<T> clone = new ArrayList<T>();
-		for (T t : list) {
-			clone.add(t);
-		}
-		return clone;
-	}
-
-	/**
 	 * Gets all moves of all Pieces of the input Color
 	 * 
 	 * @param color
@@ -472,7 +485,8 @@ public class Board extends Observable {
 	public List<Move> getMoves(Color color) {
 		List<Move> moves = new ArrayList<Move>();
 		List<Move> pMoves;
-		for (Piece p : getPieces(color)) {
+		List<Piece> pieces = getPieces(color);
+		for (Piece p : pieces) {
 			pMoves = p.getMoves(this);
 			if (pMoves != null && pMoves.size() != 0) {
 				moves.addAll(pMoves);
@@ -514,13 +528,16 @@ public class Board extends Observable {
 	 *         not a King of the input color on this Board
 	 */
 	public King findKing(Color color) {
-		for (Piece piece : getPieces(color)) {
-			if (piece instanceof King) {
-				return (King) piece;
-			}
-		}
-		throw new IllegalStateException("The " + color
-				+ " King is not on the Board");
+
+		return color == Color.WHITE ? whiteKing : blackKing;
+
+		// for (Piece piece : getPieces(color)) {
+		// if (piece instanceof King) {
+		// return (King) piece;
+		// }
+		// }
+		// throw new IllegalStateException("The " + color
+		// + " King is not on the Board");
 	}
 
 	/**
@@ -647,16 +664,22 @@ public class Board extends Observable {
 				Piece thisPiece = getOccupant(i, j);
 				Piece thatPiece = thatBoard.getOccupant(i, j);
 				if ((thisPiece == null && thatPiece != null)
-						|| !thisPiece.equals(thatPiece)) {
+						|| (thisPiece != null && !thisPiece.equals(thatPiece))) {
 					return false;
 				}
 			}
 		}
-		return true;
+		Square thatEnPoissantSq = thatBoard.getEnPoissantSq();
+		Color thatSideToMove = thatBoard.getSideToMove();
+
+		return sideToMove == thatSideToMove
+				&& (enPoissantSq == thatEnPoissantSq || (enPoissantSq != null && enPoissantSq
+						.equals(thatEnPoissantSq)));
 	}
 
 	/**
 	 * A readable ASCII representation of this Board
+	 * 
 	 * @return A String representation of this Board
 	 */
 	@Override
@@ -680,6 +703,8 @@ public class Board extends Observable {
 		}
 		b = b + "\n";
 		b = colNum + b;
+		b += "enPoissant Square: " + enPoissantSq;
+		b += " side toMove: " + sideToMove;
 		return b;
 	}
 }

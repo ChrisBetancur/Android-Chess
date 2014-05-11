@@ -20,6 +20,7 @@ public class Move {
 	private int startingCol;
 	private Piece taken;
 	private Type type;
+	private Square enPoissantSq;
 
 	public enum Type {
 		NORMAL, WHITE_LONG, WHITE_SHORT, BLACK_LONG, BLACK_SHORT, PAWN_PROMOTION, EN_POISSANT;
@@ -57,6 +58,9 @@ public class Move {
 	}
 
 	public Move(Piece piece, int row, int col, Type type) {
+		if (piece == null) {
+			throw new NullPointerException("Can't make a move with a null piece");
+		}
 		this.piece = piece;
 		this.startingRow = piece.getRow();
 		this.startingCol = piece.getCol();
@@ -83,12 +87,16 @@ public class Move {
 		return new Square(row, col);
 	}
 
-	public int row() {
+	public int getRow() {
 		return row;
 	}
 
-	public int col() {
+	public int getCol() {
 		return col;
+	}
+	
+	public Piece getTaken() {
+		return taken;
 	}
 
 	/**
@@ -120,37 +128,13 @@ public class Move {
 	 * @return The piece captured by making this move if there was one otherwise
 	 *         null
 	 */
-	public Piece makeMove(Board b) {
-		if (type.isCastling()) {
-			((King) piece).moveTo(b, row, col);
-			return null;
-		}
-		b.remove(piece.getRow(), piece.getCol());
-		this.taken = b.setPiece(row, col, piece);
-		return taken;
+	public void make(Board b) {
+		taken = b.getOccupant(row, col);
+		enPoissantSq = b.getEnPoissantSq();
+		piece.moveTo(b, row, col);
 	}
 
-	/**
-	 * EFFECT: Takes back this move
-	 * 
-	 * @param b
-	 *            The Board to undo this Move on
-	 * @param prevRow
-	 *            The row from which Piece came from
-	 * @param prevCol
-	 *            The column from which Piece came from
-	 * @param taken
-	 *            The Piece which was taken after this Move was made
-	 */
-	public void undo(Board b, int prevRow, int prevCol, Piece taken) {
-		b.remove(row, col);
-		b.setPiece(prevRow, prevCol, getPiece());
-		if (taken != null) {
-			b.setPiece(row, col, taken);
-		}
-	}
-
-	public void undo(Board b) {
+	public void unmake(Board b) {
 		switch (type) {
 		case NORMAL:
 			b.remove(row, col);
@@ -158,6 +142,7 @@ public class Move {
 			if (taken != null) {
 				b.setPiece(row, col, taken);
 			}
+			b.setEnPoissantSq(enPoissantSq);
 			break;
 		case PAWN_PROMOTION:
 			b.remove(row, col);
