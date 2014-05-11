@@ -1,7 +1,5 @@
 package com.kdoherty.android;
 
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -18,8 +16,6 @@ public class SquareAdapter extends BaseAdapter {
 	private Context mContext;
 	private Board board;
 
-	private ArrayList<Integer> mPieceIds;
-
 	public SquareAdapter(Context mContext) {
 		this(mContext, Board.defaultBoard());
 	}
@@ -27,20 +23,17 @@ public class SquareAdapter extends BaseAdapter {
 	public SquareAdapter(Context mContext, Board board) {
 		this.mContext = mContext;
 		this.board = board;
-		mPieceIds = new ArrayList<Integer>();
-		for (Piece p : board.getAllPieces()) {
-			mPieceIds.add(PieceImages.getId(p));
-		}
 	}
 
 	@Override
 	public int getCount() {
-		return mPieceIds.size();
+		// Board size stays constant
+		return Board.NUM_ROWS * Board.NUM_COLS;
 	}
 
 	@Override
 	public Object getItem(int position) {
-		return mPieceIds.get(position);
+		return null;
 	}
 
 	@Override
