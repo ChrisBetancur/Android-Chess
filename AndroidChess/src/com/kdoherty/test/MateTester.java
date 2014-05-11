@@ -1,5 +1,7 @@
 package com.kdoherty.test;
 
+import android.util.Log;
+
 import com.kdoherty.chess.Bishop;
 import com.kdoherty.chess.Board;
 import com.kdoherty.chess.Color;
@@ -12,6 +14,9 @@ import com.kdoherty.engine.MateSolver;
 
 
 public class MateTester {
+	
+	
+	private static int NUM_MATE_TESTS = 9;
 
 	public void fillWithTestMate(Board b, int x) {
 		Pawn p1 = new Pawn(Color.WHITE);
@@ -223,27 +228,28 @@ public class MateTester {
 		long startTime = System.currentTimeMillis();
 		int numFails = 0;
 		boolean allPass = true;
-		for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < NUM_MATE_TESTS; i++) {
 			long testStartTime = System.currentTimeMillis();
 			fillWithTestMate(b, i);
 			if (MateSolver.findMateUpToN(b, Color.WHITE, 5) == null) {
-				System.out.println("Test mate number " + i + " failed testing");
+				Log.d("MateTests", "Test mate number " + i + " failed testing");
 				allPass = false;
 				numFails++;
 			}
 			long testEndTime = System.currentTimeMillis();
 			long testTotalTime = testEndTime - testStartTime;
-			System.out.println("Test mate number " + i + " took "
+			Log.d("MateTests", "Test mate number " + i + " took "
 					+ testTotalTime / 1000.0 + " seconds");
 			b.clearBoard();
 		}
-		if (allPass)
-			System.out.println("All tests passed!");
-		else
-			System.out.println("Tests Complete: " + numFails + " tests failed");
+		if (allPass) {
+			Log.d("MateTests", "All tests passed!");
+		} else {
+			Log.d("MateTests", "Tests Complete: " + numFails + " tests failed");
+		}
 		long endTime = System.currentTimeMillis();
 		long totalTime = endTime - startTime;
-		System.out.println("Total execution time: " + totalTime / 1000.0
+		Log.d("MateTests", "Total execution time: " + totalTime / 1000.0
 				+ " seconds");
 	}
 }
