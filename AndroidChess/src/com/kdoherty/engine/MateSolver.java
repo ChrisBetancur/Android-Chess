@@ -3,7 +3,6 @@ package com.kdoherty.engine;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.kdoherty.chess.Piece;
 import com.kdoherty.chess.Board;
 import com.kdoherty.chess.Color;
 import com.kdoherty.chess.Move;
@@ -11,27 +10,23 @@ import com.kdoherty.chess.Move;
 public class MateSolver {
 
 	private MateSolver() {
+		// Hide Constructor
 	}
 
 	/*
 	 * If there is a move which color can make which puts the oppColor in
 	 * check-mate it returns that move, otherwise returns null
 	 */
-	public static Move findMate1(Board b, Color color) {
-		Piece cur = null;
-		Piece taken = null;
+	public static Move findMateInOne(Board b, Color color) {
 		List<Move> moves = new ArrayList<Move>();
 		moves = b.getMoves(color);
-		for (Move firstMove : moves) {
-			cur = firstMove.getPiece();
-			int r = cur.getRow();
-			int c = cur.getCol();
-			taken = firstMove.makeMove(b);
+		for (Move move : moves) {
+			move.makeMove(b);
 			if (b.isCheckMate(color.opp())) {
-				firstMove.undo(b, r, c, taken);
-				return firstMove;
+				move.undo(b);
+				return move;
 			} else {
-				firstMove.undo(b, r, c, taken);
+				move.undo(b);
 			}
 		}
 		return null;
@@ -40,70 +35,60 @@ public class MateSolver {
 	// if there is a forced mate this will return A solution. The other side may
 	// make different moves and other corresponding moves
 	// will need to be made in the output but it is forced either way
-	public static List<Move> SolveMateInN(Board b, Color color, int depth) {
+	public static List<Move> findMateInN(Board b, Color color, int depth) {
 		List<Move> mateMoves = new ArrayList<Move>();
 		List<Move> nextMateMoves = new ArrayList<Move>();
-		List<Move> moves = new ArrayList<Move>();
-		List<Move> nextMoves = new ArrayList<Move>();
-		Piece cur, nextCur, taken, nextTaken;
 		boolean soonerMate = false;
 		if (depth == 1) {
-			mateMoves.add(findMate1(b, color));
+			Move move = findMateInOne(b, color);
+			if (move != null) {
+				mateMoves.add(move);
+			}
 			return mateMoves;
 		} else {
-			moves = b.getMoves(color);
-			for (Move m : moves) {
-				cur = m.getPiece();
-				int curRow = cur.getRow();
-				int curCol = cur.getCol();
+			for (Move m : b.getMoves(color)) {
 				mateMoves.add(m);
-				taken = m.makeMove(b);
-				nextMoves = b.getMoves(color.opp());
-				for (Move mo : nextMoves) {
-					nextCur = mo.getPiece();
-					int nextCurRow = nextCur.getRow();
-					int nextCurCol = nextCur.getCol();
-					if (mateMoves.size() != 0) {
+				m.makeMove(b);
+				if (mateMoves.size() != 0) {
+					for (Move mo : b.getMoves(color.opp())) {
 						nextMateMoves = null;
-						nextTaken = null;
 						soonerMate = false;
-						b.remove(nextCurRow, nextCurCol);
-						nextTaken = mo.makeMove(b);
+						mo.makeMove(b);
 						// make sure a sooner mate can't be found
 						for (int i = 1; i < depth - 1; i++) {
 							List<Move> test = new ArrayList<Move>();
-							test = SolveMateInN(b, color, i);
-							if (!(test == null || test.get(0) == null)) {
+							test = findMateInN(b, color, i);
+							if (!(test == null || test.size() == 0)) {
 								soonerMate = true;
 							}
 						}
 						if (!soonerMate) {
-							nextMateMoves = SolveMateInN(b, color, depth - 1);
+							nextMateMoves = findMateInN(b, color, depth - 1);
 							if (nextMateMoves == null
-									|| nextMateMoves.get(0) == null) {
+									|| nextMateMoves.size() == 0) {
 								mateMoves.clear();
 							}
 						}
-						mo.undo(b, nextCurRow, nextCurCol, nextTaken);
+						mo.undo(b);
 					}
 				}
-				if ((!(nextMateMoves == null || nextMateMoves.size() == 0 || nextMateMoves
-						.get(0) == null))) {
-					m.undo(b, curRow, curCol, taken);
+				if (!(nextMateMoves == null || nextMateMoves.size() == 0)) {
+					m.undo(b);
 					mateMoves.addAll(nextMateMoves);
 					return mateMoves;
 				}
-				m.undo(b, curRow, curCol, taken);
+				m.undo(b);
 			}
 		}
-		return null;
+		// No mate was found... Return the empty list of moves
+		return mateMoves;
 	}
 
 	public static List<Move> findMateUpToN(Board b, Color color, int n) {
 		List<Move> mate = new ArrayList<Move>();
 		for (int i = 1; i <= n; i++) {
-			mate = SolveMateInN(b, color, i);
-			if (!(mate == null || mate.get(0) == null))
+			mate = findMateInN(b, color, i);
+			if (mate != null && mate.size() != 0)
 				return mate;
 		}
 		return null;
