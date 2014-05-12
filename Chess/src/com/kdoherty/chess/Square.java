@@ -22,10 +22,6 @@ public final class Square {
 	 *            Sets this squares column to this value
 	 */
 	public Square(int row, int col) {
-		if (!Board.isInbounds(row, col)) {
-			throw new IllegalArgumentException("Square is not inbounds! Row: "
-					+ row + " col: " + col);
-		}
 		this.row = row;
 		this.col = col;
 	}
