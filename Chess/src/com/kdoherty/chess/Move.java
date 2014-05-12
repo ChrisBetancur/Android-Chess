@@ -16,17 +16,40 @@ public class Move {
 	/** The column this piece is moving to */
 	private int col;
 
+	/** The starting row of the Piece before this Move is made */
 	private int startingRow;
+
+	/** The starting column of the Piece before this Move is made */
 	private int startingCol;
+	
+	/** The Square to move this piece to */
+	private Square targetSquare;
+
+	/**
+	 * The Piece that is taken when this move is made, or null if there isnt one
+	 */
 	private Piece taken;
+
+	/** The type of Move this is */
 	private Type type;
+
+	/** The enPoissant square of the board before this Move is played */
 	private Square enPoissantSq;
 
+	/** The type of Move this is */
 	public enum Type {
+
 		NORMAL, WHITE_LONG, WHITE_SHORT, BLACK_LONG, BLACK_SHORT, PAWN_PROMOTION, EN_POISSANT;
-		
+
+		/**
+		 * Is this Type a castling Move?
+		 * 
+		 * @return true if this Type is either WHITE_LONG, WHITE_SHORT,
+		 *         BLACK_LONG, or BLACK_SHORT
+		 */
 		public boolean isCastling() {
-			return this != NORMAL && this != PAWN_PROMOTION && this != EN_POISSANT;
+			return this == WHITE_SHORT || this == WHITE_LONG
+					|| this == BLACK_SHORT || this == BLACK_LONG;
 		}
 	}
 
@@ -59,7 +82,8 @@ public class Move {
 
 	public Move(Piece piece, int row, int col, Type type) {
 		if (piece == null) {
-			throw new NullPointerException("Can't make a move with a null piece");
+			throw new NullPointerException(
+					"Can't make a move with a null piece");
 		}
 		this.piece = piece;
 		this.startingRow = piece.getRow();
@@ -67,6 +91,7 @@ public class Move {
 		this.row = row;
 		this.col = col;
 		this.type = type;
+		this.targetSquare = new Square(row, col);
 	}
 
 	/**
@@ -84,17 +109,9 @@ public class Move {
 	 * @return the coordinate of this move represented as a Square
 	 */
 	public Square getSq() {
-		return new Square(row, col);
+		return targetSquare;
 	}
 
-	public int getRow() {
-		return row;
-	}
-
-	public int getCol() {
-		return col;
-	}
-	
 	public Piece getTaken() {
 		return taken;
 	}
@@ -154,7 +171,7 @@ public class Move {
 		case EN_POISSANT:
 			int direction = piece.getColor() == Color.WHITE ? 1 : -1;
 			b.remove(row, col);
-			b.setPiece(startingRow,  startingCol, piece);
+			b.setPiece(startingRow, startingCol, piece);
 			b.setPiece(row + direction, col, new Pawn(piece.getColor().opp()));
 			break;
 		default:
