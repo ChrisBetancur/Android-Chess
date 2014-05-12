@@ -212,20 +212,90 @@ public class Board extends Observable {
 	 */
 	private static List<Square> getBtwnSqsDiag(Square s1, Square s2) {
 		List<Square> btwnSqs = new ArrayList<Square>();
-		int rowDif = s1.row() - s2.row();
-		Square startSq = rowDif < 0 ? s1 : s2;
-		Square endSq = rowDif < 0 ? s2 : s1;
+		int rowDiff = s1.row() - s2.row();
+		Square startSq = rowDiff < 0 ? s1 : s2;
+		Square endSq = rowDiff < 0 ? s2 : s1;
 		int rowIncr = 1;
 		int colIncr = startSq.col() - endSq.col() > 0 ? -1 : 1;
 		int row = startSq.row();
 		int col = startSq.col();
-		int dif = Math.abs(rowDif);
-		for (int i = 0; i < dif - 1; i++) {
+		int diff = Math.abs(rowDiff);
+		for (int i = 0; i < diff - 1; i++) {
 			row += rowIncr;
 			col += colIncr;
 			btwnSqs.add(new Square(row, col));
 		}
 		return btwnSqs;
+	}
+	
+	/**
+	 * Gets all Squares in the input row
+	 * @param row The row to get all the Squares in
+	 * @return A List of all the Squares in the input row
+	 */
+	public static List<Square> getSquaresInRow(int row) {
+		List<Square> sqsInRow = new ArrayList<Square>();
+		for (int col = 0; col < Board.NUM_COLS; col++) {
+			sqsInRow.add(new Square(row, col));
+		}
+		return sqsInRow;
+	}
+	
+	/**
+	 * Gets all Squares in the input column
+	 * @param col The column to get all the Squares in
+	 * @return A List of all the Squares in the input column
+	 */
+	public static List<Square> getSquaresInCol(int col) {
+		List<Square> sqsInCol = new ArrayList<Square>();
+		for (int row = 0; row < Board.NUM_ROWS; row ++) {
+			sqsInCol.add(new Square(row, col));
+		}
+		return sqsInCol;
+	}
+	
+	/**
+	 * Gets all Squares that are diagonal from the input row, column
+	 * @param row The row coordinate of the starting Square
+	 * @param col The column coordinate of the starting Square
+	 * @return All Squares diagonal to the input coordinate
+	 */
+	public static List<Square> getSquaresInDiag(int row, int col) {
+		List<Square> sqsInDiag = new ArrayList<Square>();
+		
+		int tempRow = row;
+		int tempCol = col;
+		while (tempRow > 0 && tempCol > 0) {
+			tempRow--;
+			tempCol--;
+			sqsInDiag.add(new Square(tempRow, tempCol));
+		}
+		
+		tempRow = row;
+		tempCol = col;
+		while (tempRow < Board.NUM_ROWS - 1 && tempCol < Board.NUM_COLS - 1) {
+			tempRow++;
+			tempCol++;
+			sqsInDiag.add(new Square(tempRow, tempCol));
+		}
+		
+		tempRow = row;
+		tempCol = col;
+		while (tempRow > 0 && tempCol < Board.NUM_COLS - 1) {
+			tempRow--;
+			tempCol++;
+			sqsInDiag.add(new Square(tempRow, tempCol));
+		}
+		
+		tempRow = row;
+		tempCol = col;
+		while (tempRow < Board.NUM_ROWS - 1 && tempCol > 0) {
+			tempRow++;
+			tempCol--;
+			sqsInDiag.add(new Square(tempRow, tempCol));
+		}
+		
+		return sqsInDiag;
 	}
 
 	/**
