@@ -43,9 +43,6 @@ public class Board extends Observable {
 	/** Keeps track of the Square where a pawn can be captured by enPoissant */
 	private Square enPoissantSq;
 
-	private King whiteKing;
-	private King blackKing;
-
 	/** The number of moves that have been played so far */
 	private int moveCount;
 
@@ -227,42 +224,52 @@ public class Board extends Observable {
 		}
 		return btwnSqs;
 	}
-	
+
 	/**
 	 * Gets all Squares in the input row
-	 * @param row The row to get all the Squares in
+	 * 
+	 * @param row
+	 *            The row to get all the Squares in
 	 * @return A List of all the Squares in the input row
 	 */
 	public static List<Square> getSquaresInRow(int row) {
+		// TODO Add cache for this
 		List<Square> sqsInRow = new ArrayList<Square>();
 		for (int col = 0; col < Board.NUM_COLS; col++) {
 			sqsInRow.add(new Square(row, col));
 		}
 		return sqsInRow;
 	}
-	
+
 	/**
 	 * Gets all Squares in the input column
-	 * @param col The column to get all the Squares in
+	 * 
+	 * @param col
+	 *            The column to get all the Squares in
 	 * @return A List of all the Squares in the input column
 	 */
 	public static List<Square> getSquaresInCol(int col) {
+		// TODO Add cache for this
 		List<Square> sqsInCol = new ArrayList<Square>();
-		for (int row = 0; row < Board.NUM_ROWS; row ++) {
+		for (int row = 0; row < Board.NUM_ROWS; row++) {
 			sqsInCol.add(new Square(row, col));
 		}
 		return sqsInCol;
 	}
-	
+
 	/**
 	 * Gets all Squares that are diagonal from the input row, column
-	 * @param row The row coordinate of the starting Square
-	 * @param col The column coordinate of the starting Square
+	 * 
+	 * @param row
+	 *            The row coordinate of the starting Square
+	 * @param col
+	 *            The column coordinate of the starting Square
 	 * @return All Squares diagonal to the input coordinate
 	 */
 	public static List<Square> getSquaresInDiag(int row, int col) {
 		List<Square> sqsInDiag = new ArrayList<Square>();
-		
+		// TODO Add cache for this
+
 		int tempRow = row;
 		int tempCol = col;
 		while (tempRow > 0 && tempCol > 0) {
@@ -270,7 +277,7 @@ public class Board extends Observable {
 			tempCol--;
 			sqsInDiag.add(new Square(tempRow, tempCol));
 		}
-		
+
 		tempRow = row;
 		tempCol = col;
 		while (tempRow < Board.NUM_ROWS - 1 && tempCol < Board.NUM_COLS - 1) {
@@ -278,7 +285,7 @@ public class Board extends Observable {
 			tempCol++;
 			sqsInDiag.add(new Square(tempRow, tempCol));
 		}
-		
+
 		tempRow = row;
 		tempCol = col;
 		while (tempRow > 0 && tempCol < Board.NUM_COLS - 1) {
@@ -286,7 +293,7 @@ public class Board extends Observable {
 			tempCol++;
 			sqsInDiag.add(new Square(tempRow, tempCol));
 		}
-		
+
 		tempRow = row;
 		tempCol = col;
 		while (tempRow < Board.NUM_ROWS - 1 && tempCol > 0) {
@@ -294,7 +301,7 @@ public class Board extends Observable {
 			tempCol--;
 			sqsInDiag.add(new Square(tempRow, tempCol));
 		}
-		
+
 		return sqsInDiag;
 	}
 
@@ -447,13 +454,6 @@ public class Board extends Observable {
 		} else {
 			blackPieces.add(p);
 		}
-		if (p instanceof King) {
-			if (p.getColor() == Color.WHITE) {
-				whiteKing = (King) p;
-			} else {
-				blackKing = (King) p;
-			}
-		}
 		return removed;
 	}
 
@@ -598,16 +598,13 @@ public class Board extends Observable {
 	 *         not a King of the input color on this Board
 	 */
 	public King findKing(Color color) {
-
-		return color == Color.WHITE ? whiteKing : blackKing;
-
-		// for (Piece piece : getPieces(color)) {
-		// if (piece instanceof King) {
-		// return (King) piece;
-		// }
-		// }
-		// throw new IllegalStateException("The " + color
-		// + " King is not on the Board");
+		for (Piece piece : getPieces(color)) {
+			if (piece instanceof King) {
+				return (King) piece;
+			}
+		}
+		throw new IllegalStateException("The " + color
+				+ " King is not on the Board");
 	}
 
 	/**
