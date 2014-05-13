@@ -138,14 +138,18 @@ public class King extends Piece {
 				}
 			}
 		}
-		if (canCastle(b, 7, 6))
-			moves.add(new Move(this, 7, 6, Move.Type.WHITE_SHORT));
-		else if (canCastle(b, 7, 2))
-			moves.add(new Move(this, 7, 2, Move.Type.WHITE_LONG));
-		else if (canCastle(b, 0, 6))
-			moves.add(new Move(this, 0, 6, Move.Type.BLACK_SHORT));
-		else if (canCastle(b, 0, 2))
-			moves.add(new Move(this, 0, 2, Move.Type.BLACK_LONG));
+		if (color == Color.WHITE) {
+			if (canCastle(b, 7, 6))
+				moves.add(new Move(this, 7, 6, Move.Type.WHITE_SHORT));
+			if (canCastle(b, 7, 2))
+				moves.add(new Move(this, 7, 2, Move.Type.WHITE_LONG));
+		} else {
+			if (canCastle(b, 0, 6))
+				moves.add(new Move(this, 0, 6, Move.Type.BLACK_SHORT));
+			if (canCastle(b, 0, 2))
+				moves.add(new Move(this, 0, 2, Move.Type.BLACK_LONG));
+		}
+
 		return moves;
 	}
 
