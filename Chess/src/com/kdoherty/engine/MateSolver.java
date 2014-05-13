@@ -6,6 +6,7 @@ import java.util.List;
 import com.kdoherty.chess.Board;
 import com.kdoherty.chess.Color;
 import com.kdoherty.chess.Move;
+import com.kdoherty.chess.Pawn;
 
 public class MateSolver {
 
@@ -49,7 +50,6 @@ public class MateSolver {
 			for (Move m : b.getMoves(color)) {
 				mateMoves.add(m);
 				m.make(b);
-				if (mateMoves.size() != 0) {
 					for (Move mo : b.getMoves(color.opp())) {
 						nextMateMoves = null;
 						soonerMate = false;
@@ -65,13 +65,15 @@ public class MateSolver {
 						if (!soonerMate) {
 							nextMateMoves = findMateInN(b, color, depth - 1);
 							if (nextMateMoves == null
-									|| nextMateMoves.size() == 0) {
+									|| nextMateMoves.isEmpty()) {
+								// A way to stop mate was found. Don't need to keep checking this move
 								mateMoves.clear();
+								mo.unmake(b);
+								break;
 							}
 						}
 						mo.unmake(b);
 					}
-				}
 				if (!(nextMateMoves == null || nextMateMoves.size() == 0)) {
 					m.unmake(b);
 					mateMoves.addAll(nextMateMoves);
@@ -80,7 +82,7 @@ public class MateSolver {
 				m.unmake(b);
 			}
 		}
-		// No mate was found... Return the empty list of moves
+		// No forced mate was found... Return the empty list of moves
 		return mateMoves;
 	}
 
