@@ -14,9 +14,6 @@ import com.kdoherty.engine.RookEval;
  */
 public class Rook extends Piece {
 
-	/** Has this Rook moved yet? */
-	private boolean hasMoved;
-
 	/**
 	 * Constructor for a Rook sets the Color and initializes hasMoved to start
 	 * at false
@@ -26,16 +23,6 @@ public class Rook extends Piece {
 	 */
 	public Rook(Color color) {
 		super(color);
-		hasMoved = false;
-	}
-
-	/**
-	 * Has this rook moved yet?
-	 * 
-	 * @return true if this rook has moved
-	 */
-	public boolean hasMoved() {
-		return hasMoved;
 	}
 
 	/**
@@ -136,7 +123,7 @@ public class Rook extends Piece {
 	@Override
 	public void moveTo(Board b, int r, int c) {
 		b.movePiece(row, col, r, c);
-		hasMoved = true;
+		incrementMoveCount();
 		b.setEnPoissantSq(null);
 	}
 

@@ -16,18 +16,19 @@ public abstract class Piece {
 
 	// TODO: Make Pieces singleton and not know their location or change the
 	// board to a list of pieces
-	// TODO: Cache moves
 
 	/** The row where this Piece is located */
-	int row;
+	protected int row;
 
 	/** The column where this Piece is located */
-	int col;
+	protected int col;
 
 	/** The color of this Piece */
-	final Color color;
+	protected final Color color;
 
-	List<Move> moves;
+	protected List<Move> moves;
+	
+	protected int moveCount = 0;
 
 	public Piece(Color color, Square square) {
 		this.color = color;
@@ -71,7 +72,23 @@ public abstract class Piece {
 	public void setCol(int col) {
 		this.col = col;
 	}
-
+	
+	public void incrementMoveCount() {
+		this.moveCount++;
+	}
+	
+	public void decrementMoveCount() {
+		this.moveCount--;
+	}
+	
+	public int getMoveCount() {
+		return moveCount;
+	}
+	
+	public boolean hasMoved() {
+		return moveCount != 0;
+	}
+	
 	/**
 	 * Gets the row coordinate of this Piece
 	 * 
@@ -153,6 +170,7 @@ public abstract class Piece {
 
 	public void moveTo(Board b, int r, int c) {
 		b.movePiece(row, col, r, c);
+		incrementMoveCount();
 	}
 
 	/**
@@ -191,12 +209,14 @@ public abstract class Piece {
 	 * @return true if this piece is equal to the input object
 	 */
 	public boolean equals(Object o) {
+		// TODO:
 		return o != null && o.getClass() == getClass()
 				&& color == ((Piece) o).getColor()
-				&& row == ((Piece) o).getRow() && col == ((Piece) o).getCol();
+				&& row == ((Piece) o).getRow() && col == ((Piece) o).getCol() && moveCount == ((Piece)o).moveCount;
 	}
 
 	public int hashCode() {
+		// TOOO:
 		return toString().hashCode();
 	}
 

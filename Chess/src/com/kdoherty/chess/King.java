@@ -17,9 +17,6 @@ import com.kdoherty.engine.KingEval;
 
 public class King extends Piece {
 
-	/** Has this King moved yet */
-	private boolean hasMoved;
-
 	/** The home row of this King */
 	private int homeRow;
 
@@ -33,7 +30,6 @@ public class King extends Piece {
 	 */
 	public King(Color color) {
 		super(color);
-		hasMoved = false;
 		hasCastled = false;
 		homeRow = color == Color.WHITE ? 7 : 0;
 	}
@@ -51,10 +47,12 @@ public class King extends Piece {
 	 *         otherwise
 	 */
 	public boolean canMove(Board b, int r, int c) {
-		return (Board.isInbounds(r, c)
-				&& (b.isEmpty(r, c) || isTaking(b, r, c))
-				&& Board.isNeighbor(row, col, r, c) && !stillInCheck(b, r, c))
-				|| canCastle(b, r, c);
+		if (Board.isNeighbor(row, col, r, c)) {
+			return (Board.isInbounds(r, c)
+					&& (b.isEmpty(r, c) || isTaking(b, r, c)) && !stillInCheck(
+						b, r, c));
+		}
+		return canCastle(b, r, c);
 	}
 
 	/**
@@ -108,8 +106,7 @@ public class King extends Piece {
 	 */
 	@Override
 	public void moveTo(Board b, int r, int c) {
-		if (!hasMoved)
-			hasMoved = true;
+		incrementMoveCount();
 		if (Board.isNeighbor(row, col, r, c)) {
 			b.movePiece(row, col, r, c);
 		} else {
@@ -175,7 +172,7 @@ public class King extends Piece {
 	 * @return true if this King can castle to the sepcified row/column
 	 */
 	public boolean canCastle(Board b, int r, int c) {
-		if (hasMoved || isInCheck(b) || r != homeRow) {
+		if (hasMoved() || isInCheck(b) || r != homeRow || row != homeRow) {
 			return false;
 		}
 		if (c == 6) {
@@ -201,7 +198,7 @@ public class King extends Piece {
 		int col = 6;
 		int rookCol = 7;
 		Piece rook = b.getOccupant(homeRow, rookCol);
-		return rook instanceof Rook && !((Rook) rook).hasMoved()
+		return rook instanceof Rook && !rook.hasMoved()
 				&& b.isEmpty(homeRow, col) && b.isEmpty(homeRow, 5)
 				&& !b.isAttacked(homeRow, col, color.opp())
 				&& !b.isAttacked(homeRow, 5, color.opp());
@@ -218,7 +215,7 @@ public class King extends Piece {
 		int col = 2;
 		int rookCol = 0;
 		Piece rook = b.getOccupant(homeRow, rookCol);
-		return rook instanceof Rook && !((Rook) rook).hasMoved()
+		return rook instanceof Rook && !rook.hasMoved()
 				&& b.isEmpty(homeRow, col) && b.isEmpty(homeRow, 3)
 				&& b.isEmpty(homeRow, 1)
 				&& !b.isAttacked(homeRow, col, color.opp())
@@ -245,8 +242,11 @@ public class King extends Piece {
 			kingTo = 2; // where to move the king
 			rookFrom = 0; // where the rook used to be
 		}
-		b.movePiece(row, col, homeRow, kingTo); // move the king
-		b.movePiece(homeRow, rookFrom, homeRow, rookTo); // move the rook
+		b.movePiece(row, col, row, kingTo);
+		b.getOccupant(homeRow, rookFrom).moveTo(b, homeRow, rookTo);
+
+		// b.movePiece(row, col, homeRow, kingTo); // move the king
+		// b.movePiece(homeRow, rookFrom, homeRow, rookTo); // move the rook
 		hasCastled = true;
 	}
 
@@ -266,10 +266,6 @@ public class King extends Piece {
 		return KingEval.eval(board, this);
 	}
 
-	public void setHasMoved(boolean hasMoved) {
-		this.hasMoved = hasMoved;
-	}
-
 	public void setHasCastled(boolean hasCastled) {
 		this.hasCastled = hasCastled;
 	}
@@ -280,7 +276,6 @@ public class King extends Piece {
 
 	@Override
 	public boolean equals(Object obj) {
-		return super.equals(obj) && ((King) obj).hasMoved == hasMoved
-				&& ((King) obj).hasCastled == hasCastled;
+		return super.equals(obj) && ((King) obj).hasCastled == hasCastled;
 	}
 }

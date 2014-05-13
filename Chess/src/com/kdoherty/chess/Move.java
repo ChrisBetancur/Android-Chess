@@ -21,7 +21,7 @@ public class Move {
 
 	/** The starting column of the Piece before this Move is made */
 	private int startingCol;
-	
+
 	/** The Square to move this piece to */
 	private Square targetSquare;
 
@@ -146,12 +146,18 @@ public class Move {
 	 *         null
 	 */
 	public void make(Board b) {
-		taken = b.getOccupant(row, col);
+		if (type == Type.EN_POISSANT) {
+			int takenRow = piece.getColor() == Color.WHITE ? row + 1 : row - 1;
+			taken = b.getOccupant(takenRow, col);
+		} else {
+			taken = b.getOccupant(row, col);
+		}
 		enPoissantSq = b.getEnPoissantSq();
 		piece.moveTo(b, row, col);
 	}
 
 	public void unmake(Board b) {
+		piece.decrementMoveCount();
 		switch (type) {
 		case NORMAL:
 			b.remove(row, col);
@@ -172,7 +178,7 @@ public class Move {
 			int direction = piece.getColor() == Color.WHITE ? 1 : -1;
 			b.remove(row, col);
 			b.setPiece(startingRow, startingCol, piece);
-			b.setPiece(row + direction, col, new Pawn(piece.getColor().opp()));
+			b.setPiece(row + direction, col, taken);
 			break;
 		default:
 			undoCastling(b);
@@ -185,27 +191,31 @@ public class Move {
 					"Can't undo castling because this move was not castling");
 		}
 		b.setPiece(startingRow, startingCol, b.remove(row, col));
+		Rook rook;
 		switch (type) {
 		case WHITE_LONG:
-			b.setPiece(7, 0, b.remove(row, col + 1));
+			rook = (Rook) b.remove(row, col + 1);
+			b.setPiece(7, 0, rook);
 			break;
 		case WHITE_SHORT:
-			b.setPiece(7, 7, b.remove(row, col - 1));
+			rook = (Rook) b.remove(row, col - 1);
+			b.setPiece(7, 7, rook);
 			break;
 		case BLACK_LONG:
-			b.setPiece(0, 0, b.remove(row, col + 1));
+			rook = (Rook) b.remove(row, col + 1);
+			b.setPiece(0, 0, rook);
 			break;
 		case BLACK_SHORT:
-			b.setPiece(0, 7, b.remove(row, col - 1));
+			rook = (Rook) b.remove(row, col - 1);
+			b.setPiece(0, 7, rook);
 			break;
 		default:
 			throw new IllegalStateException(
 					"Undo castling should only be used on a Castling move not a "
 							+ type + " move");
 		}
-		King king = (King) piece;
-		king.setHasMoved(false);
-		king.setHasCastled(false);
+		rook.decrementMoveCount();
+		((King) piece).setHasCastled(false);
 	}
 
 	/**
@@ -215,7 +225,7 @@ public class Move {
 	 * @return A String representation of this Move
 	 */
 	public String toString() {
-		if (piece instanceof King) {
+		if (piece instanceof King && piece.getCol() == 4) {
 			if ((getSq().equals(new Square(7, 6)) || getSq().equals(
 					new Square(0, 6)))) {
 				return "0-0";
@@ -226,6 +236,6 @@ public class Move {
 			}
 		}
 
-		return piece.toString() + getSq();
+		return piece.toString() + targetSquare;
 	}
 }

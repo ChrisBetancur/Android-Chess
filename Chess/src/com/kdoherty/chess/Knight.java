@@ -116,6 +116,7 @@ public class Knight extends Piece {
 	 */
 	public List<Square> getPossibleSqs() {
 		Square currentSquare = new Square(row, col);
+		// TODO: Run perf test and see if helps or not
 		if (posMovesCache.containsKey(currentSquare)) {
 			return posMovesCache.get(currentSquare);
 		}
