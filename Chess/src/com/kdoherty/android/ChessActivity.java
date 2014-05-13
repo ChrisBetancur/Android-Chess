@@ -54,7 +54,6 @@ public class ChessActivity extends Activity implements Observer {
 		adapter = new SquareAdapter(this);
 		boardView = (SquareGridView) findViewById(R.id.chessboard);
 		boardView.setAdapter(adapter);
-		adapter.getBoard().addObserver(this);
 	}
 
 	public void refreshAdapter(Board board) {

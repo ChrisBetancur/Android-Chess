@@ -41,7 +41,11 @@ public class OnPieceDrag implements OnDragListener {
 			view.setVisibility(View.VISIBLE);
 			if (moved) {
 				// TODO: Just get chessActivity Context and make computer move
-				board.toggleSideToMoveUpdate();
+				
+				board.toggleSideToMove();
+				ChessActivity chessContext = (ChessActivity) context;
+				chessContext.makeCpuMove();
+				
 				Log.d("kdoherty", "Toggling side to move");
 			}
 			break;

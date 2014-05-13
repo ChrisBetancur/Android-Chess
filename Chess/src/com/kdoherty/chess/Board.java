@@ -2,7 +2,6 @@ package com.kdoherty.chess;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
 
 /**
  * @author Kevin Doherty
@@ -17,7 +16,7 @@ import java.util.Observable;
  *          played.
  * 
  */
-public class Board extends Observable {
+public class Board {
 
 	/** The number of rows on a chess board */
 	public final static int NUM_ROWS = 8;
@@ -527,12 +526,6 @@ public class Board extends Observable {
 	 */
 	public void toggleSideToMove() {
 		this.sideToMove = sideToMove.opp();
-	}
-
-	public void toggleSideToMoveUpdate() {
-		this.sideToMove = sideToMove.opp();
-		setChanged();
-		notifyObservers(sideToMove);
 	}
 
 	/**
