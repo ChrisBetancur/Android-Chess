@@ -31,6 +31,7 @@ public final class PieceImages {
 	}
 
 	public static Integer getId(Piece piece) {
+		// A null piece represents an empty square
 		if (piece == null) {
 			return R.color.transparent;
 		}
