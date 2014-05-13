@@ -104,7 +104,7 @@ public class Board extends Observable {
 	/**
 	 * Takes in two locations on the board and determines if they are next to
 	 * each other Not using getNeighbors because we want to stop looping as soon
-	 * as we find the square in neighbors
+	 * as we find the square in neighbors. Does not check isInbound
 	 * 
 	 * @param r
 	 *            row coordinate for first location
@@ -138,7 +138,8 @@ public class Board extends Observable {
 	 */
 	public static List<Square> getBtwnSqs(Square s1, Square s2) {
 		if (s1.equals(s2)) {
-			return null;
+			throw new IllegalArgumentException("Can't get Squares between "
+					+ s1 + " and " + s2);
 		}
 		if (s1.row() == s2.row()) {
 			return getBtwnSqsRow(s1, s2);
@@ -149,7 +150,8 @@ public class Board extends Observable {
 		if (sameDiagonal(s1.row(), s1.col(), s2.row(), s2.col())) {
 			return getBtwnSqsDiag(s1, s2);
 		}
-		return null;
+		throw new IllegalArgumentException("Can't Squares between " + s1
+				+ " and " + s2);
 	}
 
 	/**
@@ -161,7 +163,7 @@ public class Board extends Observable {
 	 *            One square in the row
 	 * @param s2
 	 *            A different square in the same row
-	 * @return An <code>List</code> of all squares between the input squares
+	 * @return A <code>List</code> of all squares between the input squares
 	 */
 	private static List<Square> getBtwnSqsRow(Square s1, Square s2) {
 		List<Square> btwnSqs = new ArrayList<Square>();
