@@ -1,5 +1,7 @@
 package com.kdoherty.engine;
 
+import java.util.List;
+
 import com.kdoherty.chess.Board;
 import com.kdoherty.chess.Color;
 import com.kdoherty.chess.Move;
@@ -9,7 +11,10 @@ public class CpuPlayer {
 	public Move negaMaxMove(Board board, Color color, int depth) {
 		int max = Integer.MAX_VALUE;
 		Move bestMove = null;
-
+		List<Move> mateMoves = MateSolver.findMateUpToN(board, color, 2);
+		if (mateMoves != null && !mateMoves.isEmpty()) {
+			return mateMoves.get(0);
+		}
 		for (Move move : board.getMoves(color)) {
 			move.make(board);
 			int score = negaMaxWithPruning(board, color.opp(),
