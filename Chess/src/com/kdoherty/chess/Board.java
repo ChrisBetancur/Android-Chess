@@ -1,6 +1,7 @@
 package com.kdoherty.chess;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -688,25 +689,6 @@ public class Board {
 	}
 
 	/**
-	 * Generates an integer representation of this Board
-	 * 
-	 * @return An integer representation of this Board
-	 */
-	@Override
-	public int hashCode() {
-		int result = 37;
-		for (int i = 0; i < Board.NUM_ROWS; i++) {
-			for (int j = 0; j < Board.NUM_COLS; j++) {
-				Piece piece = getOccupant(i, j);
-				if (piece != null) {
-					result += piece.hashCode();
-				}
-			}
-		}
-		return result;
-	}
-
-	/**
 	 * A Board is equal to another Board if it contains all the same Pieces on
 	 * all the same squares.
 	 * 
@@ -721,22 +703,52 @@ public class Board {
 			return false;
 		}
 		Board thatBoard = (Board) obj;
-		for (int i = 0; i < Board.NUM_ROWS; i++) {
-			for (int j = 0; j < Board.NUM_COLS; j++) {
-				Piece thisPiece = getOccupant(i, j);
-				Piece thatPiece = thatBoard.getOccupant(i, j);
-				if ((thisPiece == null && thatPiece != null)
-						|| (thisPiece != null && !thisPiece.equals(thatPiece))) {
-					return false;
-				}
-			}
-		}
 		Square thatEnPoissantSq = thatBoard.getEnPoissantSq();
 		Color thatSideToMove = thatBoard.getSideToMove();
 
-		return sideToMove == thatSideToMove
+		return Arrays.deepEquals(pieces, thatBoard.pieces)
+				&& sideToMove == thatSideToMove
 				&& (enPoissantSq == thatEnPoissantSq || (enPoissantSq != null && enPoissantSq
-						.equals(thatEnPoissantSq)));
+						.equals(thatEnPoissantSq)))
+				&& sameList(whitePieces, thatBoard.whitePieces)
+				&& sameList(blackPieces, thatBoard.blackPieces);
+	}
+
+	/**
+	 * Do the two lists contain the same elements. Order is ignored.
+	 * @param listOne One list to check
+	 * @param listTwo Another list to check
+	 * @return Do the two input lists contain the same Elements
+	 */
+	private <T> boolean sameList(List<T> listOne, List<T> listTwo) {
+		for (T t : listOne) {
+			if (!listTwo.contains(t)) {
+				return false;
+			}
+		}
+		return listOne.size() == listTwo.size();
+	}
+
+	/**
+	 * Generates an integer representation of this Board
+	 * 
+	 * @return An integer representation of this Board
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.deepHashCode(pieces);
+		result = prime * result
+				+ ((blackPieces == null) ? 0 : Arrays.deepHashCode(blackPieces.toArray()));
+		result = prime * result
+				+ ((whitePieces == null) ? 0 : Arrays.deepHashCode(whitePieces.toArray()));
+		result = prime * result
+				+ ((enPoissantSq == null) ? 0 : enPoissantSq.hashCode());
+		result = prime * result + moveCount;
+		result = prime * result
+				+ ((sideToMove == null) ? 0 : sideToMove.hashCode());
+		return result;
 	}
 
 	/**
