@@ -115,18 +115,6 @@ public class Rook extends Piece {
 		return moves;
 	}
 
-	/**
-	 * EFFECT: moves the rook to the input row/column if it can move there
-	 * Overridden moveTo method so we know if the rook has moved yet.
-	 * 
-	 */
-	@Override
-	public void moveTo(Board b, int r, int c) {
-		b.movePiece(row, col, r, c);
-		incrementMoveCount();
-		b.setEnPoissantSq(null);
-	}
-
 	@Override
 	public int evaluate(Board board) {
 		return RookEval.eval(board, this);
