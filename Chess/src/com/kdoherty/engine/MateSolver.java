@@ -6,7 +6,6 @@ import java.util.List;
 import com.kdoherty.chess.Board;
 import com.kdoherty.chess.Color;
 import com.kdoherty.chess.Move;
-import com.kdoherty.chess.Pawn;
 
 public class MateSolver {
 
@@ -50,30 +49,35 @@ public class MateSolver {
 			for (Move m : b.getMoves(color)) {
 				mateMoves.add(m);
 				m.make(b);
-					for (Move mo : b.getMoves(color.opp())) {
-						nextMateMoves = null;
-						soonerMate = false;
-						mo.make(b);
-						// make sure a sooner mate can't be found
-						for (int i = 1; i < depth - 1; i++) {
-							List<Move> test = new ArrayList<Move>();
-							test = findMateInN(b, color, i);
-							if (!(test == null || test.size() == 0)) {
-								soonerMate = true;
-							}
+				for (Move mo : b.getMoves(color.opp())) {
+					nextMateMoves = null;
+					soonerMate = false;
+					mo.make(b);
+					
+					// make sure a sooner mate can't be found
+					for (int i = 1; i < depth - 1; i++) {
+						List<Move> test = new ArrayList<Move>();
+						test = findMateInN(b, color, i);
+						if (!(test == null || test.size() == 0)) {
+							soonerMate = true;
 						}
-						if (!soonerMate) {
-							nextMateMoves = findMateInN(b, color, depth - 1);
-							if (nextMateMoves == null
-									|| nextMateMoves.isEmpty()) {
-								// A way to stop mate was found. Don't need to keep checking this move
-								mateMoves.clear();
-								mo.unmake(b);
-								break;
-							}
-						}
-						mo.unmake(b);
 					}
+					
+					if (!soonerMate) {
+						
+						nextMateMoves = findMateInN(b, color, depth - 1);
+						
+						if (nextMateMoves == null || nextMateMoves.isEmpty()) {
+							// A way to stop mate was found. Don't need to keep
+							// checking this move
+							mateMoves.clear();
+							mo.unmake(b);
+							break;
+						}
+					}
+
+					mo.unmake(b);
+				}
 				if (!(nextMateMoves == null || nextMateMoves.size() == 0)) {
 					m.unmake(b);
 					mateMoves.addAll(nextMateMoves);
