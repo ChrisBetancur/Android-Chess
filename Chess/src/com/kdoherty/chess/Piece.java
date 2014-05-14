@@ -171,6 +171,7 @@ public abstract class Piece {
 	public void moveTo(Board b, int r, int c) {
 		b.movePiece(row, col, r, c);
 		incrementMoveCount();
+		b.setEnPoissantSq(null);
 	}
 
 	/**

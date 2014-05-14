@@ -237,8 +237,10 @@ public class Pawn extends Piece {
 				&& (col + 1 == c || col - 1 == c)) {
 			b.movePiece(row, col, r, c);
 			b.remove(r - forward, c);
+			b.setEnPoissantSq(null);
 		} else {
 			b.movePiece(row, col, r, c);
+			b.setEnPoissantSq(null);
 		}
 		if (isPromoting()) {
 			// TODO

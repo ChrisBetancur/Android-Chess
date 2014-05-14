@@ -107,6 +107,7 @@ public class King extends Piece {
 	@Override
 	public void moveTo(Board b, int r, int c) {
 		incrementMoveCount();
+		b.setEnPoissantSq(null);
 		if (Board.isNeighbor(row, col, r, c)) {
 			b.movePiece(row, col, r, c);
 		} else {
