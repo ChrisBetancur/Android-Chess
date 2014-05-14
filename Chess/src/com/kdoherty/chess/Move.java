@@ -24,7 +24,7 @@ public class Move {
 
 	/** The Square to move this piece to */
 	private Square targetSquare;
-
+	
 	/**
 	 * The Piece that is taken when this move is made, or null if there isnt one
 	 */
@@ -185,11 +185,7 @@ public class Move {
 		}
 	}
 
-	public void undoCastling(Board b) {
-		if (type == null) {
-			throw new NullPointerException(
-					"Can't undo castling because this move was not castling");
-		}
+	private void undoCastling(Board b) {
 		b.setPiece(startingRow, startingCol, b.remove(row, col));
 		Rook rook;
 		switch (type) {
