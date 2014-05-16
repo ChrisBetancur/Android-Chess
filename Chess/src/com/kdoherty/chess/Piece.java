@@ -27,7 +27,7 @@ public abstract class Piece {
 	protected final Color color;
 
 	protected List<Move> moves;
-	
+
 	protected int moveCount = 0;
 
 	public Piece(Color color, Square square) {
@@ -72,23 +72,23 @@ public abstract class Piece {
 	public void setCol(int col) {
 		this.col = col;
 	}
-	
+
 	public void incrementMoveCount() {
 		this.moveCount++;
 	}
-	
+
 	public void decrementMoveCount() {
 		this.moveCount--;
 	}
-	
+
 	public int getMoveCount() {
 		return moveCount;
 	}
-	
+
 	public boolean hasMoved() {
 		return moveCount != 0;
 	}
-	
+
 	/**
 	 * Gets the row coordinate of this Piece
 	 * 
@@ -137,6 +137,7 @@ public abstract class Piece {
 	 * @return true if the Piece can move to the input square and false
 	 *         otherwise
 	 */
+	// TODO: check check?
 	public abstract boolean canMove(Board b, int r, int c);
 
 	/**
@@ -201,24 +202,47 @@ public abstract class Piece {
 	public abstract List<Move> getMoves(Board b);
 
 	/**
-	 * A piece equals another Object if they are: 1. Both Pieces of the same
-	 * type 2. Have the same color 3. Are located on the same row 4. Are located
-	 * on the same column
+	 * A piece equals another Object if they are:
+	 * 1. Both Pieces of the same type
+	 * 2. Have the same color
+	 * 3. Are located on the same row
+	 * 4. Are located on the same column
+	 * 5. Have the same moveCount
 	 * 
 	 * @param o
 	 *            The object we are checking if it is equal to this Piece
 	 * @return true if this piece is equal to the input object
 	 */
-	public boolean equals(Object o) {
-		// TODO:
-		return o != null && o.getClass() == getClass()
-				&& color == ((Piece) o).getColor()
-				&& row == ((Piece) o).getRow() && col == ((Piece) o).getCol() && moveCount == ((Piece)o).moveCount;
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		Piece other = (Piece) obj;
+
+		return color == other.color && row == other.row && col == other.col
+				&& moveCount == other.moveCount;
 	}
 
+	/**
+	 * Gets an integer representation of this Piece
+	 * @return an integer representation of this Piece
+	 */
+	@Override
 	public int hashCode() {
-		// TOOO:
-		return toString().hashCode();
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + col;
+		result = prime * result + ((color == null) ? 0 : color.hashCode());
+		result = prime * result + moveCount;
+		result = prime * result + row;
+		return result;
 	}
 
 	/**
@@ -270,14 +294,6 @@ public abstract class Piece {
 		}
 		return false;
 	}
-
-	// public List<Move> getMoves(Board b) {
-	// if (moves != null) {
-	// return moves;
-	// }
-	// moves = getPieceMoves(b);
-	// return moves;
-	// }
 
 	/**
 	 * Can this Piece move to the input coordinate without putting its King in
