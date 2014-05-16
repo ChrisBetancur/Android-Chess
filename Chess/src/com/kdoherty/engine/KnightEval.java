@@ -10,6 +10,7 @@ public class KnightEval {
 	private static int START_VALUE = 325;
 	private static int ENDGAME_PENALTY = -10;
 	private static int BLOCKING_CNTR_PAWN_PENALTY = -10;
+	private static int LOSS_TEMPO_PENALTY = -30;
 	private static int[] BOARD_VALUES = { -50, -40, -30, -30, -30, -30, -40, -50,
 										  -40, -20,   0,   5,   5,   0, -20, -40,
 										  -30,   5,  10,  12,  12,  10,   5, -30,
@@ -28,6 +29,9 @@ public class KnightEval {
 		value += BOARD_VALUES[index];
 		if (PieceEval.isBlockingCenterPawn(b, n))
 			value += BLOCKING_CNTR_PAWN_PENALTY;
+		if (n.getMoveCount() > 1 && b.getMoveCount() < 10) {
+			value += LOSS_TEMPO_PENALTY;
+		}
 		return value;
 	}
 

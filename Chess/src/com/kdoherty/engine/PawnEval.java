@@ -15,10 +15,16 @@ public class PawnEval {
 	private static int PROTECTED_PASSED_BONUS = 10;
 	private static int PASSED_BONUS = 10;
 
-	private static int[] BOARD_VALS = { 0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 10, -20,
-			-20, 10, 10, 5, 5, -5, -10, 0, 0, -10, -5, 5, 0, 0, 0, 20, 20, 0,
-			0, 0, 5, 5, 10, 30, 30, 10, 5, 5, 10, 10, 20, 40, 40, 20, 10, 10,
-			50, 50, 50, 50, 50, 50, 50, 50, 0, 0, 0, 0, 0, 0, 0, 0 };
+	private static int[] BOARD_VALS = { 
+		0,   0,   0,   0,   0,   0,  0,  0,
+		5,  10,  10, -20, -20,  10, 10,  5,
+		5,  -5, -10,   0,   0, -10, -5,  5,
+		0,   0,   0,  20,  20,   0,  0,  0,
+		5,   5,  10,  30,  30,  10,  5,  5,
+		10, 10,  20,  40,  40,  20, 10, 10,
+		50, 50,  50,  50,  50,  50, 50, 50,
+		0,   0,   0,   0,   0,   0,  0,  0
+		};
 
 	/*
 	 * evaluates the pawn based on its position

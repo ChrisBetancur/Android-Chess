@@ -31,9 +31,6 @@ public class RookEval {
 	public static int eval(Board b, Rook r) {
 		int value = START_VALUE;
 		int seventhRank = r.getColor() == Color.WHITE ? 1 : 6;
-//		int eigthRank = r.getColor() == Color.WHITE ? 0 : 7;
-//		int homeRow = r.getColor() == Color.WHITE ? 7 : 0;
-//		int homeRank = r.getColor() == Color.WHITE ? 6 : 1;
 		Square s = r.getSq();
 		int index = r.getColor() == Color.WHITE ? s.toNum() : 63 - s
 				.toNum();
