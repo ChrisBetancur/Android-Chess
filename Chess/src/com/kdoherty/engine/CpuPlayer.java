@@ -9,6 +9,14 @@ import com.kdoherty.chess.Move;
 public class CpuPlayer {
 
 	public Move negaMaxMove(Board board, Color color, int depth) {
+		Move lastMove = board.getLastMove();
+		if (board.getMoveCount() == 1) {
+			if (lastMove.toString().equals("pe4")) {
+				return new Move(board.getOccupant(1, 4), 3, 4);
+			} else if (lastMove.toString().equals("pd4")) {
+				return new Move(board.getOccupant(1, 3), 3, 3);
+			}
+		}
 		int max = Integer.MAX_VALUE;
 		Move bestMove = null;
 		List<Move> mateMoves = MateSolver.findMateUpToN(board, color, 2);
