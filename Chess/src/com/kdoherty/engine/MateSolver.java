@@ -3,6 +3,7 @@ package com.kdoherty.engine;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.kdoherty.engine.MoveSorter;
 import com.kdoherty.chess.Board;
 import com.kdoherty.chess.Color;
 import com.kdoherty.chess.Move;
@@ -46,7 +47,7 @@ public class MateSolver {
 			}
 			return mateMoves;
 		} else {
-			for (Move m : b.getMoves(color)) {
+			for (Move m : MoveSorter.sort(b, b.getMoves(color))) {
 				mateMoves.add(m);
 				m.make(b);
 				for (Move mo : b.getMoves(color.opp())) {
