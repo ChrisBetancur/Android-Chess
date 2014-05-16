@@ -8,6 +8,7 @@ import com.kdoherty.chess.Board;
 import com.kdoherty.chess.Color;
 import com.kdoherty.chess.King;
 import com.kdoherty.chess.Knight;
+import com.kdoherty.chess.Pawn;
 import com.kdoherty.chess.Piece;
 import com.kdoherty.chess.Queen;
 import com.kdoherty.chess.Rook;
@@ -259,4 +260,13 @@ public class Evaluate {
     private static int getMaterialCount(Board board, Color color) {
         return getTotalPieceValue(board, color) - getTotalPieceValue(board, color.opp());
     }
+    
+	public static boolean isBlockingCenterPawn(Board b, Piece p) {
+		int pawnRow = (p.getColor() == Color.WHITE) ? 6 : 1;
+		int blockingRow = (p.getColor() == Color.WHITE) ? pawnRow - 1
+				: pawnRow + 1;
+		return p.getRow() == blockingRow
+				&& ((p.getCol() == 3 && b.getOccupant(pawnRow, 3) instanceof Pawn) || (p
+						.getCol() == 4 && b.getOccupant(pawnRow, 4) instanceof Pawn));
+	}
 }
