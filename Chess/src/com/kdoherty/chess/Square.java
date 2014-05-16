@@ -6,6 +6,8 @@ package com.kdoherty.chess;
  *          on the chessBoard
  */
 public final class Square {
+	
+	//TODO: Check invariants
 
 	/** Row coordinate of this Square */
 	private final int row;
@@ -22,6 +24,9 @@ public final class Square {
 	 *            Sets this squares column to this value
 	 */
 	public Square(int row, int col) {
+//		if (!Board.isInbounds(row, col)) {
+//			throw new IllegalArgumentException("The square " + row + ", " + col + " is out of bounds");
+//		}
 		this.row = row;
 		this.col = col;
 	}
@@ -38,7 +43,7 @@ public final class Square {
 	public Square(char col, int row) {
 		if (row > 8 || row < 1) {
 			throw new IllegalArgumentException(
-					"Input row input. Should be between 1 and 8 but is " + row);
+					"Invalid row input. Should be between 1 and 8 but is " + row);
 		}
 		this.row = 8 - row;
 		switch (col) {
