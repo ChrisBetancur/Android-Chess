@@ -17,4 +17,33 @@
         android:padding="5dp"
         android:verticalSpacing="1dp" />
 
+    <TextView
+        android:id="@+id/whiteTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/chessboard"
+        android:layout_centerHorizontal="true"
+        android:layout_marginRight="15dp"
+        android:layout_toLeftOf="@+id/centerPoint"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/centerPoint"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/chessboard"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/blackTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/chessboard"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="15dp"
+        android:layout_toRightOf="@+id/centerPoint"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
 </RelativeLayout>
