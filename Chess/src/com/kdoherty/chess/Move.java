@@ -213,6 +213,15 @@ public class Move {
 		rook.decrementMoveCount();
 		((King) piece).setHasCastled(false);
 	}
+	
+	public boolean isChecking(Board b) {
+		Color pieceColor = piece.getColor();
+		return b.kingInCheck(pieceColor.opp());
+	}
+	
+	public boolean isTaking() {
+		return taken != null;
+	}
 
 	/**
 	 * Represents this Move as a String Chess accepted notation for castling is
