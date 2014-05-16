@@ -1,12 +1,12 @@
 package com.kdoherty.android;
 
-import android.content.Context;
-import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
 import android.view.View.OnDragListener;
 
 import com.kdoherty.chess.Board;
+import com.kdoherty.chess.Color;
+import com.kdoherty.chess.Move;
 import com.kdoherty.chess.Pawn;
 import com.kdoherty.chess.Piece;
 
@@ -15,10 +15,10 @@ public class OnPieceDrag implements OnDragListener {
 	private Board board;
 	private int targetRow;
 	private int targetCol;
-	private Context context;
+	private ChessActivity context;
 	private boolean moved = false;
 
-	public OnPieceDrag(Context context, Board baord, int targetRow,
+	public OnPieceDrag(ChessActivity context, Board baord, int targetRow,
 			int targetCol) {
 		this.context = context;
 		this.board = baord;
@@ -40,13 +40,10 @@ public class OnPieceDrag implements OnDragListener {
 		case DragEvent.ACTION_DRAG_ENDED:
 			view.setVisibility(View.VISIBLE);
 			if (moved) {
-				// TODO: Just get chessActivity Context and make computer move
-				
+				Color sideToMove = board.getSideToMove();
+				//context.toggleTimer(sideToMove);
 				board.toggleSideToMove();
-				ChessActivity chessContext = (ChessActivity) context;
-				chessContext.makeCpuMove();
-				
-				Log.d("kdoherty", "Toggling side to move");
+				context.makeCpuMove();
 			}
 			break;
 		case DragEvent.ACTION_DRAG_EXITED:
@@ -65,6 +62,7 @@ public class OnPieceDrag implements OnDragListener {
 						board.setPiece(targetRow, targetCol, promotedTo);
 					}
 				}
+				board.addMove(new Move(piece, targetRow, targetCol));
 				if (board.isGameOver()) {
 					chessContext.showGameOver();
 				}

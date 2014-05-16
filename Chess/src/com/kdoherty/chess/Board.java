@@ -1,7 +1,9 @@
 package com.kdoherty.chess;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.List;
 
 /**
@@ -42,9 +44,8 @@ public class Board {
 
 	/** Keeps track of the Square where a pawn can be captured by enPoissant */
 	private Square enPoissantSq;
-
-	/** The number of moves that have been played so far */
-	private int moveCount;
+	
+	private Deque<Move> moveList = new ArrayDeque<Move>();
 
 	/**
 	 * Constructor for Board. Initially sets all squares to null
@@ -53,6 +54,22 @@ public class Board {
 		pieces = new Piece[NUM_ROWS][NUM_COLS];
 		whitePieces = new ArrayList<Piece>();
 		blackPieces = new ArrayList<Piece>();
+	}
+	
+	public void addMove(Move move) {
+		moveList.push(move);
+	}
+	
+	public void undoMove() {
+		moveList.pop();
+	}
+	
+	public Move getLastMove() {
+		return moveList.peek();
+	}
+	
+	public int getMoveCount() {
+		return moveList.size();
 	}
 
 	/**
@@ -228,86 +245,6 @@ public class Board {
 	}
 
 	/**
-	 * Gets all Squares in the input row
-	 * 
-	 * @param row
-	 *            The row to get all the Squares in
-	 * @return A List of all the Squares in the input row
-	 */
-	public static List<Square> getSquaresInRow(int row) {
-		// TODO Add cache for this
-		List<Square> sqsInRow = new ArrayList<Square>();
-		for (int col = 0; col < Board.NUM_COLS; col++) {
-			sqsInRow.add(new Square(row, col));
-		}
-		return sqsInRow;
-	}
-
-	/**
-	 * Gets all Squares in the input column
-	 * 
-	 * @param col
-	 *            The column to get all the Squares in
-	 * @return A List of all the Squares in the input column
-	 */
-	public static List<Square> getSquaresInCol(int col) {
-		// TODO Add cache for this
-		List<Square> sqsInCol = new ArrayList<Square>();
-		for (int row = 0; row < Board.NUM_ROWS; row++) {
-			sqsInCol.add(new Square(row, col));
-		}
-		return sqsInCol;
-	}
-
-	/**
-	 * Gets all Squares that are diagonal from the input row, column
-	 * 
-	 * @param row
-	 *            The row coordinate of the starting Square
-	 * @param col
-	 *            The column coordinate of the starting Square
-	 * @return All Squares diagonal to the input coordinate
-	 */
-	public static List<Square> getSquaresInDiag(int row, int col) {
-		List<Square> sqsInDiag = new ArrayList<Square>();
-		// TODO Add cache for this
-
-		int tempRow = row;
-		int tempCol = col;
-		while (tempRow > 0 && tempCol > 0) {
-			tempRow--;
-			tempCol--;
-			sqsInDiag.add(new Square(tempRow, tempCol));
-		}
-
-		tempRow = row;
-		tempCol = col;
-		while (tempRow < Board.NUM_ROWS - 1 && tempCol < Board.NUM_COLS - 1) {
-			tempRow++;
-			tempCol++;
-			sqsInDiag.add(new Square(tempRow, tempCol));
-		}
-
-		tempRow = row;
-		tempCol = col;
-		while (tempRow > 0 && tempCol < Board.NUM_COLS - 1) {
-			tempRow--;
-			tempCol++;
-			sqsInDiag.add(new Square(tempRow, tempCol));
-		}
-
-		tempRow = row;
-		tempCol = col;
-		while (tempRow < Board.NUM_ROWS - 1 && tempCol > 0) {
-			tempRow++;
-			tempCol--;
-			sqsInDiag.add(new Square(tempRow, tempCol));
-		}
-
-		return sqsInDiag;
-	}
-
-	/**
 	 * Deep clones a List
 	 * 
 	 * @param list
@@ -320,25 +257,6 @@ public class Board {
 			clone.add(t);
 		}
 		return clone;
-	}
-
-	/**
-	 * Gets the number of moves played on this Board
-	 * 
-	 * @return The number of moves that have been played so far
-	 */
-	public int getMoveCount() {
-		return moveCount;
-	}
-
-	/**
-	 * Sets the move count
-	 * 
-	 * @param moveCount
-	 *            The number to set the move count to
-	 */
-	public void setMoveCount(int moveCount) {
-		this.moveCount = moveCount;
 	}
 
 	/**
@@ -708,8 +626,8 @@ public class Board {
 
 		return Arrays.deepEquals(pieces, thatBoard.pieces)
 				&& sideToMove == thatSideToMove
-				&& (enPoissantSq == thatEnPoissantSq || (enPoissantSq != null && enPoissantSq
-						.equals(thatEnPoissantSq)))
+				&& (enPoissantSq == thatEnPoissantSq
+				|| (enPoissantSq != null && enPoissantSq.equals(thatEnPoissantSq)))
 				&& sameList(whitePieces, thatBoard.whitePieces)
 				&& sameList(blackPieces, thatBoard.blackPieces);
 	}
@@ -745,7 +663,6 @@ public class Board {
 				+ ((whitePieces == null) ? 0 : Arrays.deepHashCode(whitePieces.toArray()));
 		result = prime * result
 				+ ((enPoissantSq == null) ? 0 : enPoissantSq.hashCode());
-		result = prime * result + moveCount;
 		result = prime * result
 				+ ((sideToMove == null) ? 0 : sideToMove.hashCode());
 		return result;
