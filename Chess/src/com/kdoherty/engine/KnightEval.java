@@ -27,7 +27,7 @@ public class KnightEval {
 		if (Evaluate.isEndGame(b))
 			value += ENDGAME_PENALTY;
 		value += BOARD_VALUES[index];
-		if (PieceEval.isBlockingCenterPawn(b, n))
+		if (Evaluate.isBlockingCenterPawn(b, n))
 			value += BLOCKING_CNTR_PAWN_PENALTY;
 		if (n.getMoveCount() > 1 && b.getMoveCount() < 10) {
 			value += LOSS_TEMPO_PENALTY;

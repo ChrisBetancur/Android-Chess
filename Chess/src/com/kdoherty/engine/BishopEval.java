@@ -25,7 +25,7 @@ public class BishopEval {
 		int index = bi.getColor() == Color.WHITE ? s.toNum() : 63 - s
 				.toNum();
 		value += BOARD_VALUES[index];
-		if (PieceEval.isBlockingCenterPawn(b, bi))
+		if (Evaluate.isBlockingCenterPawn(b, bi))
 			value += BLOCKING_CNTR_PAWN_PENALTY;
 		return value;
 	}
