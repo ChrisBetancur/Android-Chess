@@ -1,7 +1,6 @@
 package com.kdoherty.android;
 
 import android.app.Activity;
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,14 +12,14 @@ import com.kdoherty.chess.Piece;
 
 public class SquareAdapter extends BaseAdapter {
 
-	private Context mContext;
+	private ChessActivity mContext;
 	private Board board;
 
-	public SquareAdapter(Context mContext) {
+	public SquareAdapter(ChessActivity mContext) {
 		this(mContext, Board.defaultBoard());
 	}
 
-	public SquareAdapter(Context mContext, Board board) {
+	public SquareAdapter(ChessActivity mContext, Board board) {
 		this.mContext = mContext;
 		this.board = board;
 	}
