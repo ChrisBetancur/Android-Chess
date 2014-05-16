@@ -8,24 +8,23 @@ import java.util.List;
 
 /**
  * @author Kevin Doherty
- * @version 10/14/2013
  * 
  *          This class represents a ChessBoard using a 2D array of Pieces. An
  *          empty Square on the Board is represented by a null Piece. This Board
  *          also contains lists containing all active Pieces for each color.
  *          This way we do not need to iterate over all 64 squares to generate
  *          the Pieces of a certain color. It keeps track of the side to move,
- *          the enPoissant Square if there is one, and the number of moves
+ *          the enPoissant Square if there is one, and the Moves
  *          played.
  * 
  */
-public class Board {
+public final class Board {
 
 	/** The number of rows on a chess board */
-	public final static int NUM_ROWS = 8;
+	public static final int NUM_ROWS = 8;
 
 	/** The number of columns on a chess board */
-	public final static int NUM_COLS = 8;
+	public static final int NUM_COLS = 8;
 
 	/**
 	 * A board is represented as a 2D array of Pieces An empty Square is
@@ -34,10 +33,13 @@ public class Board {
 	private final Piece[][] pieces;
 
 	/** All the white Pieces on this Board */
-	private List<Piece> whitePieces;
+	private final List<Piece> whitePieces;
 
 	/** All the black Pieces on this Board */
-	private List<Piece> blackPieces;
+	private final List<Piece> blackPieces;
+	
+	/** Keeps track of all the moves played so far on this Board */
+	private final Deque<Move> moveList;
 
 	/** The Color of whose turn it is */
 	private Color sideToMove = Color.WHITE;
@@ -45,38 +47,21 @@ public class Board {
 	/** Keeps track of the Square where a pawn can be captured by enPoissant */
 	private Square enPoissantSq;
 	
-	private Deque<Move> moveList = new ArrayDeque<Move>();
-
 	/**
-	 * Constructor for Board. Initially sets all squares to null
+	 * Constructor for Board. Initially contains no Pieces.
 	 */
 	public Board() {
 		pieces = new Piece[NUM_ROWS][NUM_COLS];
 		whitePieces = new ArrayList<Piece>();
 		blackPieces = new ArrayList<Piece>();
-	}
-	
-	public void addMove(Move move) {
-		moveList.push(move);
-	}
-	
-	public void undoMove() {
-		moveList.pop();
-	}
-	
-	public Move getLastMove() {
-		return moveList.peek();
-	}
-	
-	public int getMoveCount() {
-		return moveList.size();
+		moveList = new ArrayDeque<Move>();
 	}
 
 	/**
-	 * Factory method for the Board filled with all the Pieces in their default
-	 * location
+	 * Factory method for a Board filled with all Pieces in their default
+	 * locations
 	 * 
-	 * @return A Board with all Pieces in their starting location
+	 * @return A Board with all Pieces in their starting locations
 	 */
 	public static Board defaultBoard() {
 		Board b = new Board();
@@ -277,7 +262,7 @@ public class Board {
 	public void setEnPoissantSq(Square enPoissantSq) {
 		this.enPoissantSq = enPoissantSq;
 	}
-
+	
 	/**
 	 * Gets the color of the side to move
 	 * 
@@ -285,6 +270,44 @@ public class Board {
 	 */
 	public Color getSideToMove() {
 		return sideToMove;
+	}
+	
+	/**
+	 * Toggles the color of the side to move
+	 */
+	public void toggleSideToMove() {
+		this.sideToMove = sideToMove.opp();
+	}
+	
+	/**
+	 * Adds a move to the list of Moves played on this Board
+	 * @param move The Move to add
+	 */
+	public void addMove(Move move) {
+		moveList.push(move);
+	}
+	
+	/**
+	 * Removes the most recently played move from the list of Moves played on this Board
+	 */
+	public void undoMove() {
+		moveList.pop();
+	}
+	
+	/**
+	 * Gets the last move played on this Board
+	 * @return The last move played on this Board
+	 */
+	public Move getLastMove() {
+		return moveList.peek();
+	}
+	
+	/**
+	 * Gets the number of moves played on this Board
+	 * @return The number of moves played on this Board
+	 */
+	public int getMoveCount() {
+		return moveList.size();
 	}
 
 	/**
@@ -433,21 +456,6 @@ public class Board {
 	}
 
 	/**
-	 * Clears the board and fill it with the Pieces at their starting location
-	 */
-	public void reset() {
-		clearBoard();
-		fillWithDefaultPieces();
-	}
-
-	/**
-	 * Toggles the color of the side to move
-	 */
-	public void toggleSideToMove() {
-		this.sideToMove = sideToMove.opp();
-	}
-
-	/**
 	 * Gets all pieces of the input color on this board
 	 * 
 	 * @param color
@@ -533,7 +541,7 @@ public class Board {
 	}
 
 	/**
-	 * Is the input color in checkMate?
+	 * Is the input color in check mate?
 	 * 
 	 * @param color
 	 *            The color to check if they are in checkMate
@@ -544,7 +552,7 @@ public class Board {
 	}
 
 	/**
-	 * Is it a draw because the input color can't move
+	 * Is it a draw because the input color can't move?
 	 * 
 	 * @param color
 	 *            The color of the side to check if they are causing a draw
@@ -564,11 +572,102 @@ public class Board {
 		return isCheckMate(Color.WHITE) || isCheckMate(Color.BLACK)
 				|| isDraw(Color.WHITE) || isDraw(Color.BLACK);
 	}
+	
+	/**
+	 * Do the two lists contain the same elements. Order is ignored.
+	 * @param listOne One list to check
+	 * @param listTwo Another list to check
+	 * @return Do the two input lists contain the same Elements
+	 */
+	private static <T> boolean sameElements(List<T> listOne, List<T> listTwo) {
+		return listOne.containsAll(listTwo) && listOne.size() == listTwo.size();
+	}
 
 	/**
-	 * Fills the board with the pieces in their starting position
+	 * A Board is equal to another Object if:
+	 * 1. The Object is a Board
+	 * 2. They contain the same Pieces in the same positions
+	 * 3. They have the same enPoissant Square
+	 * 4. They have the same sideToMove
+	 * 
+	 * @return Does this Board equal that object?
 	 */
-	public void fillWithDefaultPieces() {
+	
+	@Override public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (!(obj instanceof Board)) {
+			return false;
+		}
+		Board thatBoard = (Board) obj;
+		Square thatEnPoissantSq = thatBoard.getEnPoissantSq();
+		Color thatSideToMove = thatBoard.getSideToMove();
+
+		return Arrays.deepEquals(pieces, thatBoard.pieces)
+				&& sideToMove == thatSideToMove
+				&& (enPoissantSq == thatEnPoissantSq
+				|| (enPoissantSq != null && enPoissantSq.equals(thatEnPoissantSq)))
+				&& sameElements(whitePieces, thatBoard.whitePieces)
+				&& sameElements(blackPieces, thatBoard.blackPieces);
+	}
+
+	/**
+	 * Generates an integer representation of this Board.
+	 * This will return the same number for equal Boards.
+	 * 
+	 * @return An integer representation of this Board
+	 */
+	@Override public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.deepHashCode(pieces);
+		result = prime * result
+				+ ((blackPieces == null) ? 0 : Arrays.deepHashCode(blackPieces.toArray()));
+		result = prime * result
+				+ ((whitePieces == null) ? 0 : Arrays.deepHashCode(whitePieces.toArray()));
+		result = prime * result
+				+ ((enPoissantSq == null) ? 0 : enPoissantSq.hashCode());
+		result = prime * result
+				+ ((sideToMove == null) ? 0 : sideToMove.hashCode());
+		return result;
+	}
+
+	/**
+	 * A readable ASCII representation of this Board
+	 * 
+	 * @return A String representation of this Board
+	 */
+	@Override public String toString() {
+		String b = "";
+		String colNum = "  ";
+		for (int j = 0; j < NUM_COLS; j++) {
+			colNum += j + " ";
+		}
+		colNum += "\n";
+		for (int i = 0; i < NUM_ROWS; i++) {
+			b = b + i + "|";
+			for (int j = 0; j < NUM_COLS; j++) {
+				if (pieces[i][j] != null)
+					b = b + pieces[i][j];
+				else
+					b = b + " ";
+				b = b + "|";
+			}
+			b = b + "\n";
+		}
+		b = b + "\n";
+		b = colNum + b;
+		b += "enPoissant Square: " + enPoissantSq;
+		b += " side toMove: " + sideToMove;
+		b += " moveList: " + moveList;
+		return b;
+	}
+	
+	/**
+	 * Fills this Board with all Pieces in their starting locations
+	 */
+	private void fillWithDefaultPieces() {
 		clearBoard();
 		// adding white pieces
 		setPiece('a', 1, new Rook(Color.WHITE));
@@ -604,98 +703,5 @@ public class Board {
 		setPiece('f', 7, new Pawn(Color.BLACK));
 		setPiece('g', 7, new Pawn(Color.BLACK));
 		setPiece('h', 7, new Pawn(Color.BLACK));
-	}
-
-	/**
-	 * A Board is equal to another Board if it contains all the same Pieces on
-	 * all the same squares.
-	 * 
-	 * @return Does this Board equal that object?
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == this) {
-			return true;
-		}
-		if (!(obj instanceof Board)) {
-			return false;
-		}
-		Board thatBoard = (Board) obj;
-		Square thatEnPoissantSq = thatBoard.getEnPoissantSq();
-		Color thatSideToMove = thatBoard.getSideToMove();
-
-		return Arrays.deepEquals(pieces, thatBoard.pieces)
-				&& sideToMove == thatSideToMove
-				&& (enPoissantSq == thatEnPoissantSq
-				|| (enPoissantSq != null && enPoissantSq.equals(thatEnPoissantSq)))
-				&& sameList(whitePieces, thatBoard.whitePieces)
-				&& sameList(blackPieces, thatBoard.blackPieces);
-	}
-
-	/**
-	 * Do the two lists contain the same elements. Order is ignored.
-	 * @param listOne One list to check
-	 * @param listTwo Another list to check
-	 * @return Do the two input lists contain the same Elements
-	 */
-	private <T> boolean sameList(List<T> listOne, List<T> listTwo) {
-		for (T t : listOne) {
-			if (!listTwo.contains(t)) {
-				return false;
-			}
-		}
-		return listOne.size() == listTwo.size();
-	}
-
-	/**
-	 * Generates an integer representation of this Board
-	 * 
-	 * @return An integer representation of this Board
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + Arrays.deepHashCode(pieces);
-		result = prime * result
-				+ ((blackPieces == null) ? 0 : Arrays.deepHashCode(blackPieces.toArray()));
-		result = prime * result
-				+ ((whitePieces == null) ? 0 : Arrays.deepHashCode(whitePieces.toArray()));
-		result = prime * result
-				+ ((enPoissantSq == null) ? 0 : enPoissantSq.hashCode());
-		result = prime * result
-				+ ((sideToMove == null) ? 0 : sideToMove.hashCode());
-		return result;
-	}
-
-	/**
-	 * A readable ASCII representation of this Board
-	 * 
-	 * @return A String representation of this Board
-	 */
-	@Override
-	public String toString() {
-		String b = "";
-		String colNum = "  ";
-		for (int j = 0; j < NUM_COLS; j++) {
-			colNum += j + " ";
-		}
-		colNum += "\n";
-		for (int i = 0; i < NUM_ROWS; i++) {
-			b = b + i + "|";
-			for (int j = 0; j < NUM_COLS; j++) {
-				if (pieces[i][j] != null)
-					b = b + pieces[i][j];
-				else
-					b = b + " ";
-				b = b + "|";
-			}
-			b = b + "\n";
-		}
-		b = b + "\n";
-		b = colNum + b;
-		b += "enPoissant Square: " + enPoissantSq;
-		b += " side toMove: " + sideToMove;
-		return b;
 	}
 }
