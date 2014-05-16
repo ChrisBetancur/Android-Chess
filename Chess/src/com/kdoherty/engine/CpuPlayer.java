@@ -23,7 +23,7 @@ public class CpuPlayer {
 		if (mateMoves != null && !mateMoves.isEmpty()) {
 			return mateMoves.get(0);
 		}
-		for (Move move : board.getMoves(color)) {
+		for (Move move : MoveSorter.sort(board, board.getMoves(color))) {
 			move.make(board);
 			int score = negaMaxWithPruning(board, color.opp(),
 					Integer.MIN_VALUE, Integer.MAX_VALUE, depth);
@@ -46,7 +46,7 @@ public class CpuPlayer {
 		}
 
 		int max = Integer.MIN_VALUE;
-		for (Move move : board.getMoves(color)) {
+		for (Move move : MoveSorter.sort(board, board.getMoves(color))) {
 			move.make(board);
 			int score = -negaMaxWithPruning(board, color.opp(), -beta, -alpha,
 					depth - 1);

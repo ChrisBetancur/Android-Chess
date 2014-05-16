@@ -20,7 +20,7 @@ public class MateSolver {
 	 */
 	public static Move findMateInOne(Board b, Color color) {
 		List<Move> moves = new ArrayList<Move>();
-		moves = b.getMoves(color);
+		moves = MoveSorter.sort(b, b.getMoves(color));
 		for (Move move : moves) {
 			move.make(b);
 			if (b.isCheckMate(color.opp())) {
