@@ -5,7 +5,6 @@ import android.view.View;
 import android.view.View.OnDragListener;
 
 import com.kdoherty.chess.Board;
-import com.kdoherty.chess.Color;
 import com.kdoherty.chess.Move;
 import com.kdoherty.chess.Pawn;
 import com.kdoherty.chess.Piece;
@@ -37,16 +36,14 @@ public class OnPieceDrag implements OnDragListener {
 			break;
 		case DragEvent.ACTION_DRAG_ENTERED:
 			break;
+		case DragEvent.ACTION_DRAG_EXITED:
+			break;
 		case DragEvent.ACTION_DRAG_ENDED:
 			view.setVisibility(View.VISIBLE);
 			if (moved) {
-				Color sideToMove = board.getSideToMove();
-				//context.toggleTimer(sideToMove);
 				board.toggleSideToMove();
 				context.makeCpuMove();
 			}
-			break;
-		case DragEvent.ACTION_DRAG_EXITED:
 			break;
 		case DragEvent.ACTION_DROP:
 			Piece piece = board.getOccupant(startingRow, startingCol);
