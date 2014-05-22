@@ -24,7 +24,7 @@ import com.kdoherty.engine.CpuPlayer;
  * @author Kevin Doherty
  * 
  */
-class ChessActivity extends Activity {
+public class ChessActivity extends Activity {
 
 	// TODO: Get this data from previous Activity
 	private static boolean IS_CPU_PLAYER = true;

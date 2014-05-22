@@ -19,15 +19,15 @@ class PieceImageView extends ImageView {
 	/** The column this is located on */
 	private int col;
 
-	PieceImageView(Context context) {
+	public PieceImageView(Context context) {
 		super(context);
 	}
 
-	PieceImageView(Context context, AttributeSet attrs) {
+	public PieceImageView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 
-	PieceImageView(Context context, AttributeSet attrs, int defStyle) {
+	public PieceImageView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 	}
 
