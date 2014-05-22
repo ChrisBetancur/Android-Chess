@@ -6,15 +6,29 @@ import java.util.Map;
 import com.kdoherty.androidchess.R;
 import com.kdoherty.chess.Piece;
 
-public final class PieceImages {
+/**
+ * This class connects Pieces to their corresponding image.
+ * 
+ * @author Kevin Doherty
+ * 
+ */
+final class PieceImages {
 
-	private static final HashMap<String, Integer> instance = new HashMap<String, Integer>();
+	/**
+	 * Maps the Pieces represented as Strings to their image resource IDs.
+	 * Strings are used as keys in place of Pieces because Pieces are mutable
+	 */
+	private static final Map<String, Integer> instance = new HashMap<String, Integer>();
 
 	private PieceImages() {
+		// Should never be instantiated
 	}
 
+	/**
+	 * Fills the map with entries which contain String representation of Pieces
+	 * and the image of the Piece.
+	 */
 	static {
-		// Note: Not using Pieces for keys because they are mutable
 		instance.put("p", R.drawable.whitepawn);
 		instance.put("r", R.drawable.whiterook);
 		instance.put("n", R.drawable.whiteknight);
@@ -30,20 +44,18 @@ public final class PieceImages {
 		instance.put("Q", R.drawable.blackqueen);
 	}
 
-	public static Integer getId(Piece piece) {
+	/**
+	 * Gets the resource id of the image which represents the input Piece.
+	 * 
+	 * @param piece
+	 *            The Piece to get the image ID of
+	 * @return The resource id of the input Piece
+	 */
+	static Integer getId(Piece piece) {
 		// A null piece represents an empty square
 		if (piece == null) {
 			return R.color.transparent;
 		}
 		return instance.get(piece.toString());
-	}
-	
-	public static String getPieceString(int id) {
-		for (Map.Entry<String, Integer> entry : instance.entrySet()) {
-			if (entry.getValue().equals(id)) {
-				return entry.getKey();
-			}
-		}
-		throw new IllegalArgumentException("Key " + id + " not found in PieceImages");
 	}
 }
