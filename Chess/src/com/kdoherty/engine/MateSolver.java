@@ -3,7 +3,6 @@ package com.kdoherty.engine;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.kdoherty.engine.MoveSorter;
 import com.kdoherty.chess.Board;
 import com.kdoherty.chess.Color;
 import com.kdoherty.chess.Move;
@@ -14,14 +13,10 @@ public class MateSolver {
 		// Hide Constructor
 	}
 
-	/*
-	 * If there is a move which color can make which puts the oppColor in
-	 * check-mate it returns that move, otherwise returns null
-	 */
 	public static Move findMateInOne(Board b, Color color) {
-		List<Move> moves = new ArrayList<Move>();
-		moves = MoveSorter.sort(b, b.getMoves(color));
-		for (Move move : moves) {
+		List<Move> moves = b.getMoves(color);
+		//Collections.sort(moves, new MoveComparator(b));
+		for (Move move : MoveSorter.sort(b,moves)) {
 			move.make(b);
 			if (b.isCheckMate(color.opp())) {
 				move.unmake(b);
@@ -47,10 +42,12 @@ public class MateSolver {
 			}
 			return mateMoves;
 		} else {
-			for (Move m : MoveSorter.sort(b, b.getMoves(color))) {
+			List<Move> moves = b.getMoves(color);
+			//Collections.sort(moves, new MoveComparator(b));
+			for (Move m : MoveSorter.sort(b,moves)) {
 				mateMoves.add(m);
 				m.make(b);
-				for (Move mo : b.getMoves(color.opp())) {
+				for (Move mo : MoveSorter.sort(b, b.getMoves(color.opp()))) {
 					nextMateMoves = null;
 					soonerMate = false;
 					mo.make(b);
