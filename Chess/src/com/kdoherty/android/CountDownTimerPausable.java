@@ -5,18 +5,17 @@ import android.os.CountDownTimer;
 /**
  * This class uses the native CountDownTimer to create a timer which could be
  * paused and then started again from the previous point. See
- * http://stackoverflow.com/questions/5738362/pause-countdowntimer
- * -in-android-when-activity-is-not-in-front/6469166#6469166
+ * http://stackoverflow.com/questions/5738362/pause-countdowntimer-in-android-when-activity-is-not-in-front/6469166#6469166
  */
-public abstract class CountDownTimerPausable {
+abstract class CountDownTimerPausable {
 
-	long millisInFuture = 0;
-	long countDownInterval = 0;
-	long millisRemaining = 0;
+	private long millisInFuture = 0;
+	private long countDownInterval = 0;
+	private long millisRemaining = 0;
 
-	CountDownTimer countDownTimer = null;
+	private CountDownTimer countDownTimer = null;
 
-	boolean isPaused = true;
+	private boolean isPaused = true;
 
 	public CountDownTimerPausable(long millisInFuture, long countDownInterval) {
 		super();
@@ -32,13 +31,11 @@ public abstract class CountDownTimerPausable {
 			public void onTick(long millisUntilFinished) {
 				millisRemaining = millisUntilFinished;
 				CountDownTimerPausable.this.onTick(millisUntilFinished);
-
 			}
 
 			@Override
 			public void onFinish() {
 				CountDownTimerPausable.this.onFinish();
-
 			}
 		};
 	}
@@ -67,7 +64,7 @@ public abstract class CountDownTimerPausable {
 	}
 
 	/**
-	 * Start or Resume the countdown.
+	 * Start or Resume the count down.
 	 * 
 	 * @return CountDownTimerPausable current instance
 	 */
