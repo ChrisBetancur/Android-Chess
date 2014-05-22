@@ -7,12 +7,9 @@ import java.util.List;
  * Bishop, Rook, Queen, and King
  * 
  * @author Kevin Doherty
- * @version 10/14/2013
  * 
  */
 public abstract class Piece {
-
-	Square square;
 
 	// TODO: Make Pieces singleton and not know their location or change the
 	// board to a list of pieces
@@ -26,13 +23,11 @@ public abstract class Piece {
 	/** The color of this Piece */
 	protected final Color color;
 
-	protected List<Move> moves;
-
+	/** The number of times this Piece has moved */
 	protected int moveCount = 0;
 
 	public Piece(Color color, Square square) {
-		this.color = color;
-		this.square = square;
+		this(color, square.row(), square.col());
 	}
 
 	public Piece(Color color, int row, int col) {
@@ -50,7 +45,7 @@ public abstract class Piece {
 	 *            Board
 	 */
 	public Piece(Color color) {
-		this.color = color;
+		this(color, 0, 0);
 	}
 
 	/**
@@ -137,8 +132,11 @@ public abstract class Piece {
 	 * @return true if the Piece can move to the input square and false
 	 *         otherwise
 	 */
-	// TODO: check check?
-	public abstract boolean canMove(Board b, int r, int c);
+	public abstract boolean canMove(Board b, int r, int c, boolean testCheck);
+	
+	public boolean canMove(Board board, int r, int c) {
+		return canMove(board, r, c, true);
+	}
 
 	/**
 	 * Is this Piece attacking the input square? Note it is still attacking the
@@ -154,7 +152,9 @@ public abstract class Piece {
 	 * @return true if this Piece is attacking the input square on the input
 	 *         Board and false otherwise
 	 */
-	public abstract boolean isAttacking(Board b, int r, int c);
+	public boolean isAttacking(Board b, int r, int c) {
+		return canMove(b, r, c, false);
+	}
 
 	public abstract int evaluate(Board b);
 
@@ -202,12 +202,9 @@ public abstract class Piece {
 	public abstract List<Move> getMoves(Board b);
 
 	/**
-	 * A piece equals another Object if they are:
-	 * 1. Both Pieces of the same type
-	 * 2. Have the same color
-	 * 3. Are located on the same row
-	 * 4. Are located on the same column
-	 * 5. Have the same moveCount
+	 * A piece equals another Object if they are: 1. Both Pieces of the same
+	 * type 2. Have the same color 3. Are located on the same row 4. Are located
+	 * on the same column 5. Have the same moveCount
 	 * 
 	 * @param o
 	 *            The object we are checking if it is equal to this Piece
@@ -232,6 +229,7 @@ public abstract class Piece {
 
 	/**
 	 * Gets an integer representation of this Piece
+	 * 
 	 * @return an integer representation of this Piece
 	 */
 	@Override

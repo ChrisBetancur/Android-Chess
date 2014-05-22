@@ -7,8 +7,7 @@ import com.kdoherty.engine.BishopEval;
 
 /**
  * @author Kevin Doherty
- * @version 10/14/2013 This class represents a bishop chess piece Bishops can
- *          only move diagonally
+ * 
  * 
  */
 public class Bishop extends Piece {
@@ -35,30 +34,11 @@ public class Bishop extends Piece {
 	 * @return true if the Piece can move to the input square and false
 	 *         otherwise
 	 */
-	public boolean canMove(Board b, int r, int c) {
+	public boolean canMove(Board b, int r, int c, boolean testCheck) {
 		return Board.isInbounds(r, c) && Board.sameDiagonal(row, col, r, c)
 				&& (b.isEmpty(r, c) || isTaking(b, r, c))
-				&& !isBlocked(b, r, c) && !stillInCheck(b, r, c);
-	}
-
-	/**
-	 * Is this Piece attacking the input square? Note it is still attacking the
-	 * square even if it is pinned to it's king
-	 * 
-	 * @param b
-	 *            The Board we are checking if the Piece is attacking a square
-	 *            on
-	 * @param r
-	 *            The row we are checking if this Piece is attacking
-	 * @param c
-	 *            The row we are checking if this Piece is attacking
-	 * @return true if this Piece is attacking the input square on the input
-	 *         Board and false otherwise
-	 */
-	public boolean isAttacking(Board b, int r, int c) {
-		return Board.isInbounds(r, c) && Board.sameDiagonal(row, col, r, c)
-				&& (b.isEmpty(r, c) || isTaking(b, r, c))
-				&& !isBlocked(b, r, c);
+				&& !isBlocked(b, r, c)
+				&& (!testCheck || !stillInCheck(b, r, c));
 	}
 
 	/**
@@ -103,7 +83,6 @@ public class Bishop extends Piece {
 	@Override
 	public List<Move> getMoves(Board b) {
 		List<Move> moves = new ArrayList<Move>();
-		// TODO: Don't iterate over all 64 squares
 		for (int i = 0; i < Board.NUM_ROWS; i++) {
 			for (int j = 0; j < Board.NUM_COLS; j++) {
 				if (Board.sameDiagonal(row, col, i, j) && canMove(b, i, j)) {

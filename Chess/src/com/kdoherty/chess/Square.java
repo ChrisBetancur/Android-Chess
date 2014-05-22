@@ -2,12 +2,9 @@ package com.kdoherty.chess;
 
 /**
  * @author Kevin Doherty
- * @version 10/14/2013 A Square is an immutable representation of a coordinate
- *          on the chessBoard
+ * A Square is an immutable representation of a coordinate on the Board
  */
 public final class Square {
-	
-	//TODO: Check invariants
 
 	/** Row coordinate of this Square */
 	private final int row;
@@ -24,16 +21,13 @@ public final class Square {
 	 *            Sets this squares column to this value
 	 */
 	public Square(int row, int col) {
-//		if (!Board.isInbounds(row, col)) {
-//			throw new IllegalArgumentException("The square " + row + ", " + col + " is out of bounds");
-//		}
 		this.row = row;
 		this.col = col;
 	}
 
 	/**
 	 * A user friendly constructor for Square using chess coordinate notation
-	 * instead of 2D array notation
+	 * instead of 2D array notation.
 	 * 
 	 * @param col
 	 *            The char representing the column
@@ -77,9 +71,13 @@ public final class Square {
 							+ col);
 		}
 	}
+	
+	public static int toNum(int row, int col) {
+		return row * 8 + col;
+	}
 
 	/**
-	 * getter for the row coordinate of this Square
+	 * Getter for the row coordinate of this Square
 	 * 
 	 * @return The row coordinate of this Square
 	 */
@@ -88,7 +86,7 @@ public final class Square {
 	}
 
 	/**
-	 * getter for the column coordinate of this Square
+	 * Getter for the column coordinate of this Square
 	 * 
 	 * @return The column coordinate of this Square
 	 */
@@ -102,8 +100,7 @@ public final class Square {
 	 * 
 	 * @return true if this Square equals the input object
 	 */
-	@Override
-	public boolean equals(Object obj) {
+	@Override public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -119,8 +116,7 @@ public final class Square {
 	 * 
 	 * @return An integer representation of this Square
 	 */
-	@Override
-	public int hashCode() {
+	@Override public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + col;
@@ -133,8 +129,7 @@ public final class Square {
 	 * 
 	 * @return A String representation of this Square
 	 */
-	@Override
-	public String toString() {
+	@Override public String toString() {
 		String s = "";
 		switch (col) {
 		case (0):
@@ -165,8 +160,8 @@ public final class Square {
 		s += (8 - row);
 		return s;
 	}
-
+	
 	public int toNum() {
-		return row * 8 + col;
+		return toNum(row, col);
 	}
 }

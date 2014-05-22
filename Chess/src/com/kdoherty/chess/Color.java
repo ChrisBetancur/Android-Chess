@@ -2,8 +2,8 @@ package com.kdoherty.chess;
 
 /**
  * Enumeration for the colors White and Black
- * @author Kevin
- * @version 10/14/2013
+ * used to represent the Colors of the Pieces
+ * @author Kevin Doherty
  *
  */
 public enum Color {
@@ -11,8 +11,8 @@ public enum Color {
     WHITE, BLACK;
 
     /**
-     * gets the opposite color of this color
-     * @return the opposite color of this color
+     * Gets the opposite Color of this Color
+     * @return The opposite Color of this Color
      */
     public Color opp() {
         return this == WHITE ? BLACK : WHITE;

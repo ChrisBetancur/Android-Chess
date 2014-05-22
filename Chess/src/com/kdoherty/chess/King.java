@@ -8,14 +8,14 @@ import com.kdoherty.engine.KingEval;
 /**
  * 
  * @author Kevin Doherty
- * @version 10/14/2013 This class represents a King chess piece. This Piece can
- *          move one square in any direction unless a piece of the opposing
- *          color is attacking that square. It can also castle if certain
- *          conditions are met. This Piece can never still be in check after a
- *          Piece of this King's color moves.
+ * @version This class represents a King chess piece. This Piece can move one
+ *          square in any direction unless a piece of the opposing color is
+ *          attacking that square. It can also castle if certain conditions are
+ *          met. This Piece can never still be in check after a Piece of this
+ *          King's color moves.
  */
 
-public class King extends Piece {
+public final class King extends Piece {
 
 	/** The home row of this King */
 	private int homeRow;
@@ -46,11 +46,11 @@ public class King extends Piece {
 	 * @return true if the Piece can move to the input square and false
 	 *         otherwise
 	 */
-	public boolean canMove(Board b, int r, int c) {
+	public boolean canMove(Board b, int r, int c, boolean testCheck) {
 		if (Board.isNeighbor(row, col, r, c)) {
-			return (Board.isInbounds(r, c)
-					&& (b.isEmpty(r, c) || isTaking(b, r, c)) && !stillInCheck(
-						b, r, c));
+			return Board.isInbounds(r, c)
+					&& (b.isEmpty(r, c) || isTaking(b, r, c))
+					&& (!testCheck || !stillInCheck(b, r, c));
 		}
 		return canCastle(b, r, c);
 	}

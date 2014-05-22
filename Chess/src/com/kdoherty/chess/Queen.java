@@ -11,10 +11,9 @@ import com.kdoherty.engine.QueenEval;
  * This class represents a Queen.
  * A Queen can move vertically, horizontally, or diagonally.
  * @author Kevin Doherty
- * @version 10/14/2013
  *
  */
-public class Queen extends Piece {
+public final class Queen extends Piece {
 
     /**
      * Constructor for Queen
@@ -36,31 +35,13 @@ public class Queen extends Piece {
      * @param c The column we are checking if the piece can move to
      * @return true if the Piece can move to the input square and false otherwise
      */
-    public boolean canMove(Board b, int r, int c) {
-        return Board.isInbounds(r, c) &&
+    public boolean canMove(Board b, int r, int c, boolean testCheck) {
+    	return Board.isInbounds(r, c) &&
                 ((row == r ^ col == c) ||
                         Board.sameDiagonal(row, col, r, c)) &&
                         (b.isEmpty(r, c) || isTaking(b, r, c)) &&
                         !isBlocked(b, r, c) &&
-                        !stillInCheck(b, r, c);
-    }
-
-    /**
-     * Is this Piece attacking the input square?
-     * Note it is still attacking the square even if it is pinned
-     * to it's king
-     * @param b The Board we are checking if the Piece is attacking a square on
-     * @param r The row we are checking if this Piece is attacking
-     * @param c The row we are checking if this Piece is attacking
-     * @return true if this Piece is attacking the input square on the
-     * input Board and false otherwise
-     */
-    public boolean isAttacking(Board b, int r, int c) {
-        return Board.isInbounds(r, c) &&
-                ((row == r ^ col == c) ||
-                        Board.sameDiagonal(row, col, r, c)) &&
-                        (b.isEmpty(r, c) || isTaking(b, r, c)) &&
-                        !isBlocked(b, r, c);
+                        (!testCheck || !stillInCheck(b, r, c));
     }
 
     /**

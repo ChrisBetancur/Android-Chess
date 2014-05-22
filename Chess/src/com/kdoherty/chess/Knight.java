@@ -13,11 +13,10 @@ import com.kdoherty.engine.KnightEval;
  * can jump pieces.
  * 
  * @author Kevin Doherty
- * @version 10/14/2013
  * 
  * 
  */
-public class Knight extends Piece {
+public final class Knight extends Piece {
 
 	/**
 	 * Maps a Square on a chess board to all possible Squares a Knight could
@@ -51,29 +50,10 @@ public class Knight extends Piece {
 	 * @return true if the Piece can move to the input square and false
 	 *         otherwise
 	 */
-	public boolean canMove(Board b, int r, int c) {
+	public boolean canMove(Board b, int r, int c, boolean testCheck) {
 		return Board.isInbounds(r, c) && (b.isEmpty(r, c) || isTaking(b, r, c))
 				&& getPossibleSqs().contains(new Square(r, c))
-				&& !stillInCheck(b, r, c);
-	}
-
-	/**
-	 * Is this Piece attacking the input square? Note it is still attacking the
-	 * square even if it is pinned to it's king
-	 * 
-	 * @param b
-	 *            The Board we are checking if the Piece is attacking a square
-	 *            on
-	 * @param r
-	 *            The row we are checking if this Piece is attacking
-	 * @param c
-	 *            The row we are checking if this Piece is attacking
-	 * @return true if this Piece is attacking the input square on the input
-	 *         Board and false otherwise
-	 */
-	public boolean isAttacking(Board b, int r, int c) {
-		return Board.isInbounds(r, c) && (b.isEmpty(r, c) || isTaking(b, r, c))
-				&& getPossibleSqs().contains(new Square(r, c));
+				&& (!testCheck || !stillInCheck(b, r, c));
 	}
 
 	/**

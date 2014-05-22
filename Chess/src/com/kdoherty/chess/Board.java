@@ -346,9 +346,7 @@ public final class Board {
 	 *            The column coordinate
 	 * @return true if the input coordinate contains a piece
 	 */
-	public boolean isOccupied(int r, int c) {
-		return !isEmpty(r, c);
-	}
+	public boolean isOccupied(int r, int c) { return !isEmpty(r, c); }
 
 	/**
 	 * Makes the input coordinate empty

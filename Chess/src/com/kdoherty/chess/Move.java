@@ -2,10 +2,10 @@ package com.kdoherty.chess;
 
 /**
  * @author Kevin Doherty
- * @version 10/14/2013 This represents a chess move. A move has a piece and a
- *          Square to move the piece to
+ * This represents a chess move. A mMve has a Piece and a Square to
+ *          move the Piece to
  */
-public class Move {
+public final class Move {
 
 	/** The Piece that is moving */
 	private Piece piece;
@@ -24,7 +24,7 @@ public class Move {
 
 	/** The Square to move this piece to */
 	private Square targetSquare;
-	
+
 	/**
 	 * The Piece that is taken when this move is made, or null if there isnt one
 	 */
@@ -38,6 +38,7 @@ public class Move {
 
 	/** The type of Move this is */
 	public enum Type {
+		// TODO: Inheritance instead of this?
 
 		NORMAL, WHITE_LONG, WHITE_SHORT, BLACK_LONG, BLACK_SHORT, PAWN_PROMOTION, EN_POISSANT;
 
@@ -92,6 +93,7 @@ public class Move {
 		this.col = col;
 		this.type = type;
 		this.targetSquare = new Square(row, col);
+		// this.made = false;
 	}
 
 	/**
@@ -116,25 +118,8 @@ public class Move {
 		return taken;
 	}
 
-	/**
-	 * Does this Move equal that object? A Move is equal to an object if: 1. The
-	 * object is a Move 2. The two moves contain the same Piece 3. The two moves
-	 * are moving that piece to the same Square
-	 * 
-	 * @return true if this Move equals the input object
-	 */
-	public boolean equals(Object obj) {
-		return obj instanceof Move && (((Move) obj).getSq()).equals(getSq())
-				&& ((Move) obj).getPiece().equals(piece);
-	}
-
-	/**
-	 * Gets the hashCode for this Move
-	 * 
-	 * @return An integer representation of this Move
-	 */
-	public int hashCode() {
-		return piece.hashCode() + getSq().hashCode();
+	public Type getType() {
+		return type;
 	}
 
 	/**
@@ -213,14 +198,41 @@ public class Move {
 		rook.decrementMoveCount();
 		((King) piece).setHasCastled(false);
 	}
-	
+
 	public boolean isChecking(Board b) {
+		make(b);
 		Color pieceColor = piece.getColor();
-		return b.kingInCheck(pieceColor.opp());
+		boolean isChecking = b.kingInCheck(pieceColor.opp());
+		unmake(b);
+		return isChecking;
 	}
-	
+
 	public boolean isTaking() {
 		return taken != null;
+	}
+
+	/**
+	 * Does this Move equal that object? A Move is equal to an object if: 
+	 * 1. The object is a Move 
+	 * 2. The two moves contain the same Piece 
+	 * 3. The two moves are moving that Piece to the same Square
+	 * 
+	 * @return true if this Move equals the input object
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof Move && (((Move) obj).getSq()).equals(getSq())
+				&& ((Move) obj).getPiece().equals(piece);
+	}
+
+	/**
+	 * Gets the hashCode for this Move
+	 * 
+	 * @return An integer representation of this Move
+	 */
+	@Override
+	public int hashCode() {
+		return piece.hashCode() + getSq().hashCode();
 	}
 
 	/**
@@ -229,7 +241,7 @@ public class Move {
 	 * 
 	 * @return A String representation of this Move
 	 */
-	public String toString() {
+	@Override public String toString() {
 		if (piece instanceof King && piece.getCol() == 4) {
 			if ((getSq().equals(new Square(7, 6)) || getSq().equals(
 					new Square(0, 6)))) {

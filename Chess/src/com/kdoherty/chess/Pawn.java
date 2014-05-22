@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.kdoherty.engine.PawnEval;
 
-public class Pawn extends Piece {
+public final class Pawn extends Piece {
 
 	/** The starting row for pawns */
 	private int homeRow;
@@ -40,11 +40,11 @@ public class Pawn extends Piece {
 	 * @return true if the Piece can move to the input square and false
 	 *         otherwise
 	 */
-	public boolean canMove(Board b, int r, int c) {
+	public boolean canMove(Board b, int r, int c, boolean testCheck) {
 		return Board.isInbounds(r, c)
 				&& (canMoveOne(b, r, c) || canMoveTwo(b, r, c)
 						|| canTakeNormally(b, r, c) || canEnPoissant(b, r, c))
-				&& !stillInCheck(b, r, c);
+				&& (!testCheck || !stillInCheck(b, r, c));
 	}
 
 	/**
