@@ -10,17 +10,41 @@ import com.kdoherty.androidchess.R;
 import com.kdoherty.chess.Board;
 import com.kdoherty.chess.Piece;
 
-public class SquareAdapter extends BaseAdapter {
+/**
+ * This is responsible for binding the Board representation to the view of the
+ * Board and each of its Pieces.
+ * 
+ * @author Kevin Doherty
+ * 
+ */
+class SquareAdapter extends BaseAdapter {
 
-	private ChessActivity mContext;
+	/** The context which this adapter is called from */
+	private ChessActivity context;
+
+	/** The Board that this will represent */
 	private Board board;
 
-	public SquareAdapter(ChessActivity mContext) {
-		this(mContext, Board.defaultBoard());
+	/**
+	 * Starts with a Board in which all Pieces are in their default positions.
+	 * 
+	 * @param context
+	 *            The context which this adapter is called from
+	 */
+	public SquareAdapter(ChessActivity context) {
+		this(context, Board.defaultBoard());
 	}
 
-	public SquareAdapter(ChessActivity mContext, Board board) {
-		this.mContext = mContext;
+	/**
+	 * Creates a new instance to represent the input Board.
+	 * 
+	 * @param context
+	 *            The context which this adapter is called from
+	 * @param board
+	 *            The Board to display
+	 */
+	public SquareAdapter(ChessActivity context, Board board) {
+		this.context = context;
 		this.board = board;
 	}
 
@@ -40,21 +64,35 @@ public class SquareAdapter extends BaseAdapter {
 		return position;
 	}
 
-	public Board getBoard() {
+	/**
+	 * Gets the Board this adapter is representing
+	 * 
+	 * @return The Board this adapter is representing
+	 */
+	Board getBoard() {
 		return board;
 	}
 
+	/**
+	 * Used to hold PieceImageViews so we don't have to inflate the same View
+	 * multiple times
+	 */
 	static class ViewHolder {
 
 		PieceImageView pieceViewItem;
 
 	}
 
+	/**
+	 * Displays each Square in the Boards grid view. This is where the Piece
+	 * images are set and the Board is checkered.
+	 */
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ViewHolder viewHolder;
+
 		if (convertView == null) {
-			LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
+			LayoutInflater inflater = ((Activity) context).getLayoutInflater();
 			convertView = inflater.inflate(R.layout.square, parent, false);
 			viewHolder = new ViewHolder();
 			viewHolder.pieceViewItem = (PieceImageView) convertView
@@ -63,24 +101,29 @@ public class SquareAdapter extends BaseAdapter {
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
-		PieceImageView pieceView = viewHolder.pieceViewItem;
+
 		int row = position / 8;
 		int col = position % 8;
+
+		PieceImageView pieceView = viewHolder.pieceViewItem;
 		pieceView.setRow(row);
 		pieceView.setCol(col);
-		Piece piece = board.getOccupant(row, col);
+
 		// Checker the board
 		if (!((row % 2 == 0 && col % 2 == 0) || (row % 2 == 1 && col % 2 == 1))) {
 			convertView.setBackgroundResource(R.color.light_grey);
 		}
+
+		Piece piece = board.getOccupant(row, col);
 		if (piece != null) {
 			int id = PieceImages.getId(piece);
 			pieceView.setImageResource(id);
 			pieceView.setId(id);
 			pieceView.setOnTouchListener(OnPieceTouch.INSTANCE);
 		}
-		convertView.setOnDragListener(new OnPieceDrag(mContext, board,
-				row, col));
+
+		convertView.setOnDragListener(new OnPieceDrag(context, board, row, col));
+
 		return convertView;
 	}
 }
