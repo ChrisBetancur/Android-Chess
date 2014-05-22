@@ -9,22 +9,52 @@ import com.kdoherty.chess.Move;
 import com.kdoherty.chess.Pawn;
 import com.kdoherty.chess.Piece;
 
-public class OnPieceDrag implements OnDragListener {
+/**
+ * This handles the dragging and dropping of Pieces on the Board view.
+ * 
+ * @author Kevin Doherty
+ * 
+ */
+class OnPieceDrag implements OnDragListener {
 
+	/** The Board the Piece is being dragged on */
 	private Board board;
+
+	/** The row this Piece was dropped on */
 	private int targetRow;
+
+	/** The column this Piece was dropped on */
 	private int targetCol;
+
+	/** The Context this listener was called from */
 	private ChessActivity context;
+
+	/** Did the Piece successfully move? */
 	private boolean moved = false;
 
-	public OnPieceDrag(ChessActivity context, Board baord, int targetRow,
-			int targetCol) {
+	/**
+	 * Creates a new instance of this.
+	 * 
+	 * @param context
+	 *            The Context this listener was called from
+	 * @param baord
+	 *            The Board the Piece is being dragged on
+	 * @param targetRow
+	 *            The row this Piece was dropped on
+	 * @param targetCol
+	 *            The column this Piece was dropped on
+	 */
+	OnPieceDrag(ChessActivity context, Board baord, int targetRow, int targetCol) {
 		this.context = context;
 		this.board = baord;
 		this.targetRow = targetRow;
 		this.targetCol = targetCol;
 	}
 
+	/**
+	 * Handles the dragging and dropping of Pieces. Checks if the piece can move
+	 * to the Square it is dropped on. If it can it handles passing the turn.
+	 */
 	@Override
 	public boolean onDrag(View v, DragEvent event) {
 		int action = event.getAction();
@@ -42,32 +72,39 @@ public class OnPieceDrag implements OnDragListener {
 			view.setVisibility(View.VISIBLE);
 			if (moved) {
 				board.toggleSideToMove();
+				context.toggleTimer();
 				context.makeCpuMove();
 			}
 			break;
 		case DragEvent.ACTION_DROP:
 			Piece piece = board.getOccupant(startingRow, startingCol);
+
 			if (piece.getColor() == board.getSideToMove()
 					&& piece.canMove(board, targetRow, targetCol)) {
+
 				piece.moveTo(board, targetRow, targetCol);
-				ChessActivity chessContext = (ChessActivity) context;
+
+				// Handles Pawn Promotion
 				if (piece instanceof Pawn) {
 					Pawn pawn = (Pawn) piece;
 					if (pawn.isPromoting()) {
-						Piece promotedTo = chessContext.askPromotion(piece
+						Piece promotedTo = context.askPromotion(piece
 								.getColor());
 						board.setPiece(targetRow, targetCol, promotedTo);
 					}
 				}
+
 				board.addMove(new Move(piece, targetRow, targetCol));
 				if (board.isGameOver()) {
-					chessContext.showGameOver();
+					context.showGameOver();
 				}
-				chessContext.refreshAdapter(board);
-				
+				context.refreshAdapter(board);
+
 				moved = true;
+
 				return true;
 			} else {
+				// Piece could not move
 				view.setVisibility(View.VISIBLE);
 			}
 			break;
