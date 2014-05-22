@@ -26,8 +26,7 @@ public class Evaluate {
 	// TODO;
 	// private static int QUEEN_CLOSE_TO_KING_MATE_DEPTH = 4;
 
-	// evaluates placement of pieces
-	public static int evaluate(Board b, Color color) {
+	static int evaluate(Board b, Color color) {
 		if (b.isCheckMate(color.opp())) {
 			return Integer.MAX_VALUE;
 		}
@@ -53,9 +52,9 @@ public class Evaluate {
 		return value;
 	}
 
-	// returns all squares within 3 squares of the king
-	private static ArrayList<Square> kingZone(Board b, King k) {
-		ArrayList<Square> zone = new ArrayList<Square>();
+	// All Squares with 3 of King
+	private static List<Square> kingZone(Board b, King k) {
+		List<Square> zone = new ArrayList<Square>();
 		for (int i = k.getRow() - 2; i < k.getRow() + 3; i++) {
 			for (int j = k.getCol() - 2; j < k.getCol() + 3; j++) {
 				if (Board.isInbounds(i, j)) {
@@ -66,14 +65,11 @@ public class Evaluate {
 		return zone;
 	}
 
-	/*
-	 * returns a list of pieces of color color which are in the opp King's zone
-	 */
-	private static ArrayList<Piece> getPiecesInOppKingZone(Board b,
+	private static List<Piece> getPiecesInOppKingZone(Board b,
 			Color color) {
 		King kingOfColor = b.findKing(color.opp());
-		ArrayList<Square> kingZone = kingZone(b, kingOfColor);
-		ArrayList<Piece> piecesInZone = new ArrayList<Piece>();
+		List<Square> kingZone = kingZone(b, kingOfColor);
+		List<Piece> piecesInZone = new ArrayList<Piece>();
 		for (Square s : kingZone) {
 			Piece p = b.getOccupant(s.row(), s.col());
 			if (p != null && p.getColor() == color)
@@ -83,9 +79,6 @@ public class Evaluate {
 
 	}
 
-	/*
-	 * is color's queen close to oppColor's King
-	 */
 	private static boolean queenCloseToKing(Board b, Color color) {
 		for (Piece p : getPiecesInOppKingZone(b, color)) {
 			if (p instanceof Queen)
@@ -93,18 +86,7 @@ public class Evaluate {
 		}
 		return false;
 	}
-
-	private static int getMinVal(Board b, ArrayList<Piece> pieces) {
-		int min = 10001;
-		for (Piece p : pieces) {
-			int eval = p.evaluate(b);
-			if (eval < min)
-				min = eval;
-		}
-		return min;
-	}
-
-	// are there still queens on the board
+	
 	private static boolean stillQueens(Board b) {
 		for (int i = 0; i < Board.NUM_ROWS; i++) {
 			for (int j = 0; j < Board.NUM_COLS; j++) {
@@ -114,38 +96,6 @@ public class Evaluate {
 			}
 		}
 		return false;
-	}
-
-	/*
-	 * returns an ArrayList of pieces which canMove to a square
-	 */
-	private static ArrayList<Piece> getTakingPieces(Board b, int row,
-			int col, Color color) {
-		ArrayList<Piece> pieces = new ArrayList<Piece>();
-		for (Piece p : b.getPieces(color)) {
-			if (p != null && p.canMove(b, row, col))
-				pieces.add(p);
-		}
-		return pieces;
-	}
-
-	public static boolean isHanging(Board b, Piece p) {
-		int r = p.getRow();
-		int c = p.getCol();
-		int pVal = p.evaluate(b);
-		if (getMinVal(b, getTakingPieces(b, r, c, p.getColor().opp())) < pVal)
-			return true;
-		return false;
-	}
-
-	public static ArrayList<Piece> getHangingPieces(Board b, Color color) {
-		ArrayList<Piece> hangingPieces = new ArrayList<Piece>();
-		for (Piece p : b.getPieces(color)) {
-			if (isHanging(b, p)) {
-				hangingPieces.add(p);
-			}
-		}
-		return hangingPieces;
 	}
 
 	private static boolean stillMinorPieces(Board b) {
@@ -170,7 +120,7 @@ public class Evaluate {
 		return false;
 	}
 
-	public static boolean isEndGame(Board b) {
+	static boolean isEndGame(Board b) {
 		return !stillQueens(b)
 				|| (stillQueens(b) && !stillMinorPieces(b) && !stillRooks(b));
 	}
@@ -192,9 +142,6 @@ public class Evaluate {
 		return b.getMoves(color).size();
 	}
 
-	/*
-	 * returns an ArrayList of pieces which are defending a square
-	 */
 	private static List<Piece> getDefendingPieces(Board b, int row,
 			int col, Color color) {
 		List<Piece> pieces = new ArrayList<Piece>();
@@ -204,29 +151,7 @@ public class Evaluate {
 		}
 		return pieces;
 	}
-
-	public static int getNumSqsCtrl(Board b, Color color) {
-		int numSqs = 0;
-		for (int i = 0; i < Board.NUM_ROWS; i++) {
-			for (int j = 0; j < Board.NUM_COLS; j++) {
-				// each square that is defended by a pawn and not by an opp pawn
-				// is under control
-				if (b.getOccupant(i, j) == null
-						&& ((getDefendingPieces(b, i, j, color).size() != 0 && getDefendingPieces(
-								b, i, j, color.opp()).size() == 0) || (getLeastValofDefending(
-								b, i, j, color) < getLeastValofDefending(b, i,
-								j, color.opp())))) {
-					numSqs++;
-				}
-			}
-		}
-		return numSqs;
-	}
-
-	/*
-	 * gets least value of defending pieces returns 0 if there are no
-	 * defendingPieces
-	 */
+	
 	static int getLeastValofDefending(Board b, int row, int col,
 			Color color) {
 		List<Piece> defendingPieces = getDefendingPieces(b, row,
@@ -242,9 +167,6 @@ public class Evaluate {
 		return lowestVal;
 	}
 	
-    /*
-     * returns the sum of values of pieces of the input color
-     */
     private static int getTotalPieceValue(Board board, Color color) {
         int total = 0;
         for (Piece p : board.getPieces(color)) {
@@ -253,15 +175,12 @@ public class Evaluate {
         return total;
     }
     
-    /*
-     * returns the difference in material count 
-     * by subtracting oppColor's count from color's count
-     */
     private static int getMaterialCount(Board board, Color color) {
         return getTotalPieceValue(board, color) - getTotalPieceValue(board, color.opp());
     }
     
-	public static boolean isBlockingCenterPawn(Board b, Piece p) {
+    // TODO: PieceEval super class
+	static boolean isBlockingCenterPawn(Board b, Piece p) {
 		int pawnRow = (p.getColor() == Color.WHITE) ? 6 : 1;
 		int blockingRow = (p.getColor() == Color.WHITE) ? pawnRow - 1
 				: pawnRow + 1;
@@ -269,4 +188,61 @@ public class Evaluate {
 				&& ((p.getCol() == 3 && b.getOccupant(pawnRow, 3) instanceof Pawn) || (p
 						.getCol() == 4 && b.getOccupant(pawnRow, 4) instanceof Pawn));
 	}
+	
+//	private static int getMinVal(Board b, List<Piece> pieces) {
+//	int min = 10001;
+//	for (Piece p : pieces) {
+//		int eval = p.evaluate(b);
+//		if (eval < min)
+//			min = eval;
+//	}
+//	return min;
+//}
+
+//private static List<Piece> getTakingPieces(Board b, int row,
+//		int col, Color color) {
+//	List<Piece> pieces = new ArrayList<Piece>();
+//	for (Piece p : b.getPieces(color)) {
+//		if (p != null && p.canMove(b, row, col))
+//			pieces.add(p);
+//	}
+//	return pieces;
+//}
+
+//private static boolean isHanging(Board b, Piece p) {
+//	int r = p.getRow();
+//	int c = p.getCol();
+//	int pVal = p.evaluate(b);
+//	if (getMinVal(b, getTakingPieces(b, r, c, p.getColor().opp())) < pVal)
+//		return true;
+//	return false;
+//}
+
+//private static List<Piece> getHangingPieces(Board b, Color color) {
+//	List<Piece> hangingPieces = new ArrayList<Piece>();
+//	for (Piece p : b.getPieces(color)) {
+//		if (isHanging(b, p)) {
+//			hangingPieces.add(p);
+//		}
+//	}
+//	return hangingPieces;
+//}
+
+//private static int getNumSqsCtrl(Board b, Color color) {
+//int numSqs = 0;
+//for (int i = 0; i < Board.NUM_ROWS; i++) {
+//	for (int j = 0; j < Board.NUM_COLS; j++) {
+//		// each square that is defended by a pawn and not by an opp pawn
+//		// is under control
+//		if (b.getOccupant(i, j) == null
+//				&& ((getDefendingPieces(b, i, j, color).size() != 0 && getDefendingPieces(
+//						b, i, j, color.opp()).size() == 0) || (getLeastValofDefending(
+//						b, i, j, color) < getLeastValofDefending(b, i,
+//						j, color.opp())))) {
+//			numSqs++;
+//		}
+//	}
+//}
+//return numSqs;
+//}
 }
