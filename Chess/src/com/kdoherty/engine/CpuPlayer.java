@@ -25,17 +25,18 @@ public class CpuPlayer {
 				return new Move(board.getOccupant(1, 3), 3, 3);
 			}
 		}
-		int max = Integer.MAX_VALUE;
+		int max = Integer.MIN_VALUE;
 		Move bestMove = null;
-		List<Move> mateMoves = MateSolver.findMateUpToN(board, color, 2);
+		int mateDepth = Evaluate.queenCloseToKing(board, color) ? 5 : 2;
+		List<Move> mateMoves = MateSolver.findMateUpToN(board, color, mateDepth);
 		if (mateMoves != null && !mateMoves.isEmpty()) {
 			return mateMoves.get(0);
 		}
 		for (Move move : MoveSorter.sort(board, board.getMoves(color))) {
 			move.make(board);
-			int score = negaMaxWithPruning(board, color.opp(),
+			int score = -negaMaxWithPruning(board, color.opp(),
 					Integer.MIN_VALUE, Integer.MAX_VALUE, depth);
-			if (score < max) {
+			if (score > max) {
 				max = score;
 				bestMove = move;
 			}
@@ -47,10 +48,10 @@ public class CpuPlayer {
 	int negaMaxWithPruning(Board board, Color color, int alpha, int beta,
 			int moveDepth) {
 		if (board.isGameOver()) {
-			return Evaluate.evaluate(board, color);
+			return Evaluate.evaluate(board, color, false);
 		}
 		if (moveDepth == 0) {
-			return Evaluate.evaluate(board, color);
+			return Evaluate.evaluate(board, color, false);
 		}
 		
 		int max = Integer.MIN_VALUE;

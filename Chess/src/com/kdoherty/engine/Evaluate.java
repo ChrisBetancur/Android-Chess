@@ -3,6 +3,8 @@ package com.kdoherty.engine;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.util.Log;
+
 import com.kdoherty.chess.Bishop;
 import com.kdoherty.chess.Board;
 import com.kdoherty.chess.Color;
@@ -26,25 +28,31 @@ public class Evaluate {
 	// TODO;
 	// private static int QUEEN_CLOSE_TO_KING_MATE_DEPTH = 4;
 
-	static int evaluate(Board b, Color color) {
+	static int evaluate(Board b, Color color, boolean debug) {
 		if (b.isCheckMate(color.opp())) {
+			if (debug) Log.d("eval", "");
 			return Integer.MAX_VALUE;
 		}
 		int value = 0;
 		if (color == Color.WHITE) {
 			if ((whiteCastled || b.findKing(Color.WHITE).hasCastled()) && !isEndGame(b)) {
+				if (debug) Log.d("eval", "White gets castled bonus");
 				value += CASTLED_BONUS;
 			}
 		} else if ((blackCastled || b.findKing(Color.BLACK).hasCastled()) && !isEndGame(b)) {
+			if (debug) Log.d("eval", "Black gets castled bonus");
 			value += CASTLED_BONUS;
 		}
 		if (queenCloseToKing(b, color)) {
+			if (debug) Log.d("eval", color + " gets queen close to king bonus");
 			value += QUEEN_CLOSE_TO_KING_BONUS;
 		}
 		if (hasBishopPair(b, color)) {
+			if (debug) Log.d("eval", color + " gets bishop pair bonus");
 			value += BISHOP_PAIR_BONUS;
 		}
 		if (b.getSideToMove() == color) {
+			if (debug) Log.d("eval", color + " gets side to move bonus");
 			value += SIDE_TO_MOVE_BONUS;
 		}
 		value += (getNumMoves(b, color) - getNumMoves(b, color.opp()));
@@ -79,7 +87,7 @@ public class Evaluate {
 
 	}
 
-	private static boolean queenCloseToKing(Board b, Color color) {
+	static boolean queenCloseToKing(Board b, Color color) {
 		for (Piece p : getPiecesInOppKingZone(b, color)) {
 			if (p instanceof Queen)
 				return true;

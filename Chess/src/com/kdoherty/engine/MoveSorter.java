@@ -19,6 +19,7 @@ public class MoveSorter {
 		}
 		List<Move> sortedMoves = new ArrayList<Move>();
 		int checkingIndex = 0;
+		int takingIndex = 0;
 		Color oppColor = moves.get(0).getPiece().getColor().opp();
 		
 		for (Move move : moves) {
@@ -28,6 +29,9 @@ public class MoveSorter {
 				checkingIndex++;
 			} else if (move.getTaken() != null) {
 				sortedMoves.add(checkingIndex, move);
+				takingIndex++;
+			} else if (move.getType().isCastling()) {
+				sortedMoves.add(checkingIndex + takingIndex, move);
 			} else {
 				sortedMoves.add(move);
 			}
