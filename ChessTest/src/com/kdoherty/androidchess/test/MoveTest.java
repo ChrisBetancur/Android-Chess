@@ -4,6 +4,7 @@ import com.kdoherty.chess.Board;
 import com.kdoherty.chess.Color;
 import com.kdoherty.chess.Move;
 import com.kdoherty.chess.Piece;
+import com.kdoherty.chess.Square;
 
 public class MoveTest extends BaseTest {
 
@@ -112,7 +113,7 @@ public class MoveTest extends BaseTest {
 		promotion.unmake(board);
 		assertEquals(board, pawnPromotionReadyBoard(Color.WHITE));
 	}
-	
+
 	public void testUnmakePawnPromotionBlack() {
 		Board board = pawnPromotionReadyBoard(Color.BLACK);
 		Piece whitePawn = board.getOccupant(6, 0);
@@ -122,4 +123,15 @@ public class MoveTest extends BaseTest {
 		assertEquals(board, pawnPromotionReadyBoard(Color.BLACK));
 	}
 
+	public void testMakeUnmake() {
+		Board board = Board.defaultBoard();
+		Piece pawn = board.getOccupant(6, 4);
+		Move e4 = new Move(pawn, new Square(4, 4));
+		try {
+			e4.unmake(board);
+		} catch (Exception e) {
+			fail("Cant unmake before making");
+		}
+		
+	}
 }

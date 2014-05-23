@@ -2,62 +2,59 @@ package com.kdoherty.androidchess.test;
 
 import java.util.List;
 
-import android.util.Log;
-import android.util.SparseArray;
-
 import com.kdoherty.chess.Board;
 import com.kdoherty.chess.Color;
 import com.kdoherty.chess.Move;
 import com.kdoherty.engine.MateSolver;
 
 public class MateTester extends BaseTest {
+	
+	public void testMateSenerioOne() {
+		Board board = fillWithTestMate(0);
+		assertEquals(MateSolver.findMateUpToN(board, Color.WHITE, 5).toString(), "[rc7, rd8]");
+	}
+	
+	public void testMateSenerioTwo() {
+		Board board = fillWithTestMate(1);
+		assertEquals(MateSolver.findMateUpToN(board, Color.WHITE, 5).toString(), "[rh3]");
+	}
+	
+	public void testMateSenerioThree() {
+		Board board = fillWithTestMate(2);
+		List<Move> mateMoves = MateSolver.findMateUpToN(board, Color.WHITE, 5);
+		assertTrue(mateMoves.toString().equals("[qh7, rh3]") || mateMoves.toString().equals("[qf6, qg7]"));
+	}
+	
+	public void testMateSenerioFour() {
+		Board board = fillWithTestMate(3);
+		assertEquals(MateSolver.findMateUpToN(board, Color.WHITE, 5).toString(), "[rh6, rh7]");
+	}
+	
+	public void testMateSenerioFive() {
+		Board board = fillWithTestMate(4);
+		List<Move> mateMoves = MateSolver.findMateUpToN(board, Color.WHITE, 5);
+		assertTrue(mateMoves.toString().equals("[bb3, qd6]") || mateMoves.toString().equals("[bb3, re7]"));
+	}
+	
+	public void testMateSenerioSix() {
+		Board board = fillWithTestMate(5);
+		List<Move> mateMoves = MateSolver.findMateUpToN(board, Color.WHITE, 5);
+		assertEquals(MateSolver.findMateUpToN(board, Color.WHITE, 5).toString(), "[qg7, rh6, ne7]");
+	}
+	
+	public void testMateSenerioSeven() {
+		Board board = fillWithTestMate(6);
+		List<Move> mateMoves = MateSolver.findMateUpToN(board, Color.WHITE, 5);
+		assertTrue(mateMoves.toString().equals("[qf6, re8, rf8]") || mateMoves.toString().equals("[qf6, qf8, rg8]"));
+	}
+	
+	public void testMateSenerioEight() {
+		Board board = fillWithTestMate(7);
+		assertEquals(MateSolver.findMateUpToN(board, Color.WHITE, 5).toString(), "[nf5, qg7, qh6, qg6]");
+	}
 		
-		
-		private static final int NUM_MATE_TESTS = 4;
-		
-		private static final SparseArray<String> expectedMoves;
-		
-		static {
-			expectedMoves = new SparseArray<String>();
-			expectedMoves.put(0, "[rc7, rd8]"); // verified
-			expectedMoves.put(1, "[rh3]"); // verified
-			expectedMoves.put(2, "[qh7, rh3]"); // verified
-			expectedMoves.put(3, "[rh6, rh7]"); // verified
-		}
-
-//		public void testMateSolver() {
-//			Board b;
-//			long startTime = System.currentTimeMillis();
-//			int numFails = 0;
-//			boolean allPass = true;
-//			for (int i = 0; i < NUM_MATE_TESTS; i++) {
-//				long testStartTime = System.currentTimeMillis();
-//				b = fillWithTestMate(i);
-//				List<Move> mateMoves = MateSolver.findMateUpToN(b, Color.WHITE, 5);
-//				
-//				if (mateMoves == null || mateMoves.size() == 0) {
-//					Log.d("mateTest", "Test mate number " + i + " failed testing");
-//					allPass = false;
-//					numFails++;
-//					//assertNotNull(mateMoves);
-//					//assertFalse(mateMoves.size() == 0);
-//				}
-//				Log.d("mateTest", "mateMoves are: " + mateMoves);
-//				long testEndTime = System.currentTimeMillis();
-//				long testTotalTime = testEndTime - testStartTime;
-//				Log.d("mateTest", "Test mate number " + i + " took "
-//						+ testTotalTime / 1000.0 + " seconds");
-//				//assertEquals(mateMoves.toString(), expectedMoves.get(i));
-//				b.clearBoard();
-//			}
-//			if (allPass) {
-//				Log.d("mateTest", "All tests passed!");
-//			} else {
-//				Log.d("mateTest", "Tests Complete: " + numFails + " tests failed");
-//			}
-//			long endTime = System.currentTimeMillis();
-//			long totalTime = endTime - startTime;
-//			Log.d("mateTest", "Total execution time: " + totalTime / 1000.0
-//					+ " seconds");
-//		}
+	public void testMateSenerioNine() {
+		Board board = fillWithTestMate(8);
+		assertEquals(MateSolver.findMateUpToN(board, Color.WHITE, 5).toString(), "[ba4, pb3, bb5, rg4, ne3]");
+	}
 }

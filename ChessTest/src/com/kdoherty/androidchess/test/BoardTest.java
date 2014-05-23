@@ -94,33 +94,6 @@ public class BoardTest extends BaseTest {
 		}
 	}
 
-	public void testGetSqsInRow() {
-		assertEquals(Board.getSquaresInRow(0).toString(),
-				"[a8, b8, c8, d8, e8, f8, g8, h8]");
-		assertEquals(Board.getSquaresInRow(5).toString(),
-				"[a3, b3, c3, d3, e3, f3, g3, h3]");
-		assertEquals(Board.getSquaresInRow(7).toString(),
-				"[a1, b1, c1, d1, e1, f1, g1, h1]");
-	}
-
-	public void testGetSqsInCol() {
-		assertEquals(Board.getSquaresInCol(0).toString(),
-				"[a8, a7, a6, a5, a4, a3, a2, a1]");
-		assertEquals(Board.getSquaresInCol(5).toString(),
-				"[f8, f7, f6, f5, f4, f3, f2, f1]");
-		assertEquals(Board.getSquaresInCol(7).toString(),
-				"[h8, h7, h6, h5, h4, h3, h2, h1]");
-	}
-
-	public void testGetSqsInDiag() {
-		assertEquals(Board.getSquaresInDiag(6, 1).toString(),
-				"[a3, c1, c3, d4, e5, f6, g7, h8, a1]");
-		assertEquals(Board.getSquaresInDiag(5, 5).toString(),
-				"[e4, d5, c6, b7, a8, g2, h1, g4, h5, e2, d1]");
-		assertEquals(Board.getSquaresInDiag(0, 0).toString(),
-				"[b7, c6, d5, e4, f3, g2, h1]");
-	}
-
 	public void testGetOccupant() {
 		Board board = Board.defaultBoard();
 		assertNull(board.getOccupant(4, 4));
@@ -174,12 +147,6 @@ public class BoardTest extends BaseTest {
 				assertNull(board.getOccupant(i, j));
 			}
 		}
-	}
-
-	public void testReset() {
-		Board board = castlingReadyBoard();
-		board.reset();
-		assertEquals(board, Board.defaultBoard());
 	}
 
 	public void testGetPieces() {
