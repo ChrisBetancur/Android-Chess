@@ -18,7 +18,7 @@ final class PieceImages {
 	 * Maps the Pieces represented as Strings to their image resource IDs.
 	 * Strings are used as keys in place of Pieces because Pieces are mutable
 	 */
-	private static final Map<String, Integer> instance = new HashMap<String, Integer>();
+	private static final Map<String, Integer> pieceImages= new HashMap<String, Integer>();
 
 	private PieceImages() {
 		// Should never be instantiated
@@ -29,19 +29,19 @@ final class PieceImages {
 	 * and the image of the Piece.
 	 */
 	static {
-		instance.put("p", R.drawable.whitepawn);
-		instance.put("r", R.drawable.whiterook);
-		instance.put("n", R.drawable.whiteknight);
-		instance.put("b", R.drawable.whitebishop);
-		instance.put("k", R.drawable.whiteking);
-		instance.put("q", R.drawable.whitequeen);
+		pieceImages.put("p", R.drawable.whitepawn);
+		pieceImages.put("r", R.drawable.whiterook);
+		pieceImages.put("n", R.drawable.whiteknight);
+		pieceImages.put("b", R.drawable.whitebishop);
+		pieceImages.put("k", R.drawable.whiteking);
+		pieceImages.put("q", R.drawable.whitequeen);
 
-		instance.put("P", R.drawable.blackpawn);
-		instance.put("R", R.drawable.blackrook);
-		instance.put("N", R.drawable.blackknight);
-		instance.put("B", R.drawable.blackbishop);
-		instance.put("K", R.drawable.blackking);
-		instance.put("Q", R.drawable.blackqueen);
+		pieceImages.put("P", R.drawable.blackpawn);
+		pieceImages.put("R", R.drawable.blackrook);
+		pieceImages.put("N", R.drawable.blackknight);
+		pieceImages.put("B", R.drawable.blackbishop);
+		pieceImages.put("K", R.drawable.blackking);
+		pieceImages.put("Q", R.drawable.blackqueen);
 	}
 
 	/**
@@ -56,6 +56,6 @@ final class PieceImages {
 		if (piece == null) {
 			return R.color.transparent;
 		}
-		return instance.get(piece.toString());
+		return pieceImages.get(piece.toString());
 	}
 }
