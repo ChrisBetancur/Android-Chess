@@ -5,23 +5,10 @@
     android:layout_height="fill_parent"
     tools:context="com.kdoherty.android.ChessActivity" >
 
-    <com.kdoherty.android.SquareGridView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/chessboard"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="#ffffff"
-        android:gravity="center_horizontal"
-        android:horizontalSpacing="1dp"
-        android:numColumns="8"
-        android:padding="5dp"
-        android:verticalSpacing="1dp" />
-
     <TextView
         android:id="@+id/whiteTimer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/chessboard"
         android:layout_centerHorizontal="true"
         android:layout_marginRight="15dp"
         android:layout_toLeftOf="@+id/centerPoint"
@@ -32,18 +19,56 @@
         android:id="@+id/centerPoint"
         android:layout_width="0dip"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/chessboard"
         android:layout_centerHorizontal="true" />
 
     <TextView
         android:id="@+id/blackTimer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/chessboard"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="15dp"
         android:layout_toRightOf="@+id/centerPoint"
         android:textSize="30sp"
         android:textStyle="bold" />
+
+    <GridView
+        android:id="@+id/chessboard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/whiteTimer"
+        android:background="#000000"
+        android:horizontalSpacing="1dp"
+        android:listSelector="@null"
+        android:numColumns="8"
+        android:padding="1dp"
+        android:stretchMode="spacingWidthUniform"
+        android:verticalSpacing="1dp" />
+
+    <GridView
+        android:id="@+id/whiteTakenPieces"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/chessboard"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/chessboard"
+        android:layout_toLeftOf="@+id/centerPoint"
+        android:numColumns="8"
+        android:padding="1dp"
+        android:stretchMode="spacingWidthUniform"
+        android:verticalSpacing="1dp" />
+
+    <GridView
+        android:id="@+id/blackTakenPieces"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/chessboard"
+        android:layout_toRightOf="@+id/centerPoint"
+        android:gravity="center"
+        android:horizontalSpacing="20dp"
+        android:listSelector="@null"
+        android:numColumns="8"
+        android:padding="2dp"
+        android:stretchMode="spacingWidthUniform"
+        android:verticalSpacing="1dp" />
 
 </RelativeLayout>
