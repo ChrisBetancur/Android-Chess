@@ -27,7 +27,7 @@ public class CpuPlayer {
 		}
 		int max = Integer.MIN_VALUE;
 		Move bestMove = null;
-		int mateDepth = Evaluate.queenCloseToKing(board, color) ? 5 : 2;
+		int mateDepth = Evaluate.queenCloseToKing(board, color) ? 3 : 2;
 		List<Move> mateMoves = MateSolver.findMateUpToN(board, color, mateDepth);
 		if (mateMoves != null && !mateMoves.isEmpty()) {
 			return mateMoves.get(0);
