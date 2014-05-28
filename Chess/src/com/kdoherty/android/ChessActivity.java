@@ -5,6 +5,8 @@ import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
+import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,28 +19,23 @@ import com.kdoherty.chess.Queen;
 import com.kdoherty.engine.CpuPlayer;
 
 /**
- * This Activity is responsible for displaying the chess board and the player's
- * times. Nothing from this Class is visible to Classes not in the android
- * package.
+ * This Activity is responsible for displaying the chess board, the player's
+ * times, and the Pieces removed from the Board.
  * 
  * @author Kevin Doherty
  * 
  */
 public class ChessActivity extends Activity {
 
-	// TODO: Get this data from previous Activity
+	// TODO: Get configuration data from previous Activity
+	// TODO: Taken Piece #8 goes off screen / is covered by another view
+	// TODO: Pawn Promotion
+
 	private static boolean IS_CPU_PLAYER = true;
 	private static final Color CPU_COLOR = Color.BLACK;
 	private static final int DEPTH = 1;
-	/** The AI player if there is one */
 	private CpuPlayer player = new CpuPlayer(CPU_COLOR, DEPTH);
-
-	/** Adapter which binds the Board representation to the view of the Board */
-	private SquareAdapter adapter;
-
-	/** Used to represent the Board */
-	private SquareGridView boardView;
-
+	
 	/**
 	 * The timer which is currently ticking down. Also represents whose side it
 	 * is to move
@@ -46,7 +43,7 @@ public class ChessActivity extends Activity {
 	private Color activeTimer = Color.WHITE;
 
 	/** The starting game time in milliseconds */
-	private static final long TIME = 300000; // 5 minutes
+	private static final long TIME = 900000; // 15 minutes
 
 	/** The white count down timer */
 	private CountDownTimerPausable whiteTimer;
@@ -54,22 +51,45 @@ public class ChessActivity extends Activity {
 	/** The black count down timer */
 	private CountDownTimerPausable blackTimer;
 
-	/** The view displaying the amount of time black has left to move */
+	/** The View displaying the amount of time black has left to move */
 	private TextView whiteTimerView;
 
-	/** The view displaying the amount of time black has left to move */
+	/** The View displaying the amount of time black has left to move */
 	private TextView blackTimerView;
+	
+	
+	/** Used to represent the Board */
+	private GridView boardView;
+
+	/** Adapter which binds the Board representation to the view of the Board */
+	private SquareAdapter adapter;
+	
+	
+	/** Responsible for holding the taken white Pieces */
+	private GridView whiteTakenPieces;
+	
+	/** Responsible for holding the taken black Pieces */
+	private GridView blackTakenPieces;
+	
+	/** Adapter used to display a List of white Pieces */
+	private TakenPieceAdapter whiteTakenAdapter;
+	
+	/** Adapter used to display a List of black Pieces */
+	private TakenPieceAdapter blackTakenAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		setContentView(R.layout.activity_chess);
+
+		initTimers();
 		initBoard();
+		initPieceHolders();
+		
 		if (IS_CPU_PLAYER && CPU_COLOR == Color.WHITE) {
 			makeCpuMove();
 		}
-		initTimers();
 	}
 
 	@Override
@@ -78,17 +98,7 @@ public class ChessActivity extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-
-	/**
-	 * Initializes the board adapter and the board view. It then connects the
-	 * adapter to the view.
-	 */
-	private void initBoard() {
-		adapter = new SquareAdapter(this);
-		boardView = (SquareGridView) findViewById(R.id.chessboard);
-		boardView.setAdapter(adapter);
-	}
-
+	
 	/**
 	 * Initializes the timers for both white and black and sets them to the
 	 * starting time.
@@ -131,7 +141,7 @@ public class ChessActivity extends Activity {
 			}
 		};
 	}
-
+	
 	/**
 	 * Converts milliseconds into a String of format MM:SS where M is minutes
 	 * and S is seconds
@@ -147,7 +157,11 @@ public class ChessActivity extends Activity {
 		}
 		long minutes = seconds / 60;
 		long remainder = seconds % 60;
-		return "0" + String.valueOf(minutes) + ":" + secondsToString(remainder);
+		if (seconds < 600) {
+			return "0" + String.valueOf(minutes) + ":"
+					+ secondsToString(remainder);
+		}
+		return String.valueOf(minutes) + ":" + secondsToString(remainder);
 	}
 
 	/**
@@ -166,20 +180,98 @@ public class ChessActivity extends Activity {
 	}
 
 	/**
+	 * Initializes the board adapter and the board view. It then connects the
+	 * adapter to the view.
+	 */
+	private void initBoard() {
+		adapter = new SquareAdapter(this);
+		boardView = (GridView) findViewById(R.id.chessboard);
+		boardView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
+		boardView.setAdapter(adapter);
+	}
+
+	/**
+	 * Initializes the holders of taken Pieces
+	 */
+	private void initPieceHolders() {
+		whiteTakenPieces = (GridView) findViewById(R.id.whiteTakenPieces);
+		whiteTakenAdapter = new TakenPieceAdapter(this);
+		whiteTakenPieces.setAdapter(whiteTakenAdapter);
+
+		blackTakenPieces = (GridView) findViewById(R.id.blackTakenPieces);
+		blackTakenAdapter = new TakenPieceAdapter(this);
+		blackTakenPieces.setAdapter(blackTakenAdapter);
+	}
+	
+	/** 
+	 * Responsible for the following functionality:
+	 * 1. Makes the input move on the Board
+	 * 2. Refreshes the Board so it is displaying the most up to date version
+	 * 3. Toggles the timers
+	 * 4. Toggles the side to move
+	 * 5. Adds the input move to the stack of Moves contained in the Board
+	 * 6. Checks and notifies players of the end of the game
+	 * 7. If a Piece was taken, display that Piece with the other taken Pieces
+	 * 
+	 * @param move
+	 * 			 The move to make on the Board
+	 */
+	void passTurn(Move move) {
+		Board board = adapter.getBoard();
+		move.make(board);
+		refreshAdapter(board);
+		toggleTimer();
+		board.toggleSideToMove();
+		board.addMove(move);
+		if (board.isGameOver()) {
+			showGameOver();
+		}
+		Piece taken = move.getTaken();
+		if (taken != null) {
+			addToTakenPieces(taken);
+		}
+	}
+	
+	/**
+	 * Updates the UI to represent the input Board
+	 * 
+	 * @param board
+	 *            The Board to represent in the UI
+	 */
+	private void refreshAdapter(Board board) {
+		adapter = new SquareAdapter(this, board);
+		boardView.setAdapter(adapter);
+	}
+
+	/**
 	 * Pauses the timer which is currently active and starts the opposing
 	 * Color's timer.
 	 */
-	void toggleTimer() {
+	private void toggleTimer() {
 		if (!getTimer(activeTimer).isPaused()) {
 			getTimer(activeTimer).pause();
 		}
 		activeTimer = activeTimer.opp();
 		getTimer(activeTimer).start();
 	}
-
+	
 	/**
-	 * Helper method for toggle timer. Gets the timer corresponding to the input
-	 * color
+	 * Displays a message to the User that the game is over
+	 */
+	private void showGameOver() {
+		Board board = adapter.getBoard();
+		Color sideToMove = board.getSideToMove();
+		if (board.isCheckMate(sideToMove)) {
+			Toast.makeText(this, "CHECKMATE! " + sideToMove.opp() + " WINS",
+					Toast.LENGTH_LONG).show();
+		} else if (board.isDraw(sideToMove)) {
+			Toast.makeText(this, "DRAW!", Toast.LENGTH_LONG).show();
+		}
+		getTimer(activeTimer).cancel();
+	}
+	
+	/**
+	 * Gets the timer corresponding to the input color
 	 * 
 	 * @param color
 	 *            The Color of the timer to get
@@ -188,16 +280,24 @@ public class ChessActivity extends Activity {
 	private CountDownTimerPausable getTimer(Color color) {
 		return color == Color.WHITE ? whiteTimer : blackTimer;
 	}
-
+	
 	/**
-	 * Updates the UI to represent the input Board
+	 * Displays the input Piece with the other taken Pieces of the same color
 	 * 
-	 * @param board
-	 *            The Board to represent in the UI
+	 * @param piece
+	 *            The Piece which was taken
 	 */
-	void refreshAdapter(Board board) {
-		adapter = new SquareAdapter(this, board);
-		boardView.setAdapter(adapter);
+	private void addToTakenPieces(Piece piece) {
+		ImageView takenPieceView = new ImageView(this);
+		int resId = PieceImages.getId(piece);
+		takenPieceView.setImageResource(resId);
+		if (piece.getColor() == Color.WHITE) {
+			whiteTakenAdapter.addPiece(piece);
+			whiteTakenPieces.setAdapter(whiteTakenAdapter);
+		} else {
+			blackTakenAdapter.addPiece(piece);
+			blackTakenPieces.setAdapter(blackTakenAdapter);
+		}
 	}
 
 	/**
@@ -208,22 +308,7 @@ public class ChessActivity extends Activity {
 	 * @return The Piece which the user choice to Promote their Piece to
 	 */
 	Piece askPromotion(Color color) {
-		// TODO: Need pop up to determine type of Piece to promote to
 		return new Queen(color);
-	}
-
-	/**
-	 * Displays a message to the User that the game is over
-	 */
-	void showGameOver() {
-		Board board = adapter.getBoard();
-		Color sideToMove = board.getSideToMove();
-		if (board.isCheckMate(sideToMove)) {
-			Toast.makeText(this, "CHECKMATE! " + sideToMove.opp() + " WINS",
-					Toast.LENGTH_LONG).show();
-		} else if (board.isDraw(sideToMove)) {
-			Toast.makeText(this, "DRAW!", Toast.LENGTH_LONG).show();
-		}
 	}
 
 	/**
@@ -255,21 +340,11 @@ public class ChessActivity extends Activity {
 		protected void onPostExecute(Move result) {
 			super.onPostExecute(result);
 			if (result == null) {
-				Toast.makeText(ChessActivity.this, "YOU WIN, GOOD GAME!",
-						Toast.LENGTH_LONG).show();
-				return;
-			}
-			Board board = adapter.getBoard();
-			result.make(board);
-			refreshAdapter(board);
-			toggleTimer();
-			board.toggleSideToMove();
-			board.addMove(result);
-			if (board.isGameOver()) {
 				showGameOver();
+			} else {
+				passTurn(result);
 			}
 		}
-
 	}
 
 	/**
@@ -279,5 +354,4 @@ public class ChessActivity extends Activity {
 	void makeCpuMove() {
 		new GetCpuMove().execute();
 	}
-
 }
