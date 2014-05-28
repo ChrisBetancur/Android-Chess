@@ -7,7 +7,7 @@ import com.kdoherty.chess.Square;
 
 public class KnightEval {
 
-	private static int START_VALUE = 325;
+	public static int START_VALUE = 325;
 	private static int ENDGAME_PENALTY = -10;
 	private static int BLOCKING_CNTR_PAWN_PENALTY = -10;
 	private static int LOSS_TEMPO_PENALTY = -30;

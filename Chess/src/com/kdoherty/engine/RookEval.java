@@ -10,7 +10,7 @@ import com.kdoherty.chess.Square;
 
 public class RookEval {
 
-	private static int START_VALUE = 500;
+	public static int START_VALUE = 500;
 	private static int OPEN_FILE_BONUS = 20;
 	private static int SEMI_OPEN_FILE_BONUS = 15;
 	private static int DOUBLED_SEMI_OPEN_FILE_BONUS = 30;

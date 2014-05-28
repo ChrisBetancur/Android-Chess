@@ -7,7 +7,7 @@ import com.kdoherty.chess.Square;
 
 public class KingEval {
 
-	private static int START_VALUE = 10000;
+	public static int START_VALUE = 10000;
 	
 	private static int[] MIDDLEGAME_BOARD_VALUES = {
 		20,   30,  10,   0,   0,  10,  30,  20,

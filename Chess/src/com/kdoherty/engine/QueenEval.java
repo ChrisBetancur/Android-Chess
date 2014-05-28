@@ -7,7 +7,7 @@ import com.kdoherty.chess.Square;
 
 public class QueenEval {
 
-	private static int START_VALUE = 1000;
+	public static int START_VALUE = 1000;
 	private static int QUEEN_OUT_EARLY_PENALTY = -15;
 	private static int[] BOARD_VALUES = { -20, -10, -10, -5, -5, -10, -10,
 			-20, -10, 0, 5, 0, 0, 0, 0, -10, -10, 5, 5, 5, 5, 5, 0, -10, 0,

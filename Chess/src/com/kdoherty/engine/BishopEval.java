@@ -7,7 +7,7 @@ import com.kdoherty.chess.Square;
 
 public class BishopEval {
 
-	private static int START_VALUE = 330;
+	public static int START_VALUE = 330;
 	private static int BLOCKING_CNTR_PAWN_PENALTY = -10;
 	private static int[] BOARD_VALUES = { 
 		-20, -10, -10, -10, -10, -10, -10, -20,
@@ -19,13 +19,13 @@ public class BishopEval {
 		-10,   0,   0,   0,   0,   0,   0, -10,
 		-20, -10, -10, -10, -10, -10, -10, -20 };
 
-	public static int eval(Board b, Bishop bi) {
+	public static int evaluate(Board board, Bishop bishop) {
 		int value = START_VALUE;
-		Square s = bi.getSq();
-		int index = bi.getColor() == Color.WHITE ? s.toNum() : 63 - s
+		Square s = bishop.getSq();
+		int index = bishop.getColor() == Color.WHITE ? s.toNum() : 63 - s
 				.toNum();
 		value += BOARD_VALUES[index];
-		if (Evaluate.isBlockingCenterPawn(b, bi))
+		if (Evaluate.isBlockingCenterPawn(board, bishop))
 			value += BLOCKING_CNTR_PAWN_PENALTY;
 		return value;
 	}

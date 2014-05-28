@@ -7,7 +7,7 @@ import com.kdoherty.chess.Pawn;
 import com.kdoherty.chess.Square;
 
 public class PawnEval {
-	private static int START_VALUE = 100;
+	public static int START_VALUE = 100;
 	private static int DOUBLED_ISOLATED_PENALTY = -25;
 	private static int SINGLE_ISOLATED_PENALTY = -10;
 	private static int DOUBLED_PENALTY = -7;
@@ -40,8 +40,7 @@ public class PawnEval {
 			value += SINGLE_ISOLATED_PENALTY;
 		else if (isDoubled(b, p)) // doubled non-isolated pawn
 			value += DOUBLED_PENALTY;
-		else if (isMobileConnectedPassed(b, p)) // mobile connected passed
-												// pawns
+		else if (isMobileConnectedPassed(b, p)) // mobile connected passed pawns
 			value += MOBILE_CONNECTED_PASSED_BONUS;
 		else if (isProtectedPassed(b, p)) // protected passed pawn
 			value += PROTECTED_PASSED_BONUS;

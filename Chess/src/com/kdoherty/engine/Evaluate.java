@@ -25,9 +25,6 @@ public class Evaluate {
 	private static boolean whiteCastled = false;
 	private static boolean blackCastled = false;
 
-	// TODO;
-	// private static int QUEEN_CLOSE_TO_KING_MATE_DEPTH = 4;
-
 	static int evaluate(Board b, Color color, boolean debug) {
 		if (b.isCheckMate(color.opp())) {
 			if (debug) Log.d("eval", "");
