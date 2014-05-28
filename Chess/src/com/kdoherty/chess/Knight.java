@@ -136,4 +136,9 @@ public final class Knight extends Piece {
 	public int evaluate(Board board) {
 		return KnightEval.eval(board, this);
 	}
+
+	@Override
+	public int getStartingValue() {
+		return KnightEval.START_VALUE;
+	}
 }

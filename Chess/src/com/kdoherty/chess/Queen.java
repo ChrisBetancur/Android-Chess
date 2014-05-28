@@ -97,4 +97,9 @@ public final class Queen extends Piece {
    	public int evaluate(Board board) {
    		return QueenEval.eval(board, this);
    	}
+
+	@Override
+	public int getStartingValue() {
+		return QueenEval.START_VALUE;
+	}
 }

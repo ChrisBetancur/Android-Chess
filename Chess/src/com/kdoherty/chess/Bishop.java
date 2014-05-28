@@ -95,6 +95,11 @@ public class Bishop extends Piece {
 
 	@Override
 	public int evaluate(Board board) {
-		return BishopEval.eval(board, this);
+		return BishopEval.evaluate(board, this);
+	}
+
+	@Override
+	public int getStartingValue() {
+		return BishopEval.START_VALUE;
 	}
 }

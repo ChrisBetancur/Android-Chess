@@ -199,7 +199,7 @@ public final class Pawn extends Piece {
 	 *            The column of the potential enPoissant Square
 	 * @return true if this Pawn can enPoissant to the input row/column
 	 */
-	private boolean canEnPoissant(Board b, int r, int c) {
+	boolean canEnPoissant(Board b, int r, int c) {
 		int enPoissantRow = color == Color.WHITE ? 3 : 4;
 		return row == enPoissantRow
 				&& new Square(r, c).equals(b.getEnPoissantSq())
@@ -243,7 +243,7 @@ public final class Pawn extends Piece {
 			b.setEnPoissantSq(null);
 		}
 		if (isPromoting()) {
-			// TODO
+			// TODO: This pawn is promoting
 		}
 	}
 
@@ -282,5 +282,10 @@ public final class Pawn extends Piece {
 	@Override
 	public int evaluate(Board board) {
 		return PawnEval.eval(board, this);
+	}
+
+	@Override
+	public int getStartingValue() {
+		return PawnEval.START_VALUE;
 	}
 }

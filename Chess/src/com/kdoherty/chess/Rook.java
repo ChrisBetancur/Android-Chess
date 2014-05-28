@@ -97,4 +97,9 @@ public final class Rook extends Piece {
 	public int evaluate(Board board) {
 		return RookEval.eval(board, this);
 	}
+
+	@Override
+	public int getStartingValue() {
+		return RookEval.START_VALUE;
+	}
 }

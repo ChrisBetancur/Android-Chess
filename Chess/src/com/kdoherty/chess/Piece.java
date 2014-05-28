@@ -157,6 +157,7 @@ public abstract class Piece {
 	}
 
 	public abstract int evaluate(Board b);
+	public abstract int getStartingValue();
 
 	/**
 	 * EFFECT: Moves this Piece to the input square if it can move there

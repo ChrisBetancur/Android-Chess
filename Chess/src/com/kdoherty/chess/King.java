@@ -283,4 +283,9 @@ public final class King extends Piece {
 	public boolean equals(Object obj) {
 		return super.equals(obj) && ((King) obj).hasCastled == hasCastled;
 	}
+
+	@Override
+	public int getStartingValue() {
+		return KingEval.START_VALUE;
+	}
 }
