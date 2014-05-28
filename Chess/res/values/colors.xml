@@ -21,5 +21,7 @@
     <color name="login_font_color_1">#546778</color>
     <color name="login_font_color_2">#8E8E8E</color>
     <color name="blue_txt">#0f5690</color>
+    <color name="wood_brown">#825201</color>
+    <color name="light_brown">#b69b4c</color>
 
 </resources>
