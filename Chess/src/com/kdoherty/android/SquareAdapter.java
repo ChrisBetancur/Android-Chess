@@ -17,7 +17,7 @@ import com.kdoherty.chess.Piece;
  * @author Kevin Doherty
  * 
  */
-class SquareAdapter extends BaseAdapter {
+final class SquareAdapter extends BaseAdapter {
 
 	/** The context which this adapter is called from */
 	private ChessActivity context;
@@ -96,7 +96,8 @@ class SquareAdapter extends BaseAdapter {
 			convertView = inflater.inflate(R.layout.square, parent, false);
 			viewHolder = new ViewHolder();
 			viewHolder.pieceViewItem = (PieceImageView) convertView
-					.findViewById(R.id.square_background);
+					.findViewById(R.id.squareView);
+			
 			convertView.setTag(viewHolder);
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();
@@ -111,7 +112,9 @@ class SquareAdapter extends BaseAdapter {
 
 		// Checker the board
 		if (!((row % 2 == 0 && col % 2 == 0) || (row % 2 == 1 && col % 2 == 1))) {
-			convertView.setBackgroundResource(R.color.light_grey);
+			convertView.setBackgroundResource(R.color.wood_brown);
+		} else {
+			convertView.setBackgroundResource(R.color.light_brown);
 		}
 
 		Piece piece = board.getOccupant(row, col);
