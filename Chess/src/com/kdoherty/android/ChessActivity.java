@@ -1,5 +1,8 @@
 package com.kdoherty.android;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
@@ -27,23 +30,25 @@ import com.kdoherty.engine.CpuPlayer;
  */
 public class ChessActivity extends Activity {
 
-	// TODO: Get configuration data from previous Activity
-	// TODO: Taken Piece #8 goes off screen / is covered by another view
+	// TODO: Make computer move in the background
 	// TODO: Pawn Promotion
+	// TODO: Wood images for Squares
+	// TODO: Get configuration data from previous Activity
+	// TODO: Landscape orientation view
+	// TODO: White taken Piece #8 gets a tiny bit cut off
 
-	private static boolean IS_CPU_PLAYER = true;
-	private static final Color CPU_COLOR = Color.BLACK;
-	private static final int DEPTH = 1;
-	private CpuPlayer player = new CpuPlayer(CPU_COLOR, DEPTH);
-	
+	boolean isCpuPlayer = true;
+	private static final Color cpuColor = Color.BLACK;
+	private static final int cpuDepth = 1;
+	private CpuPlayer player = new CpuPlayer(cpuColor, cpuDepth);
+	/** The starting game time for each player in milliseconds */
+	private long startTime = 900000; // 15 minutes
+
 	/**
 	 * The timer which is currently ticking down. Also represents whose side it
 	 * is to move
 	 */
 	private Color activeTimer = Color.WHITE;
-
-	/** The starting game time in milliseconds */
-	private static final long TIME = 900000; // 15 minutes
 
 	/** The white count down timer */
 	private CountDownTimerPausable whiteTimer;
@@ -56,26 +61,37 @@ public class ChessActivity extends Activity {
 
 	/** The View displaying the amount of time black has left to move */
 	private TextView blackTimerView;
-	
-	
+
 	/** Used to represent the Board */
+	//
 	private GridView boardView;
 
 	/** Adapter which binds the Board representation to the view of the Board */
 	private SquareAdapter adapter;
-	
-	
+
 	/** Responsible for holding the taken white Pieces */
 	private GridView whiteTakenPieces;
-	
+
 	/** Responsible for holding the taken black Pieces */
 	private GridView blackTakenPieces;
-	
+
 	/** Adapter used to display a List of white Pieces */
 	private TakenPieceAdapter whiteTakenAdapter;
-	
+
 	/** Adapter used to display a List of black Pieces */
 	private TakenPieceAdapter blackTakenAdapter;
+
+	/** Keeps track of if its the first or second click on the Board */
+	private boolean isFirstClick = true;
+
+	/** Is either player out of time? */
+	private boolean isOutOfTime = false;
+
+	/**
+	 * Represents the Piece which is currently clicked and will attempt to move
+	 * to the next clicked square
+	 */
+	private Piece activePiece;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -87,8 +103,8 @@ public class ChessActivity extends Activity {
 		initBoard();
 		initPieceHolders();
 		
-		if (IS_CPU_PLAYER && CPU_COLOR == Color.WHITE) {
-			makeCpuMove();
+		if (isCpuMove()) {
+			makeCpuMove();         
 		}
 	}
 
@@ -98,7 +114,7 @@ public class ChessActivity extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-	
+
 	/**
 	 * Initializes the timers for both white and black and sets them to the
 	 * starting time.
@@ -108,75 +124,42 @@ public class ChessActivity extends Activity {
 		blackTimerView = (TextView) findViewById(R.id.blackTimer);
 		whiteTimerView = (TextView) findViewById(R.id.whiteTimer);
 
-		String startTime = millisToString(TIME);
+		final SimpleDateFormat timeFormat = new SimpleDateFormat("m:ss",
+				Locale.getDefault());
 
-		whiteTimerView.setText(startTime);
-		blackTimerView.setText(startTime);
+		String startTimeStr = timeFormat.format(startTime);
+		whiteTimerView.setText(startTimeStr);
+		blackTimerView.setText(startTimeStr);
 
-		whiteTimer = new CountDownTimerPausable(TIME, 1000) {
+		whiteTimer = new CountDownTimerPausable(startTime, 100) {
 
 			@Override
 			public void onTick(long millisUntilFinished) {
-				whiteTimerView.setText(millisToString(millisUntilFinished));
+				whiteTimerView.setText(timeFormat.format(millisUntilFinished));
 			}
 
 			@Override
 			public void onFinish() {
-				Toast.makeText(ChessActivity.this, "BLACK WINS!",
+				Toast.makeText(ChessActivity.this, "OUT OF TIME. BLACK WINS!",
 						Toast.LENGTH_LONG).show();
+				isOutOfTime = true;
 			}
 		};
 
-		blackTimer = new CountDownTimerPausable(TIME, 1000) {
+		blackTimer = new CountDownTimerPausable(startTime, 100) {
 
 			@Override
 			public void onTick(long millisUntilFinished) {
-				blackTimerView.setText(millisToString(millisUntilFinished));
+				blackTimerView.setText(timeFormat.format(millisUntilFinished));
 			}
 
 			@Override
 			public void onFinish() {
-				Toast.makeText(ChessActivity.this, "WHITE WINS!",
+				Toast.makeText(ChessActivity.this, "OUT OF TIME. WHITE WINS!",
 						Toast.LENGTH_LONG).show();
+				isOutOfTime = true;
 			}
 		};
-	}
-	
-	/**
-	 * Converts milliseconds into a String of format MM:SS where M is minutes
-	 * and S is seconds
-	 * 
-	 * @param millis
-	 *            The milliseconds to represent as a String
-	 * @return The String representation of milliseconds in MM:SS format
-	 */
-	private String millisToString(long millis) {
-		long seconds = millis / 1000;
-		if (seconds < 60) {
-			return "00:" + secondsToString(seconds);
-		}
-		long minutes = seconds / 60;
-		long remainder = seconds % 60;
-		if (seconds < 600) {
-			return "0" + String.valueOf(minutes) + ":"
-					+ secondsToString(remainder);
-		}
-		return String.valueOf(minutes) + ":" + secondsToString(remainder);
-	}
-
-	/**
-	 * Helper method for millisToString
-	 * 
-	 * @param seconds
-	 *            The seconds to represent as a String
-	 * @return The String representation of seconds in SS format
-	 */
-	private String secondsToString(long seconds) {
-		if (seconds > 9) {
-			return String.valueOf(seconds);
-		} else {
-			return "0" + String.valueOf(seconds);
-		}
 	}
 
 	/**
@@ -202,36 +185,42 @@ public class ChessActivity extends Activity {
 		blackTakenAdapter = new TakenPieceAdapter(this);
 		blackTakenPieces.setAdapter(blackTakenAdapter);
 	}
-	
-	/** 
-	 * Responsible for the following functionality:
-	 * 1. Makes the input move on the Board
-	 * 2. Refreshes the Board so it is displaying the most up to date version
-	 * 3. Toggles the timers
-	 * 4. Toggles the side to move
-	 * 5. Adds the input move to the stack of Moves contained in the Board
-	 * 6. Checks and notifies players of the end of the game
-	 * 7. If a Piece was taken, display that Piece with the other taken Pieces
+
+	/**
+	 * Responsible for the following functionality: 
+	 * 1. Makes the input move on the Board 
+	 * 2. Refreshes the Board so it is displaying the most up to date version 
+	 * 3. Toggles the timers 
+	 * 4. Toggles the side to move 
+	 * 5. Adds the input move to the stack of Moves contained in the Board 
+	 * 6. Checks and notifies players of the end of the game 
+	 * 7. If a Piece was taken, display that Piece with the other taken Pieces 
+	 * 8. If it is then the computer's turn, make the computer's move
 	 * 
 	 * @param move
-	 * 			 The move to make on the Board
+	 *            The move to make on the Board
 	 */
 	void passTurn(Move move) {
 		Board board = adapter.getBoard();
 		move.make(board);
+		// TODO: En poissant sq is null after 1. pe4
 		refreshAdapter(board);
-		toggleTimer();
 		board.toggleSideToMove();
 		board.addMove(move);
-		if (board.isGameOver()) {
-			showGameOver();
-		}
 		Piece taken = move.getTaken();
 		if (taken != null) {
 			addToTakenPieces(taken);
 		}
+		if (board.isGameOver()) {
+			showGameOver();
+		} else {
+			toggleTimer();
+		}
+		if (isCpuMove()) {
+			makeCpuMove();
+		}
 	}
-	
+
 	/**
 	 * Updates the UI to represent the input Board
 	 * 
@@ -254,7 +243,7 @@ public class ChessActivity extends Activity {
 		activeTimer = activeTimer.opp();
 		getTimer(activeTimer).start();
 	}
-	
+
 	/**
 	 * Displays a message to the User that the game is over
 	 */
@@ -269,7 +258,7 @@ public class ChessActivity extends Activity {
 		}
 		getTimer(activeTimer).cancel();
 	}
-	
+
 	/**
 	 * Gets the timer corresponding to the input color
 	 * 
@@ -280,7 +269,7 @@ public class ChessActivity extends Activity {
 	private CountDownTimerPausable getTimer(Color color) {
 		return color == Color.WHITE ? whiteTimer : blackTimer;
 	}
-	
+
 	/**
 	 * Displays the input Piece with the other taken Pieces of the same color
 	 * 
@@ -301,22 +290,18 @@ public class ChessActivity extends Activity {
 	}
 
 	/**
-	 * Asks the user which Piece to promote their Pawn to.
-	 * 
-	 * @param color
-	 *            The Color of the Pawn which is promoting
-	 * @return The Piece which the user choice to Promote their Piece to
+	 * Makes the computer's move on the view of the Board and handles passing
+	 * the turn.
 	 */
-	Piece askPromotion(Color color) {
-		return new Queen(color);
+	void makeCpuMove() {
+		new GetCpuMove().execute();
 	}
 
 	/**
 	 * Gets the computer player's move and plays it on the Board and handles
 	 * passing the turn. This is an expensive call so it is run on a background
-	 * Thread.
-	 * 
-	 * @author Kevin Doherty
+	 * Thread instead of the UI thread. This also allows the computer player's
+	 * timer to update while this call is executing.
 	 * 
 	 */
 	private class GetCpuMove extends AsyncTask<Void, Void, Move> {
@@ -329,29 +314,89 @@ public class ChessActivity extends Activity {
 		@Override
 		protected Move doInBackground(Void... params) {
 			Board board = adapter.getBoard();
-			return player.negaMaxMove(board);
+			return player.negaMaxMove(board.clone());
 		}
 
 		/**
 		 * Plays the computer player's Move on the Board and handles passing the
-		 * turn.
+		 * turn if it has not yet ran out of time.
 		 */
 		@Override
 		protected void onPostExecute(Move result) {
 			super.onPostExecute(result);
-			if (result == null) {
-				showGameOver();
-			} else {
-				passTurn(result);
+			if (!isOutOfTime) {
+				if (result == null) {
+					showGameOver();
+				} else {
+					passTurn(result);
+				}
 			}
 		}
 	}
 
 	/**
-	 * Makes the computer's move on the view of the Board and handles passing
-	 * the turn.
+	 * Toggles the boolean value of isFirstClick.
 	 */
-	void makeCpuMove() {
-		new GetCpuMove().execute();
+	void toggleClick() {
+		isFirstClick = !isFirstClick;
 	}
+
+	/**
+	 * Is this the first click on the chess board?
+	 * 
+	 * @return Is this the first click on the chess board?
+	 */
+	boolean isFirstClick() {
+		return isFirstClick;
+	}
+
+	/**
+	 * Sets the Piece which is clicked on. The next click will attempt to move
+	 * this Piece to the clicked Square
+	 * 
+	 * @param activePiece
+	 *            The Piece which will attempt to move to the next clicked
+	 *            square on the Board
+	 */
+	void setActivePiece(Piece activePiece) {
+		this.activePiece = activePiece;
+	}
+
+	/**
+	 * Gets the Piece which is currently selected.
+	 * 
+	 * @return The Piece which will attempt to move to the next clicked square
+	 *         on the Board
+	 */
+	Piece getActivePiece() {
+		return activePiece;
+	}
+
+	/**
+	 * Is either play out of time?
+	 * 
+	 * @return true if one of the players has no time left and false otherwise
+	 */
+	boolean isOutOfTime() {
+		return isOutOfTime;
+	}
+
+	/**
+	 * Asks the user which Piece to promote their Pawn to.
+	 * 
+	 * @param color
+	 *            The Color of the Pawn which is promoting
+	 * @return The Piece which the user choice to Promote their Piece to
+	 */
+	Piece askPromotion(Color color) {
+		return new Queen(color);
+	}
+
+	/**
+	 * Is it the computer's turn to move?
+	 * @return true if its the computer's turn to move and false otherwise
+	 */
+	boolean isCpuMove() {
+		return isCpuPlayer && cpuColor == activeTimer;
+	}	
 }
