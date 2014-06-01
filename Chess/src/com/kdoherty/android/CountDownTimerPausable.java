@@ -5,7 +5,7 @@ import android.os.CountDownTimer;
 /**
  * This class uses the native CountDownTimer to create a timer which could be
  * paused and then started again from the previous point. See
- * http://stackoverflow.com/questions/5738362/pause-countdowntimer-in-android-when-activity-is-not-in-front/6469166#6469166
+ * http://stackoverflow.com/a/10055480/3258892
  */
 abstract class CountDownTimerPausable {
 
@@ -66,6 +66,7 @@ abstract class CountDownTimerPausable {
 	/**
 	 * Start or Resume the count down.
 	 * 
+	 * 
 	 * @return CountDownTimerPausable current instance
 	 */
 	public synchronized final CountDownTimerPausable start() {
@@ -78,8 +79,10 @@ abstract class CountDownTimerPausable {
 	}
 
 	/**
-	 * Pauses the CountDownTimerPausable, so it could be resumed(start) later
+	 * Pauses the CountDownTimerPausable, so it could be resumed / started later
 	 * from the same point where it was paused.
+	 * 
+	 * @throws IllegalStateException
 	 */
 	public void pause() throws IllegalStateException {
 		if (!isPaused) {
