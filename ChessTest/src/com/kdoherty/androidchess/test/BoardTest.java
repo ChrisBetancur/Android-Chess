@@ -206,4 +206,17 @@ public class BoardTest extends BaseTest {
 		board = Board.defaultBoard();
 		assertFalse(board.isDraw(Color.BLACK));
 	}
+	
+	public void testClone() {
+		Board castleBoard = castlingReadyBoard();
+		assertEquals(castleBoard, castleBoard.clone());
+		Board checkMateBoard = checkmateBoard();
+		assertEquals(checkMateBoard, checkMateBoard.clone());
+		Board drawBoard = drawBoard();
+		assertEquals(drawBoard, drawBoard.clone());
+		Board kingInCheckBoard = kingInCheckBoard();
+		assertEquals(kingInCheckBoard, kingInCheckBoard.clone());
+		assertFalse(kingInCheckBoard == kingInCheckBoard.clone());
+
+	}
 }
