@@ -17,6 +17,7 @@ import com.kdoherty.androidchess.R;
 import com.kdoherty.chess.Board;
 import com.kdoherty.chess.Color;
 import com.kdoherty.chess.Move;
+import com.kdoherty.chess.Pawn;
 import com.kdoherty.chess.Piece;
 import com.kdoherty.chess.Queen;
 import com.kdoherty.engine.CpuPlayer;
@@ -30,14 +31,13 @@ import com.kdoherty.engine.CpuPlayer;
  */
 public class ChessActivity extends Activity {
 
-	// TODO: Make computer move in the background
 	// TODO: Pawn Promotion
 	// TODO: Wood images for Squares
 	// TODO: Get configuration data from previous Activity
 	// TODO: Landscape orientation view
 	// TODO: White taken Piece #8 gets a tiny bit cut off
 
-	boolean isCpuPlayer = true;
+	private boolean isCpuPlayer = true;
 	private static final Color cpuColor = Color.BLACK;
 	private static final int cpuDepth = 1;
 	private CpuPlayer player = new CpuPlayer(cpuColor, cpuDepth);
@@ -63,7 +63,6 @@ public class ChessActivity extends Activity {
 	private TextView blackTimerView;
 
 	/** Used to represent the Board */
-	//
 	private GridView boardView;
 
 	/** Adapter which binds the Board representation to the view of the Board */
@@ -85,7 +84,7 @@ public class ChessActivity extends Activity {
 	private boolean isFirstClick = true;
 
 	/** Is either player out of time? */
-	private boolean isOutOfTime = false;
+	private boolean isGameOver = false;
 
 	/**
 	 * Represents the Piece which is currently clicked and will attempt to move
@@ -104,7 +103,7 @@ public class ChessActivity extends Activity {
 		initPieceHolders();
 		
 		if (isCpuMove()) {
-			makeCpuMove();         
+			new GetCpuMove().execute();         
 		}
 	}
 
@@ -142,7 +141,7 @@ public class ChessActivity extends Activity {
 			public void onFinish() {
 				Toast.makeText(ChessActivity.this, "OUT OF TIME. BLACK WINS!",
 						Toast.LENGTH_LONG).show();
-				isOutOfTime = true;
+				isGameOver = true;
 			}
 		};
 
@@ -157,7 +156,7 @@ public class ChessActivity extends Activity {
 			public void onFinish() {
 				Toast.makeText(ChessActivity.this, "OUT OF TIME. WHITE WINS!",
 						Toast.LENGTH_LONG).show();
-				isOutOfTime = true;
+				isGameOver = true;
 			}
 		};
 	}
@@ -203,6 +202,11 @@ public class ChessActivity extends Activity {
 	void passTurn(Move move) {
 		Board board = adapter.getBoard();
 		move.make(board);
+		Piece piece = move.getPiece();
+		if (piece instanceof Pawn && ((Pawn) piece).isPromoting()) {
+			Piece promotedTo = askPromotion(piece.getColor());
+			board.setPiece(move.getRow(), move.getCol(), promotedTo);
+		}
 		// TODO: En poissant sq is null after 1. pe4
 		refreshAdapter(board);
 		board.toggleSideToMove();
@@ -217,8 +221,19 @@ public class ChessActivity extends Activity {
 			toggleTimer();
 		}
 		if (isCpuMove()) {
-			makeCpuMove();
-		}
+			new GetCpuMove().execute();
+		}	
+	}
+	
+	/**
+	 * Asks the user which Piece to promote their Pawn to.
+	 * 
+	 * @param color
+	 *            The Color of the Pawn which is promoting
+	 * @return The Piece which the user choice to Promote their Piece to
+	 */
+	private Piece askPromotion(Color color) {
+		return new Queen(color);
 	}
 
 	/**
@@ -257,6 +272,7 @@ public class ChessActivity extends Activity {
 			Toast.makeText(this, "DRAW!", Toast.LENGTH_LONG).show();
 		}
 		getTimer(activeTimer).cancel();
+		isGameOver = true;
 	}
 
 	/**
@@ -288,13 +304,13 @@ public class ChessActivity extends Activity {
 			blackTakenPieces.setAdapter(blackTakenAdapter);
 		}
 	}
-
+	
 	/**
-	 * Makes the computer's move on the view of the Board and handles passing
-	 * the turn.
+	 * Is it the computer's turn to move?
+	 * @return true if its the computer's turn to move and false otherwise
 	 */
-	void makeCpuMove() {
-		new GetCpuMove().execute();
+	boolean isCpuMove() {
+		return isCpuPlayer && cpuColor == activeTimer;
 	}
 
 	/**
@@ -324,7 +340,7 @@ public class ChessActivity extends Activity {
 		@Override
 		protected void onPostExecute(Move result) {
 			super.onPostExecute(result);
-			if (!isOutOfTime) {
+			if (!isGameOver) {
 				if (result == null) {
 					showGameOver();
 				} else {
@@ -373,30 +389,12 @@ public class ChessActivity extends Activity {
 	}
 
 	/**
-	 * Is either play out of time?
+	 * Is either play out of time or is this game over?
 	 * 
-	 * @return true if one of the players has no time left and false otherwise
+	 * @return true if one of the players has no time left or the game
+	 *  is over and false otherwise
 	 */
-	boolean isOutOfTime() {
-		return isOutOfTime;
-	}
-
-	/**
-	 * Asks the user which Piece to promote their Pawn to.
-	 * 
-	 * @param color
-	 *            The Color of the Pawn which is promoting
-	 * @return The Piece which the user choice to Promote their Piece to
-	 */
-	Piece askPromotion(Color color) {
-		return new Queen(color);
-	}
-
-	/**
-	 * Is it the computer's turn to move?
-	 * @return true if its the computer's turn to move and false otherwise
-	 */
-	boolean isCpuMove() {
-		return isCpuPlayer && cpuColor == activeTimer;
+	boolean isGameOver() {
+		return isGameOver;
 	}	
 }

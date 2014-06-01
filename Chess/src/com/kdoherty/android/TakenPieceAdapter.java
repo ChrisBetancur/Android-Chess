@@ -57,16 +57,21 @@ final class TakenPieceAdapter extends BaseAdapter {
 	 *            The Piece to add to the view displaying taken Pieces
 	 */
 	public void addPiece(Piece piece) {
+		if (piece == null) {
+			throw new NullPointerException("Can't display a null taken piece");
+		}
 		takenPieces.add(piece);
 		Collections.sort(takenPieces, PieceComparator.INSTANCE);
+		notifyDataSetChanged();
 	}
 
 	/**
 	 * A simple Piece Comparator which compares Pieces by there starting value.
 	 * If used to sort a List of Pieces it will sort them from lowest value to
 	 * highest value. An enumeration is used to ensure only one instance of this
-	 * class is used / created.
+	 * class is created.
 	 * 
+	 * @author Kevin Doherty
 	 */
 	private static enum PieceComparator implements Comparator<Piece> {
 
@@ -75,6 +80,11 @@ final class TakenPieceAdapter extends BaseAdapter {
 		/**
 		 * Compares two Pieces based on their starting values.
 		 * 
+		 * 
+		 * @param lhs
+		 *            Piece
+		 * @param rhs
+		 *            Piece
 		 * @return A positive integer if the first Piece has a greater starting
 		 *         value than the second Piece, 0 if the two Pieces have the
 		 *         same starting value, and a negative number if the second
@@ -104,7 +114,7 @@ final class TakenPieceAdapter extends BaseAdapter {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ImageView imageView;
-		
+
 		if (convertView == null) {
 			imageView = new ImageView(context);
 			imageView.setLayoutParams(new GridView.LayoutParams(60, 60));
@@ -116,7 +126,7 @@ final class TakenPieceAdapter extends BaseAdapter {
 
 		int resId = (int) getItemId(position);
 		imageView.setImageResource(resId);
-		
+
 		return imageView;
 	}
 }

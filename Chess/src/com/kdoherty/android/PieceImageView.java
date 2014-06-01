@@ -11,7 +11,7 @@ import android.widget.ImageView;
  * @author Kevin Doherty
  * 
  */
-class PieceImageView extends ImageView {
+final class PieceImageView extends ImageView {
 
 	/** The row this is located on */
 	private int row;
@@ -54,6 +54,7 @@ class PieceImageView extends ImageView {
 	/**
 	 * Gets the row of the Board that this image is located on
 	 * 
+	 * 
 	 * @return The row of the Board that this image is located on
 	 */
 	int getRow() {
@@ -62,6 +63,7 @@ class PieceImageView extends ImageView {
 
 	/**
 	 * Gets the column of the Board that this image is located on
+	 * 
 	 * 
 	 * @return The column of the Board that this image is located on
 	 */

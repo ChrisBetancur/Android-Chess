@@ -1,6 +1,5 @@
 package com.kdoherty.android;
 
-import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,7 @@ import com.kdoherty.chess.Piece;
 final class SquareAdapter extends BaseAdapter {
 
 	/** The context which this adapter is called from */
-	private ChessActivity context;
+	private ChessActivity chessContext;
 
 	/** The Board that this will represent */
 	private Board board;
@@ -44,7 +43,7 @@ final class SquareAdapter extends BaseAdapter {
 	 *            The Board to display
 	 */
 	public SquareAdapter(ChessActivity context, Board board) {
-		this.context = context;
+		this.chessContext = context;
 		this.board = board;
 	}
 
@@ -92,12 +91,12 @@ final class SquareAdapter extends BaseAdapter {
 		ViewHolder viewHolder;
 
 		if (convertView == null) {
-			LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+			LayoutInflater inflater = chessContext.getLayoutInflater();
 			convertView = inflater.inflate(R.layout.square, parent, false);
 			viewHolder = new ViewHolder();
 			viewHolder.pieceViewItem = (PieceImageView) convertView
 					.findViewById(R.id.squareView);
-			
+
 			convertView.setTag(viewHolder);
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();
@@ -106,10 +105,6 @@ final class SquareAdapter extends BaseAdapter {
 		int row = position / 8;
 		int col = position % 8;
 
-		PieceImageView pieceView = viewHolder.pieceViewItem;
-		pieceView.setRow(row);
-		pieceView.setCol(col);
-
 		// Checker the board
 		if (!((row % 2 == 0 && col % 2 == 0) || (row % 2 == 1 && col % 2 == 1))) {
 			convertView.setBackgroundResource(R.color.wood_brown);
@@ -117,15 +112,25 @@ final class SquareAdapter extends BaseAdapter {
 			convertView.setBackgroundResource(R.color.light_brown);
 		}
 
+		PieceImageView pieceView = viewHolder.pieceViewItem;
+		pieceView.setRow(row);
+		pieceView.setCol(col);
+
 		Piece piece = board.getOccupant(row, col);
 		if (piece != null) {
 			int id = PieceImages.getId(piece);
 			pieceView.setImageResource(id);
 			pieceView.setId(id);
-			pieceView.setOnTouchListener(OnPieceTouch.INSTANCE);
+			pieceView
+					.setOnLongClickListener(new OnPieceLongClick(chessContext));
+			pieceView.setOnClickListener(new OnPieceClick(chessContext, board,
+					row, col));
 		}
 
-		convertView.setOnDragListener(new OnPieceDrag(context, board, row, col));
+		convertView.setOnClickListener(new OnPieceClick(chessContext, board,
+				row, col));
+		convertView.setOnDragListener(new OnPieceDrag(chessContext, board, row,
+				col));
 
 		return convertView;
 	}

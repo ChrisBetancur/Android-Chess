@@ -49,8 +49,8 @@ final class PieceImages {
 	 * 
 	 * @param piece
 	 *            The Piece to get the image ID of
-	 * @return The resource id of the input Piece
-	 */
+	
+	 * @return The resource id of the input Piece */
 	static Integer getId(Piece piece) {
 		// A null piece represents an empty square
 		if (piece == null) {
