@@ -7,16 +7,23 @@ import com.kdoherty.chess.Board;
 import com.kdoherty.chess.Color;
 import com.kdoherty.chess.Move;
 
+/**
+ */
 public class MateSolver {
 
 	private MateSolver() {
 		// Hide Constructor
 	}
 
+	/**
+	 * Method findMateInOne.
+	 * @param b Board
+	 * @param color Color
+	 * @return Move
+	 */
 	public static Move findMateInOne(Board b, Color color) {
 		List<Move> moves = b.getMoves(color);
-		//Collections.sort(moves, new MoveComparator(b));
-		for (Move move : MoveSorter.sort(b,moves)) {
+		for (Move move : moves) {
 			move.make(b);
 			if (b.isCheckMate(color.opp())) {
 				move.unmake(b);
@@ -31,9 +38,15 @@ public class MateSolver {
 	// if there is a forced mate this will return A solution. The other side may
 	// make different moves and other corresponding moves
 	// will need to be made in the output but it is forced either way
+	/**
+	 * Method findMateInN.
+	 * @param b Board
+	 * @param color Color
+	 * @param depth int
+	 * @return List<Move>
+	 */
 	public static List<Move> findMateInN(Board b, Color color, int depth) {
 		List<Move> mateMoves = new ArrayList<Move>();
-		List<Move> nextMateMoves = new ArrayList<Move>();
 		boolean soonerMate = false;
 		if (depth == 1) {
 			Move move = findMateInOne(b, color);
@@ -42,13 +55,12 @@ public class MateSolver {
 			}
 			return mateMoves;
 		} else {
-			List<Move> moves = b.getMoves(color);
-			//Collections.sort(moves, new MoveComparator(b));
-			for (Move m : MoveSorter.sort(b,moves)) {
+			final List<Move> nextMateMoves = new ArrayList<Move>();
+			for (Move m : b.getMoves(color)) {
 				mateMoves.add(m);
 				m.make(b);
-				for (Move mo : MoveSorter.sort(b, b.getMoves(color.opp()))) {
-					nextMateMoves = null;
+				for (Move mo : b.getMoves(color.opp())) {
+					nextMateMoves.clear();
 					soonerMate = false;
 					mo.make(b);
 					
@@ -63,9 +75,9 @@ public class MateSolver {
 					
 					if (!soonerMate) {
 						
-						nextMateMoves = findMateInN(b, color, depth - 1);
+						nextMateMoves.addAll(findMateInN(b, color, depth - 1));
 						
-						if (nextMateMoves == null || nextMateMoves.isEmpty()) {
+						if (nextMateMoves.isEmpty()) {
 							// A way to stop mate was found. Don't need to keep
 							// checking this move
 							mateMoves.clear();
@@ -76,7 +88,7 @@ public class MateSolver {
 
 					mo.unmake(b);
 				}
-				if (!(nextMateMoves == null || nextMateMoves.size() == 0)) {
+				if (!nextMateMoves.isEmpty()) {
 					m.unmake(b);
 					mateMoves.addAll(nextMateMoves);
 					return mateMoves;
@@ -88,6 +100,13 @@ public class MateSolver {
 		return mateMoves;
 	}
 
+	/**
+	 * Method findMateUpToN.
+	 * @param b Board
+	 * @param color Color
+	 * @param n int
+	 * @return List<Move>
+	 */
 	public static List<Move> findMateUpToN(Board b, Color color, int n) {
 		List<Move> mate = new ArrayList<Move>();
 		for (int i = 1; i <= n; i++) {
