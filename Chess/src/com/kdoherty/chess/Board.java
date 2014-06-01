@@ -9,13 +9,12 @@ import java.util.List;
 /**
  * @author Kevin Doherty
  * 
- *          This class represents a ChessBoard using a 2D array of Pieces. An
- *          empty Square on the Board is represented by a null Piece. This Board
- *          also contains lists containing all active Pieces for each color.
- *          This way we do not need to iterate over all 64 squares to generate
- *          the Pieces of a certain color. It keeps track of the side to move,
- *          the enPoissant Square if there is one, and the Moves
- *          played.
+ *         This class represents a ChessBoard using a 2D array of Pieces. An
+ *         empty Square on the Board is represented by a null Piece. This Board
+ *         also contains lists containing all active Pieces for each color. This
+ *         way we do not need to iterate over all 64 squares to generate the
+ *         Pieces of a certain color. It keeps track of the side to move, the
+ *         enPoissant Square if there is one, and the Moves played.
  * 
  */
 public final class Board {
@@ -37,7 +36,7 @@ public final class Board {
 
 	/** All the black Pieces on this Board */
 	private final List<Piece> blackPieces;
-	
+
 	/** Keeps track of all the moves played so far on this Board */
 	private final Deque<Move> moveList;
 
@@ -46,7 +45,7 @@ public final class Board {
 
 	/** Keeps track of the Square where a pawn can be captured by enPoissant */
 	private Square enPoissantSq;
-	
+
 	/**
 	 * Constructor for Board. Initially contains no Pieces.
 	 */
@@ -61,6 +60,7 @@ public final class Board {
 	 * Factory method for a Board filled with all Pieces in their default
 	 * locations
 	 * 
+	 * 
 	 * @return A Board with all Pieces in their starting locations
 	 */
 	public static Board defaultBoard() {
@@ -72,9 +72,9 @@ public final class Board {
 	/**
 	 * Are the input row and column on a chess board?
 	 * 
-	 * @param r
+	 * @param row
 	 *            row coordinate
-	 * @param c
+	 * @param col
 	 *            column coordinate
 	 * @return is coordinate (r, c) on a chess board?
 	 */
@@ -85,13 +85,13 @@ public final class Board {
 	/**
 	 * Takes in two locations on the board and determines if they are diagonal
 	 * 
-	 * @param r
+	 * @param row
 	 *            row coordinate for first location
-	 * @param c
+	 * @param col
 	 *            column coordinate for first location
-	 * @param r2
+	 * @param row2
 	 *            row coordinate for second location
-	 * @param c2
+	 * @param col2
 	 *            column coordinate for second location
 	 * @return true if the two locations are diagonal
 	 */
@@ -116,13 +116,15 @@ public final class Board {
 	 *            row coordinate for second location
 	 * @param c2
 	 *            column coordinate for second location
+	 * 
 	 * @return true if the two locations are neighbors
 	 */
 	public static boolean isNeighbor(int r, int c, int r2, int c2) {
 		for (int i = r2 - 1; i < r2 + 2; i++) {
 			for (int j = c2 - 1; j < c2 + 2; j++) {
-				if (!(i == r2 && j == c2) && (i == r && j == c))
+				if (!(i == r2 && j == c2) && (i == r && j == c)) {
 					return true;
+				}
 			}
 		}
 		return false;
@@ -136,6 +138,7 @@ public final class Board {
 	 *            One square to find squares between
 	 * @param s2
 	 *            The other square to find squares between
+	 * 
 	 * @return An <code>List</code> of all squares between the input squares
 	 */
 	public static List<Square> getBtwnSqs(Square s1, Square s2) {
@@ -165,6 +168,7 @@ public final class Board {
 	 *            One square in the row
 	 * @param s2
 	 *            A different square in the same row
+	 * 
 	 * @return A <code>List</code> of all squares between the input squares
 	 */
 	private static List<Square> getBtwnSqsRow(Square s1, Square s2) {
@@ -187,6 +191,7 @@ public final class Board {
 	 *            One square in the column
 	 * @param s2
 	 *            A different square in the same column
+	 * 
 	 * @return An <code>List</code> of all squares between the input squares
 	 */
 	private static List<Square> getBtwnSqsCol(Square s1, Square s2) {
@@ -209,6 +214,7 @@ public final class Board {
 	 *            One square in the diagonal
 	 * @param s2
 	 *            A different square in the same diagonal
+	 * 
 	 * @return An <code>List</code> of all squares between the input squares
 	 */
 	private static List<Square> getBtwnSqsDiag(Square s1, Square s2) {
@@ -234,6 +240,7 @@ public final class Board {
 	 * 
 	 * @param list
 	 *            The List to clone
+	 * 
 	 * @return An ArrayList containing all the same elements as the input list
 	 */
 	private static <T> List<T> cloneList(List<? extends T> list) {
@@ -247,6 +254,7 @@ public final class Board {
 	/**
 	 * Gets this Board's enPoissant Square
 	 * 
+	 * 
 	 * @return The enPoissantSq of this Board
 	 */
 	public Square getEnPoissantSq() {
@@ -256,54 +264,62 @@ public final class Board {
 	/**
 	 * Sets this Board's enPoissant Square to the input Square
 	 * 
-	 * @param s
+	 * @param enPoissantSq
 	 *            The Square to make an enPoissantSq
 	 */
 	public void setEnPoissantSq(Square enPoissantSq) {
 		this.enPoissantSq = enPoissantSq;
 	}
-	
+
 	/**
 	 * Gets the color of the side to move
+	 * 
 	 * 
 	 * @return The color of whose turn it is to move
 	 */
 	public Color getSideToMove() {
 		return sideToMove;
 	}
-	
+
 	/**
 	 * Toggles the color of the side to move
 	 */
 	public void toggleSideToMove() {
 		this.sideToMove = sideToMove.opp();
 	}
-	
+
 	/**
 	 * Adds a move to the list of Moves played on this Board
-	 * @param move The Move to add
+	 * 
+	 * @param move
+	 *            The Move to add
 	 */
 	public void addMove(Move move) {
 		moveList.push(move);
 	}
-	
+
 	/**
-	 * Removes the most recently played move from the list of Moves played on this Board
+	 * Removes the most recently played move from the list of Moves played on
+	 * this Board
 	 */
 	public void undoMove() {
 		moveList.pop();
 	}
-	
+
 	/**
 	 * Gets the last move played on this Board
+	 * 
+	 * 
 	 * @return The last move played on this Board
 	 */
 	public Move getLastMove() {
 		return moveList.peek();
 	}
-	
+
 	/**
 	 * Gets the number of moves played on this Board
+	 * 
+	 * 
 	 * @return The number of moves played on this Board
 	 */
 	public int getMoveCount() {
@@ -317,6 +333,7 @@ public final class Board {
 	 *            The row coordinate
 	 * @param c
 	 *            The column coordinate
+	 * 
 	 * @return The Piece at the input coordinate if there is one and null
 	 *         otherwise
 	 */
@@ -331,6 +348,7 @@ public final class Board {
 	 *            The row coordinate
 	 * @param c
 	 *            The column coordinate
+	 * 
 	 * @return true if the input coordinate is empty
 	 */
 	public boolean isEmpty(int r, int c) {
@@ -344,9 +362,12 @@ public final class Board {
 	 *            The row coordinate
 	 * @param c
 	 *            The column coordinate
+	 * 
 	 * @return true if the input coordinate contains a piece
 	 */
-	public boolean isOccupied(int r, int c) { return !isEmpty(r, c); }
+	public boolean isOccupied(int r, int c) {
+		return !isEmpty(r, c);
+	}
 
 	/**
 	 * Makes the input coordinate empty
@@ -355,6 +376,7 @@ public final class Board {
 	 *            The row coordinate of where to remove
 	 * @param c
 	 *            The column coordinate of where to remove
+	 * 
 	 * @return The removed piece if there was one and otherwise null
 	 */
 	public Piece remove(int r, int c) {
@@ -379,6 +401,7 @@ public final class Board {
 	 *            The column coordinate of where to set the piece
 	 * @param p
 	 *            The piece to set at the input coordinate
+	 * 
 	 * @return The piece previously at this coordinate if there was one
 	 *         otherwise null
 	 */
@@ -408,6 +431,7 @@ public final class Board {
 	 *            2D array
 	 * @param p
 	 *            The piece to take set at the input square
+	 * 
 	 * @return The Piece previously at the input square if there was one
 	 *         otherwise null
 	 */
@@ -429,6 +453,7 @@ public final class Board {
 	 *            The row coordinate of the where we are moving the piece to
 	 * @param c2
 	 *            The column coordinate of the where we are moving the piece to
+	 * 
 	 * @return The piece taken if there was one, if not it will return null. If
 	 *         there was no piece at the first input square, an exception will
 	 *         be thrown.
@@ -458,6 +483,7 @@ public final class Board {
 	 * 
 	 * @param color
 	 *            The color of the pieces we are trying to get
+	 * 
 	 * @return An List of all pieces of the input color
 	 */
 	public List<Piece> getPieces(Color color) {
@@ -470,6 +496,7 @@ public final class Board {
 	 * 
 	 * @param color
 	 *            the Color of the Pieces whose moves we will return
+	 * 
 	 * @return A List of all moves Pieces of the input Color can make
 	 */
 	public List<Move> getMoves(Color color) {
@@ -497,6 +524,7 @@ public final class Board {
 	 * @param color
 	 *            The color of pieces we are checking if they attack the input
 	 *            square
+	 * 
 	 * @return true if the input square is attacked by a piece of the input
 	 *         color
 	 */
@@ -514,6 +542,7 @@ public final class Board {
 	 * 
 	 * @param color
 	 *            The color to find the king of
+	 * 
 	 * @return The King of the input color throws a runtimeException if there is
 	 *         not a King of the input color on this Board
 	 */
@@ -532,6 +561,7 @@ public final class Board {
 	 * 
 	 * @param color
 	 *            The Color of the king we want to find if its in check
+	 * 
 	 * @return true if the input Color's King is in check
 	 */
 	public boolean kingInCheck(Color color) {
@@ -543,6 +573,7 @@ public final class Board {
 	 * 
 	 * @param color
 	 *            The color to check if they are in checkMate
+	 * 
 	 * @return true if the input color is in checkMate
 	 */
 	public boolean isCheckMate(Color color) {
@@ -554,6 +585,7 @@ public final class Board {
 	 * 
 	 * @param color
 	 *            The color of the side to check if they are causing a draw
+	 * 
 	 * @return true if the input color is causing a draw
 	 */
 	public boolean isDraw(Color color) {
@@ -564,17 +596,22 @@ public final class Board {
 	 * Is this game over? A game is over if there is checkMate or a draw for
 	 * either color
 	 * 
+	 * 
 	 * @return true if the game is over
 	 */
 	public boolean isGameOver() {
 		return isCheckMate(Color.WHITE) || isCheckMate(Color.BLACK)
 				|| isDraw(Color.WHITE) || isDraw(Color.BLACK);
 	}
-	
+
 	/**
 	 * Do the two lists contain the same elements. Order is ignored.
-	 * @param listOne One list to check
-	 * @param listTwo Another list to check
+	 * 
+	 * @param listOne
+	 *            One list to check
+	 * @param listTwo
+	 *            Another list to check
+	 * 
 	 * @return Do the two input lists contain the same Elements
 	 */
 	private static <T> boolean sameElements(List<T> listOne, List<T> listTwo) {
@@ -582,16 +619,19 @@ public final class Board {
 	}
 
 	/**
-	 * A Board is equal to another Object if:
-	 * 1. The Object is a Board
+	 * A Board is equal to another Object if: 
+	 * 1. The Object is a Board 
 	 * 2. They contain the same Pieces in the same positions
-	 * 3. They have the same enPoissant Square
+	 * 3. They have the same enPoissant Square 
 	 * 4. They have the same sideToMove
 	 * 
+	 * @param obj
+	 *            Object
 	 * @return Does this Board equal that object?
 	 */
-	
-	@Override public boolean equals(Object obj) {
+
+	@Override
+	public boolean equals(Object obj) {
 		if (obj == this) {
 			return true;
 		}
@@ -604,26 +644,32 @@ public final class Board {
 
 		return Arrays.deepEquals(pieces, thatBoard.pieces)
 				&& sideToMove == thatSideToMove
-				&& (enPoissantSq == thatEnPoissantSq
-				|| (enPoissantSq != null && enPoissantSq.equals(thatEnPoissantSq)))
+				&& (enPoissantSq == thatEnPoissantSq || (enPoissantSq != null && enPoissantSq
+						.equals(thatEnPoissantSq)))
 				&& sameElements(whitePieces, thatBoard.whitePieces)
 				&& sameElements(blackPieces, thatBoard.blackPieces);
 	}
 
 	/**
-	 * Generates an integer representation of this Board.
-	 * This will return the same number for equal Boards.
+	 * Generates an integer representation of this Board. This will return the
+	 * same number for equal Boards.
+	 * 
 	 * 
 	 * @return An integer representation of this Board
 	 */
-	@Override public int hashCode() {
+	@Override
+	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + Arrays.deepHashCode(pieces);
-		result = prime * result
-				+ ((blackPieces == null) ? 0 : Arrays.deepHashCode(blackPieces.toArray()));
-		result = prime * result
-				+ ((whitePieces == null) ? 0 : Arrays.deepHashCode(whitePieces.toArray()));
+		result = prime
+				* result
+				+ ((blackPieces == null) ? 0 : Arrays.deepHashCode(blackPieces
+						.toArray()));
+		result = prime
+				* result
+				+ ((whitePieces == null) ? 0 : Arrays.deepHashCode(whitePieces
+						.toArray()));
 		result = prime * result
 				+ ((enPoissantSq == null) ? 0 : enPoissantSq.hashCode());
 		result = prime * result
@@ -634,9 +680,11 @@ public final class Board {
 	/**
 	 * A readable ASCII representation of this Board
 	 * 
+	 * 
 	 * @return A String representation of this Board
 	 */
-	@Override public String toString() {
+	@Override
+	public String toString() {
 		String b = "";
 		String colNum = "  ";
 		for (int j = 0; j < NUM_COLS; j++) {
@@ -661,7 +709,33 @@ public final class Board {
 		b += " moveList: " + moveList;
 		return b;
 	}
-	
+
+	/**
+	 * Generates a copy of this Board such that this.equals(this.clone()) will
+	 * always be true but this == this.clone() is false.
+	 * 
+	 * @return A deep copy of this Board
+	 */
+	@Override
+	public Board clone() {
+		Board clone = new Board();
+
+		for (int i = 0; i < NUM_ROWS; i++) {
+			for (int j = 0; j < NUM_COLS; j++) {
+				Piece piece = getOccupant(i, j);
+				if (piece != null) {
+					clone.setPiece(i, j, piece.clone());
+				}
+			}
+		}
+
+		clone.enPoissantSq = enPoissantSq;
+		clone.sideToMove = sideToMove;
+		clone.moveList.addAll(moveList);
+
+		return clone;
+	}
+
 	/**
 	 * Fills this Board with all Pieces in their starting locations
 	 */

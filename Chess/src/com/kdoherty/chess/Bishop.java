@@ -8,7 +8,6 @@ import com.kdoherty.engine.BishopEval;
 /**
  * @author Kevin Doherty
  * 
- * 
  */
 public class Bishop extends Piece {
 
@@ -31,9 +30,10 @@ public class Bishop extends Piece {
 	 *            The row we are checking if the piece can move to
 	 * @param c
 	 *            The column we are checking if the piece can move to
+	
+	 * @param testCheck boolean
 	 * @return true if the Piece can move to the input square and false
-	 *         otherwise
-	 */
+	 *         otherwise */
 	public boolean canMove(Board b, int r, int c, boolean testCheck) {
 		return Board.isInbounds(r, c) && Board.sameDiagonal(row, col, r, c)
 				&& (b.isEmpty(r, c) || isTaking(b, r, c))
@@ -53,9 +53,9 @@ public class Bishop extends Piece {
 	 *            The row we are checking if it is defended by this piece
 	 * @param c
 	 *            The column we are checking if it is defended by this piece
+	
 	 * @return true if this Piece is defending the input square on the input
-	 *         Board and false otherwise
-	 */
+	 *         Board and false otherwise */
 	public boolean isDefending(Board b, int r, int c) {
 		return Board.isInbounds(r, c) && Board.sameDiagonal(row, col, r, c)
 				&& !isTaking(b, r, c) && !isBlocked(b, r, c)
@@ -67,8 +67,8 @@ public class Bishop extends Piece {
 	 * lowerCase letter will be used If the piece is black an upperCase letter
 	 * will be used
 	 * 
-	 * @return A String representation of this Piece
-	 */
+	
+	 * @return A String representation of this Piece */
 	public String toString() {
 		return color == Color.WHITE ? "b" : "B";
 	}
@@ -78,8 +78,8 @@ public class Bishop extends Piece {
 	 * 
 	 * @param b
 	 *            The Board on which we are getting all moves of this Piece
-	 * @return All moves this Piece can make on the input Board
-	 */
+	
+	 * @return All moves this Piece can make on the input Board */
 	@Override
 	public List<Move> getMoves(Board b) {
 		List<Move> moves = new ArrayList<Move>();
@@ -101,5 +101,14 @@ public class Bishop extends Piece {
 	@Override
 	public int getStartingValue() {
 		return BishopEval.START_VALUE;
+	}
+
+	@Override
+	public Piece clone() {
+		Bishop clone = new Bishop(color);
+		clone.row = row;
+		clone.col = col;
+		clone.moveCount = moveCount;
+		return clone;
 	}
 }

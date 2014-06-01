@@ -47,6 +47,9 @@ public final class Knight extends Piece {
 	 *            The row we are checking if the piece can move to
 	 * @param c
 	 *            The column we are checking if the piece can move to
+	 * 
+	 * @param testCheck
+	 *            boolean
 	 * @return true if the Piece can move to the input square and false
 	 *         otherwise
 	 */
@@ -68,6 +71,7 @@ public final class Knight extends Piece {
 	 *            The row we are checking if it is defended by this piece
 	 * @param c
 	 *            The column we are checking if it is defended by this piece
+	 * 
 	 * @return true if this Piece is defending the input square on the input
 	 *         Board and false otherwise
 	 */
@@ -82,6 +86,7 @@ public final class Knight extends Piece {
 	 * lowerCase letter will be used If the piece is black an upperCase letter
 	 * will be used
 	 * 
+	 * 
 	 * @return A String representation of this Piece
 	 */
 	public String toString() {
@@ -91,6 +96,7 @@ public final class Knight extends Piece {
 	/**
 	 * This will get all potential Squares the Knight could move to. Does not
 	 * check if the Squares are inbounds because this is done in canMove
+	 * 
 	 * 
 	 * @return An List of all potential Squares this Knight could move to
 	 */
@@ -121,6 +127,7 @@ public final class Knight extends Piece {
 	 * 
 	 * @param b
 	 *            The Board on which we are getting all moves of this Piece
+	 * 
 	 * @return All moves this Piece can make on the input Board
 	 */
 	public List<Move> getMoves(Board b) {
@@ -140,5 +147,15 @@ public final class Knight extends Piece {
 	@Override
 	public int getStartingValue() {
 		return KnightEval.START_VALUE;
+	}
+
+	@Override
+	public Piece clone() {
+		Knight clone = new Knight(color);
+		clone.row = row;
+		clone.col = col;
+		clone.moveCount = moveCount;
+		clone.posMovesCache = posMovesCache;
+		return clone;
 	}
 }

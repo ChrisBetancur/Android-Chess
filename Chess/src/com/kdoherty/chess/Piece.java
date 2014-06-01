@@ -36,14 +36,6 @@ public abstract class Piece {
 		this.col = col;
 	}
 
-	/**
-	 * The constructor for Piece
-	 * 
-	 * @param color
-	 *            The color of this Piece note: Does not set row and column so
-	 *            we can make a piece this is done when the Piece is set on a
-	 *            Board
-	 */
 	public Piece(Color color) {
 		this(color, 0, 0);
 	}
@@ -87,6 +79,7 @@ public abstract class Piece {
 	/**
 	 * Gets the row coordinate of this Piece
 	 * 
+	 * 
 	 * @return The row coordinate of this Piece
 	 */
 	public int getRow() {
@@ -95,6 +88,7 @@ public abstract class Piece {
 
 	/**
 	 * Gets the column coordinate of this Piece
+	 * 
 	 * 
 	 * @return The column coordinate of this Piece
 	 */
@@ -105,6 +99,7 @@ public abstract class Piece {
 	/**
 	 * Gets the Square which this Piece is on
 	 * 
+	 * 
 	 * @return The Square which this Piece is on
 	 */
 	public Square getSq() {
@@ -113,6 +108,7 @@ public abstract class Piece {
 
 	/**
 	 * Gets the Color of this Piece
+	 * 
 	 * 
 	 * @return The Color of this Piece
 	 */
@@ -129,11 +125,14 @@ public abstract class Piece {
 	 *            The row we are checking if the piece can move to
 	 * @param c
 	 *            The column we are checking if the piece can move to
+	 * 
+	 * @param testCheck
+	 *            boolean
 	 * @return true if the Piece can move to the input square and false
 	 *         otherwise
 	 */
 	public abstract boolean canMove(Board b, int r, int c, boolean testCheck);
-	
+
 	public boolean canMove(Board board, int r, int c) {
 		return canMove(board, r, c, true);
 	}
@@ -149,6 +148,7 @@ public abstract class Piece {
 	 *            The row we are checking if this Piece is attacking
 	 * @param c
 	 *            The row we are checking if this Piece is attacking
+	 * 
 	 * @return true if this Piece is attacking the input square on the input
 	 *         Board and false otherwise
 	 */
@@ -156,11 +156,19 @@ public abstract class Piece {
 		return canMove(b, r, c, false);
 	}
 
+	/**
+	 * Method evaluate.
+	 * 
+	 * @param b
+	 *            Board
+	 * @return int
+	 */
 	public abstract int evaluate(Board b);
+
 	public abstract int getStartingValue();
 
 	/**
-	 * EFFECT: Moves this Piece to the input square if it can move there
+	 * Moves this Piece to the input square if it can move there
 	 * 
 	 * @param b
 	 *            The Board we are moving this Piece on
@@ -169,7 +177,6 @@ public abstract class Piece {
 	 * @param c
 	 *            The column we are moving this Piece to
 	 */
-
 	public void moveTo(Board b, int r, int c) {
 		b.movePiece(row, col, r, c);
 		incrementMoveCount();
@@ -188,6 +195,7 @@ public abstract class Piece {
 	 *            The row we are checking if it is defended by this piece
 	 * @param c
 	 *            The column we are checking if it is defended by this piece
+	 * 
 	 * @return true if this Piece is defending the input square on the input
 	 *         Board and false otherwise
 	 */
@@ -198,17 +206,28 @@ public abstract class Piece {
 	 * 
 	 * @param b
 	 *            The Board on which we are getting all moves of this Piece
+	 * 
 	 * @return All moves this Piece can make on the input Board
 	 */
 	public abstract List<Move> getMoves(Board b);
+	
+	/**
+	 * Generates a clone of this Piece such that this.equals(this.clone()) is true but
+	 * this == this.clone() is false
+	 * @return A clone of this Piece
+	 */
+	@Override
+	public abstract Piece clone();
 
 	/**
-	 * A piece equals another Object if they are: 1. Both Pieces of the same
-	 * type 2. Have the same color 3. Are located on the same row 4. Are located
-	 * on the same column 5. Have the same moveCount
-	 * 
-	 * @param o
-	 *            The object we are checking if it is equal to this Piece
+	 * A piece equals another Object if they are: 
+	 * 1. Both Pieces of the same type of Piece 
+	 * 2. Have the same color 
+	 * 3. Are located on the same row
+	 * 4. Are located on the same column 
+	 * 5. Have the same moveCount
+	 * @param obj
+	 *            The object we are checking if it is equal to this
 	 * @return true if this piece is equal to the input object
 	 */
 	@Override
@@ -231,6 +250,7 @@ public abstract class Piece {
 	/**
 	 * Gets an integer representation of this Piece
 	 * 
+	 * 
 	 * @return an integer representation of this Piece
 	 */
 	@Override
@@ -249,6 +269,7 @@ public abstract class Piece {
 	 * lowerCase letter will be used If the piece is black an upperCase letter
 	 * will be used
 	 * 
+	 * 
 	 * @return A String representation of this Piece
 	 */
 	public abstract String toString();
@@ -265,6 +286,7 @@ public abstract class Piece {
 	 * @param c
 	 *            The column coordinate of the square to check if this Piece is
 	 *            taking another piece on
+	 * 
 	 * @return true if this Piece would take a piece if it moved to the
 	 *         coordinate
 	 */
@@ -282,6 +304,7 @@ public abstract class Piece {
 	 *            The row coordinate of the intended Square
 	 * @param c
 	 *            The column coordinate of the intend Square
+	 * 
 	 * @return true if this piece is blocked going from its current square to
 	 *         the input square
 	 */
@@ -304,6 +327,7 @@ public abstract class Piece {
 	 *            The row this Piece is trying to move to
 	 * @param c
 	 *            The column this Piece is trying to move to
+	 * 
 	 * @return true if this Piece can move without putting its King in check
 	 */
 

@@ -33,13 +33,17 @@ public final class Rook extends Piece {
 	 *            The row we are checking if the piece can move to
 	 * @param c
 	 *            The column we are checking if the piece can move to
+	 * 
+	 * @param testCheck
+	 *            boolean
 	 * @return true if the Piece can move to the input square and false
 	 *         otherwise
 	 */
 	public boolean canMove(Board b, int r, int c, boolean testCheck) {
 		return Board.isInbounds(r, c) && row == r ^ col == c
 				&& (b.isEmpty(r, c) || isTaking(b, r, c))
-				&& !isBlocked(b, r, c) && (!testCheck || !stillInCheck(b, r, c));
+				&& !isBlocked(b, r, c)
+				&& (!testCheck || !stillInCheck(b, r, c));
 	}
 
 	/**
@@ -54,6 +58,7 @@ public final class Rook extends Piece {
 	 *            The row we are checking if it is defended by this piece
 	 * @param c
 	 *            The column we are checking if it is defended by this piece
+	 * 
 	 * @return true if this Piece is defending the input square on the input
 	 *         Board and false otherwise
 	 */
@@ -79,6 +84,7 @@ public final class Rook extends Piece {
 	 * 
 	 * @param b
 	 *            The Board on which we are getting all moves of this Piece
+	 * 
 	 * @return All moves this Piece can make on the input Board
 	 */
 	public List<Move> getMoves(Board b) {
@@ -101,5 +107,14 @@ public final class Rook extends Piece {
 	@Override
 	public int getStartingValue() {
 		return RookEval.START_VALUE;
+	}
+
+	@Override
+	public Piece clone() {
+		Rook clone = new Rook(color);
+		clone.row = row;
+		clone.col = col;
+		clone.moveCount = moveCount;
+		return clone;
 	}
 }

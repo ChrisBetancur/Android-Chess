@@ -8,11 +8,12 @@ import com.kdoherty.engine.KingEval;
 /**
  * 
  * @author Kevin Doherty
- * @version This class represents a King chess piece. This Piece can move one
- *          square in any direction unless a piece of the opposing color is
- *          attacking that square. It can also castle if certain conditions are
- *          met. This Piece can never still be in check after a Piece of this
- *          King's color moves.
+ * 
+ *         This class represents a King chess piece. This Piece can move one
+ *         square in any direction unless a piece of the opposing color is
+ *         attacking that square. It can also castle if certain conditions are
+ *         met. This Piece can never still be in check after a Piece of this
+ *         King's color moves.
  */
 
 public final class King extends Piece {
@@ -43,6 +44,9 @@ public final class King extends Piece {
 	 *            The row we are checking if the piece can move to
 	 * @param c
 	 *            The column we are checking if the piece can move to
+	 * 
+	 * @param testCheck
+	 *            boolean
 	 * @return true if the Piece can move to the input square and false
 	 *         otherwise
 	 */
@@ -66,6 +70,7 @@ public final class King extends Piece {
 	 *            The row we are checking if this Piece is attacking
 	 * @param c
 	 *            The row we are checking if this Piece is attacking
+	 * 
 	 * @return true if this Piece is attacking the input square on the input
 	 *         Board and false otherwise
 	 */
@@ -86,6 +91,7 @@ public final class King extends Piece {
 	 *            The row we are checking if it is defended by this piece
 	 * @param c
 	 *            The column we are checking if it is defended by this piece
+	 * 
 	 * @return true if this Piece is defending the input square on the input
 	 *         Board and false otherwise
 	 */
@@ -95,7 +101,7 @@ public final class King extends Piece {
 	}
 
 	/**
-	 * EFFECT: Moves this Piece to the input square if it can move there
+	 * Moves this Piece to the input square if it can move there
 	 * 
 	 * @param b
 	 *            The Board we are moving this Piece on
@@ -125,6 +131,7 @@ public final class King extends Piece {
 	 * 
 	 * @param b
 	 *            The Board on which we are getting all moves of this Piece
+	 * 
 	 * @return All moves this Piece can make on the input Board
 	 */
 	@Override
@@ -159,6 +166,7 @@ public final class King extends Piece {
 	 * lowerCase letter will be used If the piece is black an upperCase letter
 	 * will be used
 	 * 
+	 * 
 	 * @return A String representation of this Piece
 	 */
 	public String toString() {
@@ -174,6 +182,7 @@ public final class King extends Piece {
 	 *            The row this King is trying to castle to
 	 * @param c
 	 *            The column this King is trying to castle to
+	 * 
 	 * @return true if this King can castle to the sepcified row/column
 	 */
 	public boolean canCastle(Board b, int r, int c) {
@@ -195,6 +204,7 @@ public final class King extends Piece {
 	 * 
 	 * @param b
 	 *            The Board this King is checking if it can castle on
+	 * 
 	 * @return true if this King can castle short on the input Board
 	 */
 	private boolean canCastleShort(Board b) {
@@ -214,6 +224,7 @@ public final class King extends Piece {
 	 * 
 	 * @param b
 	 *            The Board this King is checking if it can castle on
+	 * 
 	 * @return true if this King can castle short on the input Board
 	 */
 	private boolean canCastleLong(Board b) {
@@ -228,7 +239,7 @@ public final class King extends Piece {
 	}
 
 	/**
-	 * EFFECT: Carries out the action of castling on the input Board
+	 * Carries out the action of castling on the input Board
 	 * 
 	 * @param b
 	 *            The Board this King is attempting to castle on
@@ -249,9 +260,6 @@ public final class King extends Piece {
 		}
 		b.movePiece(row, col, row, kingTo);
 		b.getOccupant(homeRow, rookFrom).moveTo(b, homeRow, rookTo);
-
-		// b.movePiece(row, col, homeRow, kingTo); // move the king
-		// b.movePiece(homeRow, rookFrom, homeRow, rookTo); // move the rook
 		hasCastled = true;
 	}
 
@@ -260,6 +268,7 @@ public final class King extends Piece {
 	 * 
 	 * @param b
 	 *            The Board we are checking if this King is in check on
+	 * 
 	 * @return true if this King is in check on the input Board
 	 */
 	public boolean isInCheck(Board b) {
@@ -285,7 +294,23 @@ public final class King extends Piece {
 	}
 
 	@Override
+	public int hashCode() {
+		int hasCastledVal = hasCastled ? 1231 : 1237;
+		return super.hashCode() + hasCastledVal;
+	}
+
+	@Override
 	public int getStartingValue() {
 		return KingEval.START_VALUE;
+	}
+
+	@Override
+	public Piece clone() {
+		King clone = new King(color);
+		clone.row = row;
+		clone.col = col;
+		clone.moveCount = moveCount;
+		clone.hasCastled = hasCastled;
+		return clone;
 	}
 }

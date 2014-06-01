@@ -1,8 +1,8 @@
 package com.kdoherty.chess;
 
 /**
- * @author Kevin Doherty
- * A Square is an immutable representation of a coordinate on the Board
+ * @author Kevin Doherty A Square is an immutable representation of a coordinate
+ *         on the Board
  */
 public final class Square {
 
@@ -37,7 +37,8 @@ public final class Square {
 	public Square(char col, int row) {
 		if (row > 8 || row < 1) {
 			throw new IllegalArgumentException(
-					"Invalid row input. Should be between 1 and 8 but is " + row);
+					"Invalid row input. Should be between 1 and 8 but is "
+							+ row);
 		}
 		this.row = 8 - row;
 		switch (col) {
@@ -71,7 +72,7 @@ public final class Square {
 							+ col);
 		}
 	}
-	
+
 	public static int toNum(int row, int col) {
 		return row * 8 + col;
 	}
@@ -98,9 +99,12 @@ public final class Square {
 	 * Does this square equal that object? A square is equal to an object if 1.
 	 * The object is a square 2. They contain the same chess board coordinate
 	 * 
+	 * @param obj
+	 *            The object we are checking if it is equals to this Square
 	 * @return true if this Square equals the input object
 	 */
-	@Override public boolean equals(Object obj) {
+	@Override
+	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -116,7 +120,8 @@ public final class Square {
 	 * 
 	 * @return An integer representation of this Square
 	 */
-	@Override public int hashCode() {
+	@Override
+	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + col;
@@ -129,7 +134,8 @@ public final class Square {
 	 * 
 	 * @return A String representation of this Square
 	 */
-	@Override public String toString() {
+	@Override
+	public String toString() {
 		String s = "";
 		switch (col) {
 		case (0):
@@ -160,7 +166,12 @@ public final class Square {
 		s += (8 - row);
 		return s;
 	}
-	
+
+	/**
+	 * Gets the position of this Square on a chess board (0 - 63)
+	 * 
+	 * @return The position of this Square on a chess board
+	 */
 	public int toNum() {
 		return toNum(row, col);
 	}

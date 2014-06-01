@@ -1,9 +1,15 @@
 package com.kdoherty.chess;
 
+//TODO: State issues.
+// 1. unmake called before make called
+// 2. make called twice
+// 2. getTaken only works after make has been called 
+// 3. isChecking only works if make has not been called
+// Possible solution: Keep track of state in boolean
+
 /**
- * @author Kevin Doherty
- * This represents a chess move. A mMve has a Piece and a Square to
- *          move the Piece to
+ * @author Kevin Doherty This represents a chess move. A move has a Piece and a
+ *         Square to move the Piece to
  */
 public final class Move {
 
@@ -36,7 +42,9 @@ public final class Move {
 	/** The enPoissant square of the board before this Move is played */
 	private Square enPoissantSq;
 
-	/** The type of Move this is */
+	/** The type of Move this is * @author kdoherty
+	 * @version $Revision: 1.0 $
+	 */
 	public enum Type {
 		// TODO: Inheritance instead of this?
 
@@ -45,9 +53,9 @@ public final class Move {
 		/**
 		 * Is this Type a castling Move?
 		 * 
+		
 		 * @return true if this Type is either WHITE_LONG, WHITE_SHORT,
-		 *         BLACK_LONG, or BLACK_SHORT
-		 */
+		 *         BLACK_LONG, or BLACK_SHORT */
 		public boolean isCastling() {
 			return this == WHITE_SHORT || this == WHITE_LONG
 					|| this == BLACK_SHORT || this == BLACK_LONG;
@@ -81,6 +89,13 @@ public final class Move {
 		this(piece, square.row(), square.col());
 	}
 
+	/**
+	 * Constructor for Move.
+	 * @param piece Piece
+	 * @param row int
+	 * @param col int
+	 * @param type Type
+	 */
 	public Move(Piece piece, int row, int col, Type type) {
 		if (piece == null) {
 			throw new NullPointerException(
@@ -99,8 +114,8 @@ public final class Move {
 	/**
 	 * Gets the piece from this Move
 	 * 
-	 * @return The Piece that is moving
-	 */
+	
+	 * @return The Piece that is moving */
 	public Piece getPiece() {
 		return piece;
 	}
@@ -108,16 +123,32 @@ public final class Move {
 	/**
 	 * Gets the coordinate of this move represented as a Square
 	 * 
-	 * @return the coordinate of this move represented as a Square
-	 */
+	
+	 * @return the coordinate of this move represented as a Square */
 	public Square getSq() {
 		return targetSquare;
 	}
+	
+	public int getRow() {
+		return row;
+	}
+	
+	public int getCol() {
+		return col;
+	}
 
+	/**
+	 * Method getTaken.
+	 * @return Piece
+	 */
 	public Piece getTaken() {
 		return taken;
 	}
 
+	/**
+	 * Method getType.
+	 * @return Type
+	 */
 	public Type getType() {
 		return type;
 	}
@@ -127,8 +158,7 @@ public final class Move {
 	 * 
 	 * @param b
 	 *            The Board to make this move on
-	 * @return The piece captured by making this move if there was one otherwise
-	 *         null
+	
 	 */
 	public void make(Board b) {
 		if (type == Type.EN_POISSANT) {
@@ -141,6 +171,10 @@ public final class Move {
 		piece.moveTo(b, row, col);
 	}
 
+	/**
+	 * Method unmake.
+	 * @param b Board
+	 */
 	public void unmake(Board b) {
 		piece.decrementMoveCount();
 		switch (type) {
@@ -170,6 +204,10 @@ public final class Move {
 		}
 	}
 
+	/**
+	 * Method undoCastling.
+	 * @param b Board
+	 */
 	private void undoCastling(Board b) {
 		b.setPiece(startingRow, startingCol, b.remove(row, col));
 		Rook rook;
@@ -199,6 +237,11 @@ public final class Move {
 		((King) piece).setHasCastled(false);
 	}
 
+	/**
+	 * Method isChecking.
+	 * @param b Board
+	 * @return boolean
+	 */
 	public boolean isChecking(Board b) {
 		make(b);
 		Color pieceColor = piece.getColor();
@@ -207,29 +250,39 @@ public final class Move {
 		return isChecking;
 	}
 
+	/**
+	 * Method isTaking.
+	 * @return boolean
+	 */
 	public boolean isTaking() {
 		return taken != null;
 	}
 
 	/**
-	 * Does this Move equal that object? A Move is equal to an object if: 
-	 * 1. The object is a Move 
-	 * 2. The two moves contain the same Piece 
-	 * 3. The two moves are moving that Piece to the same Square
+	 * Does this Move equal that object? A Move is equal to an object if: 1. The
+	 * object is a Move 2. The two moves contain the same Piece 3. The two moves
+	 * are moving that Piece to the same Square
 	 * 
-	 * @return true if this Move equals the input object
-	 */
+	
+	 * @param obj Object
+	 * @return true if this Move equals the input object */
 	@Override
 	public boolean equals(Object obj) {
-		return obj instanceof Move && (((Move) obj).getSq()).equals(getSq())
-				&& ((Move) obj).getPiece().equals(piece);
+		if (obj == this) {
+			return true;
+		}
+		if (!(obj instanceof Move)) {
+			return false;
+		}
+		Move that = (Move) obj;
+		return that.getSq().equals(getSq()) && that.getPiece().equals(piece);
 	}
 
 	/**
 	 * Gets the hashCode for this Move
 	 * 
-	 * @return An integer representation of this Move
-	 */
+	
+	 * @return An integer representation of this Move */
 	@Override
 	public int hashCode() {
 		return piece.hashCode() + getSq().hashCode();
@@ -239,9 +292,10 @@ public final class Move {
 	 * Represents this Move as a String Chess accepted notation for castling is
 	 * used
 	 * 
-	 * @return A String representation of this Move
-	 */
-	@Override public String toString() {
+	
+	 * @return A String representation of this Move */
+	@Override
+	public String toString() {
 		if (piece instanceof King && piece.getCol() == 4) {
 			if ((getSq().equals(new Square(7, 6)) || getSq().equals(
 					new Square(0, 6)))) {
