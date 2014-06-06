@@ -8,6 +8,7 @@ import com.kdoherty.chess.Color;
 import com.kdoherty.chess.King;
 import com.kdoherty.chess.Knight;
 import com.kdoherty.chess.Pawn;
+import com.kdoherty.chess.Piece;
 import com.kdoherty.chess.Queen;
 import com.kdoherty.chess.Rook;
 
@@ -333,6 +334,28 @@ public class BaseTest extends TestCase {
 		board.setPiece('a', 8, k2);
 		board.setPiece('b', 6, q1);
 		board.setPiece('c', 8, k1);
+		return board;
+	}
+	
+	public Board pawnCaptureBoard() {
+		Board board = new Board();
+		board.setPiece('e', 4, p1);
+		board.setPiece('d', 5, p9);
+		board.setPiece('f', 5, p10);
+		board.setPiece('c', 8, k1);
+		board.setPiece('a', 8, k2);
+		return board;
+	}
+	
+	public Board piecePinnedBoard(Piece piece) {
+		Board board = new Board();
+		Color color = piece.getColor();
+		King king = new King(color);
+		board.setPiece('h', 1, king);
+		board.setPiece('g', 2, piece);
+		Bishop pinner = new Bishop(color.opp());
+		board.setPiece('a', 8, pinner);
+		board.setPiece('h', 8, new King(color.opp()));
 		return board;
 	}
 

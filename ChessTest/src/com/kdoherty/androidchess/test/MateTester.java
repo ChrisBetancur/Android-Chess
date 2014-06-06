@@ -38,7 +38,6 @@ public class MateTester extends BaseTest {
 	
 	public void testMateSenerioSix() {
 		Board board = fillWithTestMate(5);
-		List<Move> mateMoves = MateSolver.findMateUpToN(board, Color.WHITE, 5);
 		assertEquals(MateSolver.findMateUpToN(board, Color.WHITE, 5).toString(), "[qg7, rh6, ne7]");
 	}
 	
