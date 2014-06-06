@@ -5,10 +5,28 @@ import com.kdoherty.chess.Board;
 import com.kdoherty.chess.Color;
 import com.kdoherty.chess.Square;
 
-public class BishopEval {
+/**
+ * This class is responsible for evaluating a Bishop. It takes into account its
+ * position on the Board and its position relative to other Pieces on the Board.
+ * 
+ * @author Kevin Doherty
+ * 
+ */
+public final class BishopEval extends PieceEval {
 
+	/** The starting value of a Bishop */
 	public static int START_VALUE = 330;
+
+	/**
+	 * The penalty given to a Bishop if it is blocking a center pawn from moving
+	 * from its home square
+	 */
 	private static int BLOCKING_CNTR_PAWN_PENALTY = -10;
+
+	/**
+	 * Bonuses and penalties added to a Rooks value based on its position on the
+	 * Board
+	 */
 	private static int[] BOARD_VALUES = { 
 		-20, -10, -10, -10, -10, -10, -10, -20,
 		-10,   5,   0,   0,  0,   0,    5, -10,
@@ -17,16 +35,40 @@ public class BishopEval {
 		-10,   5,   5,  10,  10,   5,   5, -10,
 		-10,   0,   5,  10,  10,   5,   0, -10,
 		-10,   0,   0,   0,   0,   0,   0, -10,
-		-20, -10, -10, -10, -10, -10, -10, -20 };
+		-20, -10, -10, -10, -10, -10, -10, -20
+	};
 
-	public static int evaluate(Board board, Bishop bishop) {
+	/**
+	 * Constructor for BishopEval
+	 * 
+	 * @param board
+	 *            The Board to evaluate the input Bishop on
+	 * @param bishop
+	 *            The Bishop to evaluate on the input Board
+	 */
+	public BishopEval(Board board, Bishop bishop) {
+		super(board, bishop);
+	}
+
+	/**
+	 * Evaluates this BishopEval's Bishop on its Board.
+	 * 
+	 * @return An integer rating of how good a Bishop is on a Board. The higher
+	 *         the rating the better the placement.
+	 */
+	@Override
+	public int evaluate() {
+		Square s = piece.getSq();
+		int index = color == Color.WHITE ? s.toNum() : 63 - s.toNum();
+
 		int value = START_VALUE;
-		Square s = bishop.getSq();
-		int index = bishop.getColor() == Color.WHITE ? s.toNum() : 63 - s
-				.toNum();
 		value += BOARD_VALUES[index];
-		if (Evaluate.isBlockingCenterPawn(board, bishop))
+
+		if (isBlockingCenterPawn()) {
 			value += BLOCKING_CNTR_PAWN_PENALTY;
+		}
+
 		return value;
 	}
+
 }
