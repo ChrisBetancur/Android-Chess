@@ -75,10 +75,7 @@ class OnPieceDrag implements OnDragListener {
 			}
 			if (piece.getColor() == board.getSideToMove()
 					&& piece.canMove(board, targetRow, targetCol)) {
-				//TODO: Not passing move type here. This will break add to taken Pieces for enPoissant
-				// and undoing of all non-normal moves. Maybe have no type constructor in Move 
-				// determine move type? But then we would also need to pass in a Board
-				chessContext.passTurn(new Move(piece, targetRow, targetCol));
+				chessContext.passTurn(new Move(board, piece, targetRow, targetCol));
 				return true;
 			} else {
 				// Piece could not move to the Square it was dropped on

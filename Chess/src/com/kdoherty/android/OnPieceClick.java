@@ -39,10 +39,7 @@ public class OnPieceClick implements OnClickListener {
 			if (activePiece != null
 					&& activePiece.getColor() == board.getSideToMove()
 					&& activePiece.canMove(board, row, col)) {
-				// TODO: Not passing move type here. This will break add to
-				// taken Pieces for enPoissant
-				// and undoing of all non-normal moves
-				chessContext.passTurn(new Move(activePiece, row, col));
+				chessContext.passTurn(new Move(board, activePiece, row, col));
 			}
 			chessContext.toggleClick();
 		}

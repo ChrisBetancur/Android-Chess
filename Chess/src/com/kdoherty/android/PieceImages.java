@@ -21,7 +21,7 @@ final class PieceImages {
 	private static final Map<String, Integer> pieceImages= new HashMap<String, Integer>();
 
 	private PieceImages() {
-		// Should never be instantiated
+		// Hide constructor
 	}
 
 	/**

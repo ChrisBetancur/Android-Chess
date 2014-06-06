@@ -31,7 +31,10 @@ import com.kdoherty.engine.CpuPlayer;
  */
 public class ChessActivity extends Activity {
 
+	// TODO: On first click show valid moves
+	// TODO: On long click also sets active piece and valid moves
 	// TODO: Pawn Promotion
+	// TODO: Show move list
 	// TODO: Wood images for Squares
 	// TODO: Get configuration data from previous Activity
 	// TODO: Landscape orientation view
@@ -42,7 +45,7 @@ public class ChessActivity extends Activity {
 	private static final int cpuDepth = 1;
 	private CpuPlayer player = new CpuPlayer(cpuColor, cpuDepth);
 	/** The starting game time for each player in milliseconds */
-	private long startTime = 900000; // 15 minutes
+	private long startTime = 300000; // 5 minutes
 
 	/**
 	 * The timer which is currently ticking down. Also represents whose side it
@@ -207,7 +210,6 @@ public class ChessActivity extends Activity {
 			Piece promotedTo = askPromotion(piece.getColor());
 			board.setPiece(move.getRow(), move.getCol(), promotedTo);
 		}
-		// TODO: En poissant sq is null after 1. pe4
 		refreshAdapter(board);
 		board.toggleSideToMove();
 		board.addMove(move);
@@ -376,6 +378,9 @@ public class ChessActivity extends Activity {
 	 */
 	void setActivePiece(Piece activePiece) {
 		this.activePiece = activePiece;
+//		Board board = adapter.getBoard();
+//		adapter.displayMoves(moves);
+//		List<Move> moves = activePiece.getMoves(board);	
 	}
 
 	/**

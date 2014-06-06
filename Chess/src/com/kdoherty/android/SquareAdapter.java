@@ -1,5 +1,8 @@
 package com.kdoherty.android;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +11,7 @@ import android.widget.BaseAdapter;
 import com.kdoherty.androidchess.R;
 import com.kdoherty.chess.Board;
 import com.kdoherty.chess.Piece;
+import com.kdoherty.chess.Square;
 
 /**
  * This is responsible for binding the Board representation to the view of the
@@ -23,6 +27,9 @@ final class SquareAdapter extends BaseAdapter {
 
 	/** The Board that this will represent */
 	private Board board;
+	
+	/** The list of Squares the active Piece can move to */
+	List<Square> markedSqs = new ArrayList<Square>();
 
 	/**
 	 * Starts with a Board in which all Pieces are in their default positions.
@@ -61,6 +68,14 @@ final class SquareAdapter extends BaseAdapter {
 	@Override
 	public long getItemId(int position) {
 		return position;
+	}
+	
+	public void setMarkedSqs(List<Square> markedSqs) {
+		this.markedSqs = markedSqs;
+	}
+	
+	public void clearMarkedSqs() {
+		this.markedSqs.clear();
 	}
 
 	/**
@@ -115,6 +130,10 @@ final class SquareAdapter extends BaseAdapter {
 		PieceImageView pieceView = viewHolder.pieceViewItem;
 		pieceView.setRow(row);
 		pieceView.setCol(col);
+		
+		if (markedSqs.contains(new Square(row, col))) {
+			// TODO: mark square somehow
+		}
 
 		Piece piece = board.getOccupant(row, col);
 		if (piece != null) {
