@@ -11,9 +11,6 @@ import java.util.List;
  */
 public abstract class Piece {
 
-	// TODO: Make Pieces singleton and not know their location or change the
-	// board to a list of pieces
-
 	/** The row where this Piece is located */
 	protected int row;
 
@@ -127,18 +124,31 @@ public abstract class Piece {
 	 *            The column we are checking if the piece can move to
 	 * 
 	 * @param testCheck
-	 *            boolean
+	 *            Should we check still in check after the move is tested or
+	 *            not?
 	 * @return true if the Piece can move to the input square and false
 	 *         otherwise
 	 */
 	public abstract boolean canMove(Board b, int r, int c, boolean testCheck);
 
+	/**
+	 * Can this piece move on the input board to the input square?
+	 * 
+	 * @param b
+	 *            The Board the piece is checking if it can move on
+	 * @param r
+	 *            The row we are checking if the piece can move to
+	 * @param c
+	 *            The column we are checking if the piece can move to
+	 * @return true if the Piece can move to the input square and false
+	 *         otherwise
+	 */
 	public boolean canMove(Board board, int r, int c) {
 		return canMove(board, r, c, true);
 	}
 
 	/**
-	 * Is this Piece attacking the input square? Note it is still attacking the
+	 * Is this Piece attacking the input square? Note: it is still attacking the
 	 * square even if it is pinned to it's king
 	 * 
 	 * @param b
@@ -157,14 +167,21 @@ public abstract class Piece {
 	}
 
 	/**
-	 * Method evaluate.
+	 * Evaluates this Piece on the input Board.
 	 * 
-	 * @param b
-	 *            Board
-	 * @return int
+	 * @param board
+	 *            The Board to evaluate this Piece on
+	 * 
+	 * @return An integer rating of how good a Piece is on the input Board. The
+	 *         higher the rating the better the placement.
 	 */
-	public abstract int evaluate(Board b);
+	public abstract int evaluate(Board board);
 
+	/**
+	 * Gets the starting value assigned to this Piece
+	 * 
+	 * @return The starting value assigned to this Piece
+	 */
 	public abstract int getStartingValue();
 
 	/**
@@ -210,22 +227,20 @@ public abstract class Piece {
 	 * @return All moves this Piece can make on the input Board
 	 */
 	public abstract List<Move> getMoves(Board b);
-	
+
 	/**
-	 * Generates a clone of this Piece such that this.equals(this.clone()) is true but
-	 * this == this.clone() is false
+	 * Generates a clone of this Piece such that this.equals(this.clone()) is
+	 * true but this == this.clone() is false
+	 * 
 	 * @return A clone of this Piece
 	 */
-	@Override
 	public abstract Piece clone();
 
 	/**
-	 * A piece equals another Object if they are: 
-	 * 1. Both Pieces of the same type of Piece 
-	 * 2. Have the same color 
-	 * 3. Are located on the same row
-	 * 4. Are located on the same column 
-	 * 5. Have the same moveCount
+	 * A piece equals another Object if they are: 1. Both Pieces of the same
+	 * type of Piece 2. Have the same color 3. Are located on the same row 4.
+	 * Are located on the same column 5. Have the same moveCount
+	 * 
 	 * @param obj
 	 *            The object we are checking if it is equal to this
 	 * @return true if this piece is equal to the input object
@@ -333,12 +348,12 @@ public abstract class Piece {
 
 	public boolean stillInCheck(Board b, int r, int c) {
 		boolean stillInCheck = true;
-		Move m = new Move(this, r, c);
-		m.make(b);
+		Move m = new Move(b, this, r, c);
+		m.make();
 		if (!(b.kingInCheck(color))) {
 			stillInCheck = false;
 		}
-		m.unmake(b);
+		m.unmake();
 		return stillInCheck;
 	}
 }

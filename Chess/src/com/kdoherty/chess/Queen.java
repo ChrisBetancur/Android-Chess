@@ -109,7 +109,7 @@ public final class Queen extends Piece {
 			for (int j = 0; j < Board.NUM_COLS; j++) {
 				if (((row == i ^ col == j) || Board
 						.sameDiagonal(row, col, i, j)) && canMove(b, i, j)) {
-					moves.add(new Move(this, i, j));
+					moves.add(new Move(b, this, i, j, Move.Type.NORMAL));
 				}
 			}
 		}
@@ -118,7 +118,7 @@ public final class Queen extends Piece {
 
 	@Override
 	public int evaluate(Board board) {
-		return QueenEval.eval(board, this);
+		return new QueenEval(board, this).evaluate();
 	}
 
 	@Override

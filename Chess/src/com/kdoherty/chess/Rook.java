@@ -92,7 +92,7 @@ public final class Rook extends Piece {
 		for (int i = 0; i < Board.NUM_ROWS; i++) {
 			for (int j = 0; j < Board.NUM_COLS; j++) {
 				if ((i == row || j == col) && canMove(b, i, j)) {
-					moves.add(new Move(this, i, j));
+					moves.add(new Move(b, this, i, j, Move.Type.NORMAL));
 				}
 			}
 		}
@@ -101,7 +101,7 @@ public final class Rook extends Piece {
 
 	@Override
 	public int evaluate(Board board) {
-		return RookEval.eval(board, this);
+		return new RookEval(board, this).evaluate();
 	}
 
 	@Override

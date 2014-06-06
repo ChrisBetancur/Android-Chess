@@ -140,22 +140,22 @@ public final class King extends Piece {
 		for (int i = row - 1; i < row + 2; i++) {
 			for (int j = col - 1; j < col + 2; j++) {
 				if (!(i == row && j == col)) {
-					if (canMove(b, i, j)) {
-						moves.add(new Move(this, i, j));
+					if (canMove(b, i, j) && !canCastle(b, i, j)) {
+						moves.add(new Move(b, this, i, j, Move.Type.NORMAL));
 					}
 				}
 			}
 		}
 		if (color == Color.WHITE) {
 			if (canCastle(b, 7, 6))
-				moves.add(new Move(this, 7, 6, Move.Type.WHITE_SHORT));
+				moves.add(new Move(b, this, 7, 6, Move.Type.WHITE_SHORT));
 			if (canCastle(b, 7, 2))
-				moves.add(new Move(this, 7, 2, Move.Type.WHITE_LONG));
+				moves.add(new Move(b, this, 7, 2, Move.Type.WHITE_LONG));
 		} else {
 			if (canCastle(b, 0, 6))
-				moves.add(new Move(this, 0, 6, Move.Type.BLACK_SHORT));
+				moves.add(new Move(b, this, 0, 6, Move.Type.BLACK_SHORT));
 			if (canCastle(b, 0, 2))
-				moves.add(new Move(this, 0, 2, Move.Type.BLACK_LONG));
+				moves.add(new Move(b, this, 0, 2, Move.Type.BLACK_LONG));
 		}
 
 		return moves;
@@ -186,7 +186,7 @@ public final class King extends Piece {
 	 * @return true if this King can castle to the sepcified row/column
 	 */
 	public boolean canCastle(Board b, int r, int c) {
-		if (hasMoved() || isInCheck(b) || r != homeRow || row != homeRow) {
+		if (hasMoved() || col != 4 || isInCheck(b) || r != homeRow || row != homeRow) {
 			return false;
 		}
 		if (c == 6) {
@@ -275,11 +275,6 @@ public final class King extends Piece {
 		return b.isAttacked(row, col, color.opp());
 	}
 
-	@Override
-	public int evaluate(Board board) {
-		return KingEval.eval(board, this);
-	}
-
 	public void setHasCastled(boolean hasCastled) {
 		this.hasCastled = hasCastled;
 	}
@@ -297,6 +292,11 @@ public final class King extends Piece {
 	public int hashCode() {
 		int hasCastledVal = hasCastled ? 1231 : 1237;
 		return super.hashCode() + hasCastledVal;
+	}
+	
+	@Override
+	public int evaluate(Board board) {
+		return new KingEval(board, this).evaluate();
 	}
 
 	@Override

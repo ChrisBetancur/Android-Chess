@@ -7,14 +7,15 @@ import java.util.Deque;
 import java.util.List;
 
 /**
- * @author Kevin Doherty
  * 
- *         This class represents a ChessBoard using a 2D array of Pieces. An
- *         empty Square on the Board is represented by a null Piece. This Board
- *         also contains lists containing all active Pieces for each color. This
- *         way we do not need to iterate over all 64 squares to generate the
- *         Pieces of a certain color. It keeps track of the side to move, the
- *         enPoissant Square if there is one, and the Moves played.
+ * This class represents a ChessBoard using a 2D array of Pieces. An empty
+ * Square on the Board is represented by a null Piece. This Board also contains
+ * lists containing all active Pieces for each color. This way we do not need to
+ * iterate over all 64 squares to generate the Pieces of a certain color. It
+ * keeps track of the side to move, the enPoissant Square if there is one, and
+ * the Moves played.
+ * 
+ * @author Kevin Doherty
  * 
  */
 public final class Board {
@@ -268,7 +269,13 @@ public final class Board {
 	 *            The Square to make an enPoissantSq
 	 */
 	public void setEnPoissantSq(Square enPoissantSq) {
-		this.enPoissantSq = enPoissantSq;
+		if (enPoissantSq == null || enPoissantSq.row() == 2
+				|| enPoissantSq.row() == 5) {
+			this.enPoissantSq = enPoissantSq;
+		} else {
+			throw new RuntimeException("enPoissantSquare can't be set to "
+					+ enPoissantSq);
+		}
 	}
 
 	/**
@@ -621,12 +628,12 @@ public final class Board {
 	/**
 	 * A Board is equal to another Object if: 
 	 * 1. The Object is a Board 
-	 * 2. They contain the same Pieces in the same positions
+	 * 2. They contain the same Pieces in the same positions 
 	 * 3. They have the same enPoissant Square 
 	 * 4. They have the same sideToMove
 	 * 
 	 * @param obj
-	 *            Object
+	 *            Object The object to test equality with this Board
 	 * @return Does this Board equal that object?
 	 */
 
@@ -662,18 +669,10 @@ public final class Board {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + Arrays.deepHashCode(pieces);
-		result = prime
-				* result
-				+ ((blackPieces == null) ? 0 : Arrays.deepHashCode(blackPieces
-						.toArray()));
-		result = prime
-				* result
-				+ ((whitePieces == null) ? 0 : Arrays.deepHashCode(whitePieces
-						.toArray()));
-		result = prime * result
-				+ ((enPoissantSq == null) ? 0 : enPoissantSq.hashCode());
-		result = prime * result
-				+ ((sideToMove == null) ? 0 : sideToMove.hashCode());
+		result = prime * result + ((blackPieces == null) ? 0 : Arrays.deepHashCode(blackPieces.toArray()));
+		result = prime * result + ((whitePieces == null) ? 0 : Arrays.deepHashCode(whitePieces.toArray()));
+		result = prime * result + ((enPoissantSq == null) ? 0 : enPoissantSq.hashCode());
+		result = prime * result + ((sideToMove == null) ? 0 : sideToMove.hashCode());
 		return result;
 	}
 

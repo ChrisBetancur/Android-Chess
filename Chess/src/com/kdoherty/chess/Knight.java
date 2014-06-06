@@ -134,14 +134,14 @@ public final class Knight extends Piece {
 		List<Move> moves = new ArrayList<Move>();
 		for (Square s : getPossibleSqs()) {
 			if (canMove(b, s.row(), s.col()))
-				moves.add(new Move(this, s));
+				moves.add(new Move(b, this, s, Move.Type.NORMAL));
 		}
 		return moves;
 	}
 
 	@Override
 	public int evaluate(Board board) {
-		return KnightEval.eval(board, this);
+		return new KnightEval(board, this).evaluate();
 	}
 
 	@Override

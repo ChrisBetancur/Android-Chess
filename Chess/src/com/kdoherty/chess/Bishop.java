@@ -86,7 +86,7 @@ public class Bishop extends Piece {
 		for (int i = 0; i < Board.NUM_ROWS; i++) {
 			for (int j = 0; j < Board.NUM_COLS; j++) {
 				if (Board.sameDiagonal(row, col, i, j) && canMove(b, i, j)) {
-					moves.add(new Move(this, i, j));
+					moves.add(new Move(b, this, i, j, Move.Type.NORMAL));
 				}
 			}
 		}
@@ -95,15 +95,14 @@ public class Bishop extends Piece {
 
 	@Override
 	public int evaluate(Board board) {
-		return BishopEval.evaluate(board, this);
+		return new BishopEval(board, this).evaluate();
 	}
 
 	@Override
 	public int getStartingValue() {
 		return BishopEval.START_VALUE;
 	}
-
-	@Override
+	
 	public Piece clone() {
 		Bishop clone = new Bishop(color);
 		clone.row = row;

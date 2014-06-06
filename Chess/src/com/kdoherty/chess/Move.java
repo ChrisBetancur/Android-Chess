@@ -1,17 +1,12 @@
 package com.kdoherty.chess;
 
-//TODO: State issues.
-// 1. unmake called before make called
-// 2. make called twice
-// 2. getTaken only works after make has been called 
-// 3. isChecking only works if make has not been called
-// Possible solution: Keep track of state in boolean
-
 /**
  * @author Kevin Doherty This represents a chess move. A move has a Piece and a
  *         Square to move the Piece to
  */
 public final class Move {
+
+	private Board board;
 
 	/** The Piece that is moving */
 	private Piece piece;
@@ -42,80 +37,101 @@ public final class Move {
 	/** The enPoissant square of the board before this Move is played */
 	private Square enPoissantSq;
 
-	/** The type of Move this is * @author kdoherty
-	 * @version $Revision: 1.0 $
+	private int pieceMoveCount;
+
+	private boolean made = false;
+
+	/**
+	 * The type of Move this is
+	 * 
 	 */
 	public enum Type {
 		// TODO: Inheritance instead of this?
 
-		NORMAL, WHITE_LONG, WHITE_SHORT, BLACK_LONG, BLACK_SHORT, PAWN_PROMOTION, EN_POISSANT;
+		NORMAL, WHITE_LONG, WHITE_SHORT, BLACK_LONG, BLACK_SHORT, PROMOTION_QUEEN, PROMOTION_KNIGHT, EN_POISSANT;
 
 		/**
 		 * Is this Type a castling Move?
 		 * 
-		
+		 * 
 		 * @return true if this Type is either WHITE_LONG, WHITE_SHORT,
-		 *         BLACK_LONG, or BLACK_SHORT */
+		 *         BLACK_LONG, or BLACK_SHORT
+		 */
 		public boolean isCastling() {
 			return this == WHITE_SHORT || this == WHITE_LONG
 					|| this == BLACK_SHORT || this == BLACK_LONG;
 		}
-	}
-
-	/**
-	 * A Move consists of A Piece and a coordinate where the piece is moving to
-	 * 
-	 * @param piece
-	 *            The Piece that is moving
-	 * @param row
-	 *            The row this piece is moving to
-	 * @param col
-	 *            The column this Piece is moving to
-	 */
-	public Move(Piece piece, int row, int col) {
-		this(piece, row, col, Type.NORMAL);
-	}
-
-	/**
-	 * Overloaded constructor to take in a Square instead of row/column if its
-	 * more convenient
-	 * 
-	 * @param piece
-	 *            The Piece that is moving
-	 * @param square
-	 *            The Square this Move's Piece is moving to
-	 */
-	public Move(Piece piece, Square square) {
-		this(piece, square.row(), square.col());
-	}
-
-	/**
-	 * Constructor for Move.
-	 * @param piece Piece
-	 * @param row int
-	 * @param col int
-	 * @param type Type
-	 */
-	public Move(Piece piece, int row, int col, Type type) {
-		if (piece == null) {
-			throw new NullPointerException(
-					"Can't make a move with a null piece");
+		
+		public boolean isPromotion() {
+			return this == PROMOTION_QUEEN || this == PROMOTION_KNIGHT;
 		}
+	}
+
+	public Move(Board board, Piece piece, int row, int col) {
+		this(board, piece, row, col, Type.NORMAL);
+		initType();
+	}
+
+	public Move(Board board, Piece piece, Square square) {
+		this(board, piece, square.row(), square.col());
+	}
+
+	public Move(Board board, Piece piece, Square square, Type type) {
+		this(board, piece, square.row(), square.col(), type);
+	}
+
+	public Move(Board board, Piece piece, int row, int col, Type type) {
+		this.board = board;
 		this.piece = piece;
-		this.startingRow = piece.getRow();
-		this.startingCol = piece.getCol();
 		this.row = row;
 		this.col = col;
-		this.type = type;
 		this.targetSquare = new Square(row, col);
-		// this.made = false;
+		this.startingRow = piece.getRow();
+		this.startingCol = piece.getCol();
+		this.type = type;
+		if (type.isPromotion()) {
+			this.pieceMoveCount = piece.getMoveCount();
+		}
+	}
+
+	public void initType() {
+		if (piece instanceof King
+				&& !Board.isNeighbor(startingRow, startingCol, row, col)) {
+			if (col == 2) {
+				if (piece.getColor() == Color.WHITE) {
+					this.type = Type.WHITE_LONG;
+				} else {
+					this.type = Type.BLACK_LONG;
+				}
+			} else if (col == 6) {
+				if (piece.getColor() == Color.WHITE) {
+					this.type = Type.WHITE_SHORT;
+				} else {
+					this.type = Type.BLACK_SHORT;
+				}
+			}
+		} else if (piece instanceof Pawn) {
+			Pawn pawn = (Pawn) piece;
+			int promotingRow = pawn.getColor() == Color.WHITE ? 0 : 7;
+			if (row == promotingRow) {
+				this.type = Type.PROMOTION_QUEEN;
+				this.pieceMoveCount = piece.getMoveCount();
+			} else if (Board.sameDiagonal(startingRow, startingCol, row, col)
+					&& board.isEmpty(row, col)) {
+				this.type = Type.EN_POISSANT;
+			} else {
+				this.type = Type.NORMAL;
+			}
+		} else {
+			this.type = Type.NORMAL;
+		}
 	}
 
 	/**
 	 * Gets the piece from this Move
 	 * 
-	
-	 * @return The Piece that is moving */
+	 * @return The Piece that is moving
+	 */
 	public Piece getPiece() {
 		return piece;
 	}
@@ -123,30 +139,31 @@ public final class Move {
 	/**
 	 * Gets the coordinate of this move represented as a Square
 	 * 
-	
-	 * @return the coordinate of this move represented as a Square */
+	 * 
+	 * @return the coordinate of this move represented as a Square
+	 */
 	public Square getSq() {
 		return targetSquare;
 	}
-	
+
 	public int getRow() {
 		return row;
 	}
-	
+
 	public int getCol() {
 		return col;
 	}
 
-	/**
-	 * Method getTaken.
-	 * @return Piece
-	 */
 	public Piece getTaken() {
+		if (!made) {
+			throw new RuntimeException("Taken has not been initialized");
+		}
 		return taken;
 	}
 
 	/**
 	 * Method getType.
+	 * 
 	 * @return Type
 	 */
 	public Type getType() {
@@ -158,75 +175,98 @@ public final class Move {
 	 * 
 	 * @param b
 	 *            The Board to make this move on
-	
 	 */
-	public void make(Board b) {
-		if (type == Type.EN_POISSANT) {
-			int takenRow = piece.getColor() == Color.WHITE ? row + 1 : row - 1;
-			taken = b.getOccupant(takenRow, col);
-		} else {
-			taken = b.getOccupant(row, col);
-		}
-		enPoissantSq = b.getEnPoissantSq();
-		piece.moveTo(b, row, col);
+	public void make() {
+		make(board);
 	}
 
-	/**
-	 * Method unmake.
-	 * @param b Board
-	 */
-	public void unmake(Board b) {
+	public void make(Board board) {
+		if (made) {
+			throw new RuntimeException("Can't make a move twice");
+		}
+		made = true;
+		enPoissantSq = board.getEnPoissantSq();
+		if (type == Type.EN_POISSANT) {
+			int takenRow = piece.getColor() == Color.WHITE ? row + 1 : row - 1;
+			taken = board.getOccupant(takenRow, col);
+		} else {
+			taken = board.getOccupant(row, col);
+		}
+		if (type.isPromotion()) {
+			Piece promoteTo = new Queen(piece.getColor());
+			if (type == Type.PROMOTION_KNIGHT) {
+				promoteTo = new Knight(piece.getColor());
+			}
+			piece.incrementMoveCount();
+			board.setEnPoissantSq(null);
+			board.remove(startingRow, startingCol);
+			board.setPiece(row, col, promoteTo);
+		} else {
+			piece.moveTo(board, row, col);
+		}
+	}
+
+	public void unmake() {
+		unmake(board);
+	}
+
+	public void unmake(Board board) {
+		if (!made) {
+			throw new RuntimeException("Can't undo a move before making it");
+		}
+		made = false;
 		piece.decrementMoveCount();
 		switch (type) {
 		case NORMAL:
-			b.remove(row, col);
-			b.setPiece(startingRow, startingCol, piece);
+			board.remove(row, col);
+			board.setPiece(startingRow, startingCol, piece);
 			if (taken != null) {
-				b.setPiece(row, col, taken);
+				board.setPiece(row, col, taken);
 			}
-			b.setEnPoissantSq(enPoissantSq);
+			board.setEnPoissantSq(enPoissantSq);
 			break;
-		case PAWN_PROMOTION:
-			b.remove(row, col);
-			b.setPiece(startingRow, startingCol, new Pawn(piece.getColor()));
+		case PROMOTION_KNIGHT:
+			// Fall though because unmake is handled in the same way for both promotion types
+		case PROMOTION_QUEEN:
+			board.remove(row, col);
+			Pawn replacement = new Pawn(piece.getColor());
+			replacement.moveCount = pieceMoveCount;
+			board.setPiece(startingRow, startingCol, replacement);
 			if (taken != null) {
-				b.setPiece(row, col, taken);
+				board.setPiece(row, col, taken);
 			}
 			break;
 		case EN_POISSANT:
+			board.remove(row, col);
+			board.setPiece(startingRow, startingCol, piece);
 			int direction = piece.getColor() == Color.WHITE ? 1 : -1;
-			b.remove(row, col);
-			b.setPiece(startingRow, startingCol, piece);
-			b.setPiece(row + direction, col, taken);
+			board.setPiece(row + direction, col, taken);
+			board.setEnPoissantSq(enPoissantSq);
 			break;
 		default:
-			undoCastling(b);
+			undoCastling();
 		}
 	}
 
-	/**
-	 * Method undoCastling.
-	 * @param b Board
-	 */
-	private void undoCastling(Board b) {
-		b.setPiece(startingRow, startingCol, b.remove(row, col));
+	private void undoCastling() {
+		board.setPiece(startingRow, startingCol, board.remove(row, col));
 		Rook rook;
 		switch (type) {
 		case WHITE_LONG:
-			rook = (Rook) b.remove(row, col + 1);
-			b.setPiece(7, 0, rook);
+			rook = (Rook) board.remove(row, col + 1);
+			board.setPiece(7, 0, rook);
 			break;
 		case WHITE_SHORT:
-			rook = (Rook) b.remove(row, col - 1);
-			b.setPiece(7, 7, rook);
+			rook = (Rook) board.remove(row, col - 1);
+			board.setPiece(7, 7, rook);
 			break;
 		case BLACK_LONG:
-			rook = (Rook) b.remove(row, col + 1);
-			b.setPiece(0, 0, rook);
+			rook = (Rook) board.remove(row, col + 1);
+			board.setPiece(0, 0, rook);
 			break;
 		case BLACK_SHORT:
-			rook = (Rook) b.remove(row, col - 1);
-			b.setPiece(0, 7, rook);
+			rook = (Rook) board.remove(row, col - 1);
+			board.setPiece(0, 7, rook);
 			break;
 		default:
 			throw new IllegalStateException(
@@ -239,19 +279,28 @@ public final class Move {
 
 	/**
 	 * Method isChecking.
-	 * @param b Board
+	 * 
+	 * @param b
+	 *            Board
 	 * @return boolean
 	 */
-	public boolean isChecking(Board b) {
-		make(b);
+	public boolean isChecking() {
+		boolean undo = false;
+		if (!made) {
+			make();
+			undo = true;
+		}
 		Color pieceColor = piece.getColor();
-		boolean isChecking = b.kingInCheck(pieceColor.opp());
-		unmake(b);
+		boolean isChecking = board.kingInCheck(pieceColor.opp());
+		if (undo) {
+			unmake();
+		}
 		return isChecking;
 	}
 
 	/**
 	 * Method isTaking.
+	 * 
 	 * @return boolean
 	 */
 	public boolean isTaking() {
@@ -263,9 +312,11 @@ public final class Move {
 	 * object is a Move 2. The two moves contain the same Piece 3. The two moves
 	 * are moving that Piece to the same Square
 	 * 
-	
-	 * @param obj Object
-	 * @return true if this Move equals the input object */
+	 * 
+	 * @param obj
+	 *            Object
+	 * @return true if this Move equals the input object
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) {
@@ -281,8 +332,9 @@ public final class Move {
 	/**
 	 * Gets the hashCode for this Move
 	 * 
-	
-	 * @return An integer representation of this Move */
+	 * 
+	 * @return An integer representation of this Move
+	 */
 	@Override
 	public int hashCode() {
 		return piece.hashCode() + getSq().hashCode();
@@ -292,8 +344,9 @@ public final class Move {
 	 * Represents this Move as a String Chess accepted notation for castling is
 	 * used
 	 * 
-	
-	 * @return A String representation of this Move */
+	 * 
+	 * @return A String representation of this Move
+	 */
 	@Override
 	public String toString() {
 		if (piece instanceof King && piece.getCol() == 4) {

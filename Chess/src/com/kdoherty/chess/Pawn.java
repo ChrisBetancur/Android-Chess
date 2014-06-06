@@ -119,19 +119,16 @@ public final class Pawn extends Piece {
 			if (canMove(b, sRow, sCol)) {
 				if (s.col() != col && b.isEmpty(sRow, sCol)) {
 					// En Poissant
-					moves.add(new Move(this, sRow, sCol, Move.Type.EN_POISSANT));
-				} else if (s.row() != finalRow) {
-					// Normal Move
-					moves.add(new Move(this, s));
-				} else {
+					moves.add(new Move(b, this, sRow, sCol));
+				} else if (s.row() == finalRow) {
 					// Pawn Promotion
-					moves.add(new Move(new Queen(color, row, col), sRow, sCol,
-							Move.Type.PAWN_PROMOTION));
-					moves.add(new Move(new Knight(color, row, col), sRow, sCol,
-							Move.Type.PAWN_PROMOTION));
+					moves.add(new Move(b, this, sRow, sCol, Move.Type.PROMOTION_QUEEN));
+					moves.add(new Move(b, this, sRow, sCol, Move.Type.PROMOTION_KNIGHT));
+				} else {
+					// Normal Move
+					moves.add(new Move(b, this, s));
 				}
 			}
-
 		}
 		return moves;
 	}
@@ -242,8 +239,10 @@ public final class Pawn extends Piece {
 	@Override
 	public void moveTo(Board b, int r, int c) {
 		incrementMoveCount();
+		boolean set = false;
 		if (row + 2 * forward == r) {
 			b.setEnPoissantSq(new Square(row + forward, col));
+			set = true;
 		}
 		if (canEnPoissant(b, r, c) && row + forward == r
 				&& (col + 1 == c || col - 1 == c)) {
@@ -252,7 +251,9 @@ public final class Pawn extends Piece {
 			b.setEnPoissantSq(null);
 		} else {
 			b.movePiece(row, col, r, c);
-			b.setEnPoissantSq(null);
+			if (!set) {
+				b.setEnPoissantSq(null);
+			}
 		}
 	}
 
@@ -291,7 +292,7 @@ public final class Pawn extends Piece {
 
 	@Override
 	public int evaluate(Board board) {
-		return PawnEval.eval(board, this);
+		return new PawnEval(board, this).evaluate();
 	}
 
 	@Override
