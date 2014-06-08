@@ -356,4 +356,8 @@ public abstract class Piece {
 		m.unmake();
 		return stillInCheck;
 	}
+	
+	public boolean sameColor(Piece piece) {
+		return color == piece.color;
+	}
 }

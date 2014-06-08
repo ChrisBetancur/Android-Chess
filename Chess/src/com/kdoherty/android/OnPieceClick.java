@@ -1,13 +1,11 @@
 package com.kdoherty.android;
 
-
 import android.view.View;
 import android.view.View.OnClickListener;
 
 import com.kdoherty.chess.Board;
 import com.kdoherty.chess.Move;
 import com.kdoherty.chess.Piece;
-
 
 public class OnPieceClick implements OnClickListener {
 
@@ -28,14 +26,21 @@ public class OnPieceClick implements OnClickListener {
 		if (chessContext.isGameOver() || chessContext.isCpuMove()) {
 			return;
 		}
-		if (chessContext.isFirstClick()) {
-			Piece piece = board.getOccupant(row, col);
+		Piece piece = board.getOccupant(row, col);
+		Piece activePiece = chessContext.getActivePiece();
+		boolean firstClick = chessContext.isFirstClick();
+		
+		if (firstClick
+				|| (piece != null && activePiece != null && piece
+						.sameColor(activePiece))) {
 			if (piece != null) {
 				chessContext.setActivePiece(piece);
-				chessContext.toggleClick();
+				chessContext.refreshAdapter(board);
+				if (firstClick) {
+					chessContext.toggleClick();
+				}
 			}
 		} else {
-			Piece activePiece = chessContext.getActivePiece();
 			if (activePiece != null
 					&& activePiece.getColor() == board.getSideToMove()
 					&& activePiece.canMove(board, row, col)) {

@@ -1,6 +1,8 @@
 package com.kdoherty.android;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import android.app.Activity;
@@ -20,6 +22,7 @@ import com.kdoherty.chess.Move;
 import com.kdoherty.chess.Pawn;
 import com.kdoherty.chess.Piece;
 import com.kdoherty.chess.Queen;
+import com.kdoherty.chess.Square;
 import com.kdoherty.engine.CpuPlayer;
 
 /**
@@ -31,8 +34,6 @@ import com.kdoherty.engine.CpuPlayer;
  */
 public class ChessActivity extends Activity {
 
-	// TODO: On first click show valid moves
-	// TODO: On long click also sets active piece and valid moves
 	// TODO: Pawn Promotion
 	// TODO: Show move list
 	// TODO: Wood images for Squares
@@ -45,7 +46,7 @@ public class ChessActivity extends Activity {
 	private static final int cpuDepth = 1;
 	private CpuPlayer player = new CpuPlayer(cpuColor, cpuDepth);
 	/** The starting game time for each player in milliseconds */
-	private long startTime = 300000; // 5 minutes
+	private long startTime = 900000; // 5 minutes
 
 	/**
 	 * The timer which is currently ticking down. Also represents whose side it
@@ -95,6 +96,9 @@ public class ChessActivity extends Activity {
 	 */
 	private Piece activePiece;
 
+	/** The list of Squares the active Piece can move to */
+	private List<Square> activePieceSquares = new ArrayList<Square>();
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -104,9 +108,9 @@ public class ChessActivity extends Activity {
 		initTimers();
 		initBoard();
 		initPieceHolders();
-		
+
 		if (isCpuMove()) {
-			new GetCpuMove().execute();         
+			new GetCpuMove().execute();
 		}
 	}
 
@@ -189,15 +193,13 @@ public class ChessActivity extends Activity {
 	}
 
 	/**
-	 * Responsible for the following functionality: 
-	 * 1. Makes the input move on the Board 
-	 * 2. Refreshes the Board so it is displaying the most up to date version 
-	 * 3. Toggles the timers 
-	 * 4. Toggles the side to move 
-	 * 5. Adds the input move to the stack of Moves contained in the Board 
-	 * 6. Checks and notifies players of the end of the game 
-	 * 7. If a Piece was taken, display that Piece with the other taken Pieces 
-	 * 8. If it is then the computer's turn, make the computer's move
+	 * Responsible for the following functionality: 1. Makes the input move on
+	 * the Board 2. Refreshes the Board so it is displaying the most up to date
+	 * version 3. Toggles the timers 4. Toggles the side to move 5. Adds the
+	 * input move to the stack of Moves contained in the Board 6. Checks and
+	 * notifies players of the end of the game 7. If a Piece was taken, display
+	 * that Piece with the other taken Pieces 8. If it is then the computer's
+	 * turn, make the computer's move
 	 * 
 	 * @param move
 	 *            The move to make on the Board
@@ -210,6 +212,7 @@ public class ChessActivity extends Activity {
 			Piece promotedTo = askPromotion(piece.getColor());
 			board.setPiece(move.getRow(), move.getCol(), promotedTo);
 		}
+		setActivePiece(null);
 		refreshAdapter(board);
 		board.toggleSideToMove();
 		board.addMove(move);
@@ -224,9 +227,9 @@ public class ChessActivity extends Activity {
 		}
 		if (isCpuMove()) {
 			new GetCpuMove().execute();
-		}	
+		}
 	}
-	
+
 	/**
 	 * Asks the user which Piece to promote their Pawn to.
 	 * 
@@ -235,6 +238,8 @@ public class ChessActivity extends Activity {
 	 * @return The Piece which the user choice to Promote their Piece to
 	 */
 	private Piece askPromotion(Color color) {
+		
+		
 		return new Queen(color);
 	}
 
@@ -244,7 +249,7 @@ public class ChessActivity extends Activity {
 	 * @param board
 	 *            The Board to represent in the UI
 	 */
-	private void refreshAdapter(Board board) {
+	void refreshAdapter(Board board) {
 		adapter = new SquareAdapter(this, board);
 		boardView.setAdapter(adapter);
 	}
@@ -306,9 +311,10 @@ public class ChessActivity extends Activity {
 			blackTakenPieces.setAdapter(blackTakenAdapter);
 		}
 	}
-	
+
 	/**
 	 * Is it the computer's turn to move?
+	 * 
 	 * @return true if its the computer's turn to move and false otherwise
 	 */
 	boolean isCpuMove() {
@@ -378,9 +384,15 @@ public class ChessActivity extends Activity {
 	 */
 	void setActivePiece(Piece activePiece) {
 		this.activePiece = activePiece;
-//		Board board = adapter.getBoard();
-//		adapter.displayMoves(moves);
-//		List<Move> moves = activePiece.getMoves(board);	
+		activePieceSquares.clear();
+		if (activePiece != null) {
+			Board board = adapter.getBoard();
+			List<Move> moves = activePiece.getMoves(board);
+			for (Move move : moves) {
+				activePieceSquares.add(move.getSq());
+			}
+		}	
+		refreshAdapter(adapter.getBoard());
 	}
 
 	/**
@@ -394,12 +406,20 @@ public class ChessActivity extends Activity {
 	}
 
 	/**
+	 * Gets all Squares the active Piece can move to
+	 * @return A list of Squares the active Piece can move to
+	 */
+	List<Square> getActivePieceSquares() {
+		return activePieceSquares;
+	}
+
+	/**
 	 * Is either play out of time or is this game over?
 	 * 
-	 * @return true if one of the players has no time left or the game
-	 *  is over and false otherwise
+	 * @return true if one of the players has no time left or the game is over
+	 *         and false otherwise
 	 */
 	boolean isGameOver() {
 		return isGameOver;
-	}	
+	}
 }

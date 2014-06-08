@@ -1,8 +1,5 @@
 package com.kdoherty.android;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,9 +24,6 @@ final class SquareAdapter extends BaseAdapter {
 
 	/** The Board that this will represent */
 	private Board board;
-	
-	/** The list of Squares the active Piece can move to */
-	List<Square> markedSqs = new ArrayList<Square>();
 
 	/**
 	 * Starts with a Board in which all Pieces are in their default positions.
@@ -68,14 +62,6 @@ final class SquareAdapter extends BaseAdapter {
 	@Override
 	public long getItemId(int position) {
 		return position;
-	}
-	
-	public void setMarkedSqs(List<Square> markedSqs) {
-		this.markedSqs = markedSqs;
-	}
-	
-	public void clearMarkedSqs() {
-		this.markedSqs.clear();
 	}
 
 	/**
@@ -120,8 +106,11 @@ final class SquareAdapter extends BaseAdapter {
 		int row = position / 8;
 		int col = position % 8;
 
-		// Checker the board
-		if (!((row % 2 == 0 && col % 2 == 0) || (row % 2 == 1 && col % 2 == 1))) {
+		if (chessContext.getActivePieceSquares().contains(new Square(row, col))) {
+			// Highlight possible moves
+			convertView.setBackgroundResource(R.color.aqua);
+		} else if (!((row % 2 == 0 && col % 2 == 0) || (row % 2 == 1 && col % 2 == 1))) {
+			// Checker the board
 			convertView.setBackgroundResource(R.color.wood_brown);
 		} else {
 			convertView.setBackgroundResource(R.color.light_brown);
@@ -130,26 +119,18 @@ final class SquareAdapter extends BaseAdapter {
 		PieceImageView pieceView = viewHolder.pieceViewItem;
 		pieceView.setRow(row);
 		pieceView.setCol(col);
-		
-		if (markedSqs.contains(new Square(row, col))) {
-			// TODO: mark square somehow
-		}
 
 		Piece piece = board.getOccupant(row, col);
 		if (piece != null) {
 			int id = PieceImages.getId(piece);
 			pieceView.setImageResource(id);
 			pieceView.setId(id);
-			pieceView
-					.setOnLongClickListener(new OnPieceLongClick(chessContext));
-			pieceView.setOnClickListener(new OnPieceClick(chessContext, board,
-					row, col));
+			pieceView.setOnLongClickListener(new OnPieceLongClick(chessContext));
+			pieceView.setOnClickListener(new OnPieceClick(chessContext, board, row, col));
 		}
 
-		convertView.setOnClickListener(new OnPieceClick(chessContext, board,
-				row, col));
-		convertView.setOnDragListener(new OnPieceDrag(chessContext, board, row,
-				col));
+		convertView.setOnClickListener(new OnPieceClick(chessContext, board, row, col));
+		convertView.setOnDragListener(new OnPieceDrag(chessContext, board, row, col));
 
 		return convertView;
 	}
