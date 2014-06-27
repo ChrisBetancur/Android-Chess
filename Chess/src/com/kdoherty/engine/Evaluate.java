@@ -20,6 +20,8 @@ import com.kdoherty.chess.Square;
  * @author Kevin Doherty
  */
 final class Evaluate {
+	
+	//TODO: Evaluate captures to higher depth than regular moves?
 
 	/**
 	 * The bonus given if it is the Board's side to move is the same as the
@@ -87,7 +89,7 @@ final class Evaluate {
 			value += SIDE_TO_MOVE_BONUS;
 		}
 
-		value += (getNumMoves(b, color) - getNumMoves(b, color.opp()));
+		//value += (getNumMoves(b, color) - getNumMoves(b, color.opp()));
 		value += getMaterialCount(b, color);
 
 		return value;
@@ -251,9 +253,9 @@ final class Evaluate {
 	 *            The Color of which we are counting the number of moves on
 	 * @return The number of moves the input can make on the input Board.
 	 */
-	private static int getNumMoves(Board b, Color color) {
-		return b.getMoves(color).size();
-	}
+//	private static int getNumMoves(Board b, Color color) {
+//		return b.getMoves(color).size();
+//	}
 
 	/**
 	 * Gets the total Piece value of all Pieces on the input Board of the input
@@ -291,5 +293,4 @@ final class Evaluate {
 		return getTotalPieceValue(board, color)
 				- getTotalPieceValue(board, color.opp());
 	}
-	
 }
