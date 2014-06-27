@@ -42,6 +42,20 @@ final class PieceImages {
 		pieceImages.put("B", R.drawable.blackbishop);
 		pieceImages.put("K", R.drawable.blackking);
 		pieceImages.put("Q", R.drawable.blackqueen);
+		
+//		pieceImages.put("p", R.drawable.purplepawn);
+//		pieceImages.put("r", R.drawable.purplerook);
+//		pieceImages.put("n", R.drawable.purpleknight);
+//		pieceImages.put("b", R.drawable.purplebishop);
+//		pieceImages.put("k", R.drawable.purpleking);
+//		pieceImages.put("q", R.drawable.purplequeen);
+//
+//		pieceImages.put("P", R.drawable.greenpawn);
+//		pieceImages.put("R", R.drawable.greenrook);
+//		pieceImages.put("N", R.drawable.greenknight);
+//		pieceImages.put("B", R.drawable.greenbishop);
+//		pieceImages.put("K", R.drawable.greenking);
+//		pieceImages.put("Q", R.drawable.greenqueen);
 	}
 
 	/**
