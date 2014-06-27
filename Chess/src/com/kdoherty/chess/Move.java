@@ -18,10 +18,10 @@ public final class Move {
 	private int col;
 
 	/** The starting row of the Piece before this Move is made */
-	private int startingRow;
+	private final int startingRow;
 
 	/** The starting column of the Piece before this Move is made */
-	private int startingCol;
+	private final int startingCol;
 
 	/** The Square to move this piece to */
 	private Square targetSquare;
@@ -338,6 +338,14 @@ public final class Move {
 	@Override
 	public int hashCode() {
 		return piece.hashCode() + getSq().hashCode();
+	}
+	
+	public int getStartingRow() {
+		return startingRow;
+	}
+	
+	public int getStartingCol() {
+		return startingCol;
 	}
 
 	/**
