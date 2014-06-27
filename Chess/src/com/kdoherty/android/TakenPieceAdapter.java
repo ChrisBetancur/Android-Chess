@@ -28,7 +28,7 @@ final class TakenPieceAdapter extends BaseAdapter {
 	/** Contains all Pieces which have been taken off the Board */
 	private List<Piece> takenPieces;
 
-	public TakenPieceAdapter(Context context) {
+	TakenPieceAdapter(Context context) {
 		this.context = context;
 		takenPieces = new ArrayList<Piece>();
 	}
@@ -56,7 +56,7 @@ final class TakenPieceAdapter extends BaseAdapter {
 	 * @param piece
 	 *            The Piece to add to the view displaying taken Pieces
 	 */
-	public void addPiece(Piece piece) {
+	void addPiece(Piece piece) {
 		if (piece == null) {
 			throw new NullPointerException("Can't display a null taken piece");
 		}
