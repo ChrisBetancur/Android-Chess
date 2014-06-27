@@ -7,6 +7,7 @@ import android.widget.BaseAdapter;
 
 import com.kdoherty.androidchess.R;
 import com.kdoherty.chess.Board;
+import com.kdoherty.chess.Move;
 import com.kdoherty.chess.Piece;
 import com.kdoherty.chess.Square;
 
@@ -74,6 +75,40 @@ final class SquareAdapter extends BaseAdapter {
 	}
 
 	/**
+	 * Gets the Color of the Square based on the Board.
+	 * @param row The row of the Square to get the view of
+	 * @param col The col of the Square to get the view of
+	 * @return The Color of the Square at the input row and column
+	 */
+	private int getSquareColor(int row, int col) {
+		if (chessContext.getActivePieceSquares().contains(new Square(row, col))) {
+			// Highlight possible moves
+			return R.color.highlight_moves;
+		}
+
+		Move lastMove = board.getLastMove();
+		if (!chessContext.isCpuMove() && board.getLastMove() != null
+				&& lastMove.getStartingRow() == row
+				&& lastMove.getStartingCol() == col) {
+			// Highlight from square of last move
+			return R.color.from_square;
+		}
+		
+		if (!chessContext.isCpuMove() && board.getLastMove() != null
+				&& lastMove.getRow() == row && lastMove.getCol() == col) {
+			// Highlight to square of last move
+			return R.color.to_square;
+		}
+		
+		// Checker the board
+		if (!((row % 2 == 0 && col % 2 == 0) || (row % 2 == 1 && col % 2 == 1))) {	
+			return R.color.dark_square;
+		}
+		
+		return R.color.light_square;
+	}
+
+	/**
 	 * Used to hold PieceImageViews so we don't have to inflate the same View
 	 * multiple times
 	 */
@@ -106,15 +141,7 @@ final class SquareAdapter extends BaseAdapter {
 		int row = position / 8;
 		int col = position % 8;
 
-		if (chessContext.getActivePieceSquares().contains(new Square(row, col))) {
-			// Highlight possible moves
-			convertView.setBackgroundResource(R.color.aqua);
-		} else if (!((row % 2 == 0 && col % 2 == 0) || (row % 2 == 1 && col % 2 == 1))) {
-			// Checker the board
-			convertView.setBackgroundResource(R.color.wood_brown);
-		} else {
-			convertView.setBackgroundResource(R.color.light_brown);
-		}
+		convertView.setBackgroundResource(getSquareColor(row, col));
 
 		PieceImageView pieceView = viewHolder.pieceViewItem;
 		pieceView.setRow(row);
@@ -125,12 +152,16 @@ final class SquareAdapter extends BaseAdapter {
 			int id = PieceImages.getId(piece);
 			pieceView.setImageResource(id);
 			pieceView.setId(id);
-			pieceView.setOnLongClickListener(new OnPieceLongClick(chessContext));
-			pieceView.setOnClickListener(new OnPieceClick(chessContext, board, row, col));
+			pieceView
+					.setOnLongClickListener(new OnPieceLongClick(chessContext));
+			pieceView.setOnClickListener(new OnPieceClick(chessContext, board,
+					row, col));
 		}
 
-		convertView.setOnClickListener(new OnPieceClick(chessContext, board, row, col));
-		convertView.setOnDragListener(new OnPieceDrag(chessContext, board, row, col));
+		convertView.setOnClickListener(new OnPieceClick(chessContext, board,
+				row, col));
+		convertView.setOnDragListener(new OnPieceDrag(chessContext, board, row,
+				col));
 
 		return convertView;
 	}
