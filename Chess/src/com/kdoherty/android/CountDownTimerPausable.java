@@ -97,4 +97,8 @@ abstract class CountDownTimerPausable {
 	public boolean isPaused() {
 		return isPaused;
 	}
+	
+	public long getMillisRemaining() {
+		return millisRemaining;
+	}
 }
