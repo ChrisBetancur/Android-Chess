@@ -29,11 +29,14 @@ public class OnPieceClick implements OnClickListener {
 		Piece piece = board.getOccupant(row, col);
 		Piece activePiece = chessContext.getActivePiece();
 		boolean firstClick = chessContext.isFirstClick();
-		
+
 		if (firstClick
 				|| (piece != null && activePiece != null && piece
 						.sameColor(activePiece))) {
-			if (piece != null) {
+			if (piece != null
+					&& (!chessContext.isCpuPlayer() && board.getSideToMove() == piece.getColor()
+					|| (chessContext.isCpuPlayer() && piece.getColor() != chessContext
+							.getCpuColor()))) {
 				chessContext.setActivePiece(piece);
 				chessContext.refreshAdapter(board);
 				if (firstClick) {
