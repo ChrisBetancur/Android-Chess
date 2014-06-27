@@ -12,7 +12,6 @@
     <color name="black">#000000</color>
     <color name="transparent">#00000000</color>
     <color name="white">#FFFFFF</color>
-    <color name="blue">#00aceb</color>
     <color name="spiritclips_bck">#8AB8E0</color>
     <color name="translucent_black">#55000000</color>
     <color name="grid_bck">#627583</color>
@@ -23,5 +22,20 @@
     <color name="blue_txt">#0f5690</color>
     <color name="wood_brown">#825201</color>
     <color name="light_brown">#b69b4c</color>
-
+    <color name="light_yellow">#ffff99</color>
+    <color name="yellow">#ffff00</color>
+    <color name="light_green">#7fff7f</color>
+    <color name="green">#00ff00</color>
+    <color name="aquamarine">#66CDAA</color>
+    <color name="blue">#3232ff</color>
+    <color name="light_pink">#ffb4d9</color>
+    <color name="neon_purple">#e994ff</color>
+    <color name="neon_blue">#94d4e9</color>
+    
+    
+    <color name="dark_square">#825201</color>
+    <color name="light_square">#b69b4c</color>
+	<color name="from_square">#7fff7f</color>
+	<color name="to_square">#00ff00</color>
+	<color name="highlight_moves">#66CDAA</color>
 </resources>

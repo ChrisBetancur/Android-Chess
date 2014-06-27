@@ -6,5 +6,7 @@
     <string name="desc">Piece Image</string>
     <string name="title_activity_home">HomeActivity</string>
     <string name="undo_button_text">undo</string>
+    <string name="one_player">One Player</string>
+    <string name="two_player">Two Player</string>
 
 </resources>
