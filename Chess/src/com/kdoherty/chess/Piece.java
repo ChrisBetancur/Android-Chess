@@ -4,7 +4,7 @@ import java.util.List;
 
 /**
  * This class represents a Chess Piece This is a superClass for Pawn, Knight,
- * Bishop, Rook, Queen, and King
+ * Bishop, Rook, Queen, and King.
  * 
  * @author Kevin Doherty
  * 
@@ -306,7 +306,7 @@ public abstract class Piece {
 	 *         coordinate
 	 */
 	public boolean isTaking(Board b, int r, int c) {
-		return b.isOccupied(r, c) && b.getOccupant(r, c).getColor() != color;
+		return b.isOccupied(r, c) && !b.getOccupant(r, c).sameColor(this);
 	}
 
 	/**
@@ -357,6 +357,11 @@ public abstract class Piece {
 		return stillInCheck;
 	}
 	
+	/**
+	 * Does this Piece have the same Color as the input Piece
+	 * @param piece The Piece to check if it has the same Color
+	 * @return true if this Piece's Color is the same as the input Piece's Color
+	 */
 	public boolean sameColor(Piece piece) {
 		return color == piece.color;
 	}
