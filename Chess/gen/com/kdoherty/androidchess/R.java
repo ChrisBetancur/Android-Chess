@@ -14,25 +14,38 @@ public final class R {
         public static final int BLACK=0x7f040000;
         public static final int WHITE=0x7f040001;
         public static final int aqua=0x7f040005;
+        public static final int aquamarine=0x7f040019;
         public static final int black=0x7f040008;
-        public static final int blue=0x7f04000b;
-        public static final int blue_txt=0x7f040013;
+        public static final int blue=0x7f04001a;
+        public static final int blue_txt=0x7f040012;
         public static final int brown=0x7f040003;
         public static final int dark_grey=0x7f040004;
-        public static final int dark_grey_bg=0x7f040010;
-        public static final int grey=0x7f04000f;
-        public static final int grid_bck=0x7f04000e;
-        public static final int light_brown=0x7f040015;
+        public static final int dark_grey_bg=0x7f04000f;
+        public static final int dark_square=0x7f04001e;
+        public static final int from_square=0x7f040020;
+        public static final int green=0x7f040018;
+        public static final int grey=0x7f04000e;
+        public static final int grid_bck=0x7f04000d;
+        public static final int highlight_moves=0x7f040022;
+        public static final int light_brown=0x7f040014;
+        public static final int light_green=0x7f040017;
         public static final int light_grey=0x7f040002;
-        public static final int login_font_color_1=0x7f040011;
-        public static final int login_font_color_2=0x7f040012;
+        public static final int light_pink=0x7f04001b;
+        public static final int light_square=0x7f04001f;
+        public static final int light_yellow=0x7f040015;
+        public static final int login_font_color_1=0x7f040010;
+        public static final int login_font_color_2=0x7f040011;
+        public static final int neon_blue=0x7f04001d;
+        public static final int neon_purple=0x7f04001c;
         public static final int red_cherry=0x7f040006;
         public static final int silver=0x7f040007;
-        public static final int spiritclips_bck=0x7f04000c;
-        public static final int translucent_black=0x7f04000d;
+        public static final int spiritclips_bck=0x7f04000b;
+        public static final int to_square=0x7f040021;
+        public static final int translucent_black=0x7f04000c;
         public static final int transparent=0x7f040009;
         public static final int white=0x7f04000a;
-        public static final int wood_brown=0x7f040014;
+        public static final int wood_brown=0x7f040013;
+        public static final int yellow=0x7f040016;
     }
     public static final class dimen {
         /**  Default screen margins, per the Android Design guidelines. 
@@ -48,39 +61,65 @@ public final class R {
          */
         public static final int activity_horizontal_margin=0x7f050000;
         public static final int activity_vertical_margin=0x7f050001;
+        public static final int grid_line_width=0x7f050004;
+        public static final int grid_padding=0x7f050005;
+        public static final int piece_size=0x7f050006;
+        public static final int timer_margin=0x7f050002;
+        public static final int timer_text_size=0x7f050003;
     }
     public static final class drawable {
         public static final int blackbishop=0x7f020000;
-        public static final int blackking=0x7f020001;
-        public static final int blackknight=0x7f020002;
-        public static final int blackpawn=0x7f020003;
-        public static final int blackqueen=0x7f020004;
-        public static final int blackrook=0x7f020005;
-        public static final int ic_launcher=0x7f020006;
-        public static final int whitebishop=0x7f020007;
-        public static final int whiteking=0x7f020008;
-        public static final int whiteknight=0x7f020009;
-        public static final int whitepawn=0x7f02000a;
-        public static final int whitequeen=0x7f02000b;
-        public static final int whiterook=0x7f02000c;
+        public static final int blackhole=0x7f020001;
+        public static final int blackking=0x7f020002;
+        public static final int blackknight=0x7f020003;
+        public static final int blackpawn=0x7f020004;
+        public static final int blackqueen=0x7f020005;
+        public static final int blackrook=0x7f020006;
+        public static final int green_bishop=0x7f020007;
+        public static final int greenbishop=0x7f020008;
+        public static final int greenking=0x7f020009;
+        public static final int greenknight=0x7f02000a;
+        public static final int greenpawn=0x7f02000b;
+        public static final int greenqueen=0x7f02000c;
+        public static final int greenrook=0x7f02000d;
+        public static final int ic_launcher=0x7f02000e;
+        public static final int purplebishop=0x7f02000f;
+        public static final int purpleking=0x7f020010;
+        public static final int purpleknight=0x7f020011;
+        public static final int purplepawn=0x7f020012;
+        public static final int purplequeen=0x7f020013;
+        public static final int purplerook=0x7f020014;
+        public static final int whitebishop=0x7f020015;
+        public static final int whiteking=0x7f020016;
+        public static final int whiteknight=0x7f020017;
+        public static final int whitepawn=0x7f020018;
+        public static final int whitequeen=0x7f020019;
+        public static final int whiterook=0x7f02001a;
     }
     public static final class id {
-        public static final int action_settings=0x7f09000a;
+        public static final int action_settings=0x7f090010;
+        public static final int bishop=0x7f09000d;
         public static final int blackTakenPieces=0x7f090005;
         public static final int blackTimer=0x7f090002;
         public static final int centerPoint=0x7f090001;
         public static final int chessboard=0x7f090003;
-        public static final int square=0x7f090006;
-        public static final int squareView=0x7f090007;
-        public static final int takenPieceHolder=0x7f090008;
-        public static final int takenPieceView=0x7f090009;
+        public static final int knight=0x7f09000b;
+        public static final int moveList=0x7f090006;
+        public static final int one_player=0x7f090007;
+        public static final int promotion_options=0x7f090009;
+        public static final int queen=0x7f09000a;
+        public static final int rook=0x7f09000c;
+        public static final int square=0x7f09000e;
+        public static final int squareView=0x7f09000f;
+        public static final int two_player=0x7f090008;
         public static final int whiteTakenPieces=0x7f090004;
         public static final int whiteTimer=0x7f090000;
     }
     public static final class layout {
         public static final int activity_chess=0x7f030000;
-        public static final int square=0x7f030001;
-        public static final int taken_piece=0x7f030002;
+        public static final int activity_home=0x7f030001;
+        public static final int promotion_options=0x7f030002;
+        public static final int square=0x7f030003;
     }
     public static final class menu {
         public static final int home=0x7f080000;
@@ -90,7 +129,9 @@ public final class R {
         public static final int action_settings=0x7f060001;
         public static final int app_name=0x7f060000;
         public static final int desc=0x7f060002;
+        public static final int one_player=0x7f060005;
         public static final int title_activity_home=0x7f060003;
+        public static final int two_player=0x7f060006;
         public static final int undo_button_text=0x7f060004;
     }
     public static final class style {
