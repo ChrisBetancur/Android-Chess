@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/promotion_options"
+    android:columnCount="2" >
+
+    <ImageView
+        android:id="@+id/queen"
+        android:contentDescription="queen image"
+        android:src="@drawable/whitequeen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/knight"
+        android:contentDescription="knight image"
+        android:src="@drawable/whiteknight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/rook"
+        android:contentDescription="rook image"
+        android:src="@drawable/whiterook"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/bishop"
+        android:contentDescription="bishop image"
+        android:src="@drawable/whitebishop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</GridLayout>
