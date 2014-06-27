@@ -217,6 +217,6 @@ public class BoardTest extends BaseTest {
 		Board kingInCheckBoard = kingInCheckBoard();
 		assertEquals(kingInCheckBoard, kingInCheckBoard.clone());
 		assertFalse(kingInCheckBoard == kingInCheckBoard.clone());
-
+		System.out.println(Board.defaultBoard());
 	}
 }

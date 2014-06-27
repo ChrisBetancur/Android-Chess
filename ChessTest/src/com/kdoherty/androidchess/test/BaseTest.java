@@ -358,5 +358,59 @@ public class BaseTest extends TestCase {
 		board.setPiece('h', 8, new King(color.opp()));
 		return board;
 	}
+	
+	/**
+	 * White Pawn on e4, black pawn on e5
+	 * @return
+	 */
+	public Board middleIsolatedBoard() {
+		Board board = new Board();
+		board.setPiece('e', 4, p1);
+		board.setPiece('e', 5, p10);
+		board.setPiece('c', 8, k1);
+		board.setPiece('a', 8, k2);
+		return board;
+	}
+	
+	/**
+	 * White Pawn on a4, black pawn on a5
+	 * @return
+	 */
+	public Board leftIsolatedBoard() {
+		Board board = new Board();
+		board.setPiece('a', 4, p1);
+		board.setPiece('a', 5, p10);
+		board.setPiece('c', 8, k1);
+		board.setPiece('a', 8, k2);
+		return board;
+	}
+	
+	/**
+	 * White Pawn on h4 black pawn on h5
+	 * @return
+	 */
+	public Board rightIsolatedBoard() {
+		Board board = new Board();
+		board.setPiece('h', 4, p1);
+		board.setPiece('h', 5, p10);
+		board.setPiece('c', 8, k1);
+		board.setPiece('a', 8, k2);
+		return board;
+	}
+	
+	/**
+	 * White pawns on e4 and d4, black pawns on e5 and d5
+	 * @return
+	 */
+	public Board notIsolatedBoard() {
+		Board board = new Board();
+		board.setPiece('e', 4, p1);
+		board.setPiece('d', 4, p2);
+		board.setPiece('e', 5, p10);
+		board.setPiece('d', 5, p11);
+		board.setPiece('c', 8, k1);
+		board.setPiece('a', 8, k2);
+		return board;
+	}
 
 }
