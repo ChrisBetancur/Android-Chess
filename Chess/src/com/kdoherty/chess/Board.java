@@ -1,9 +1,7 @@
 package com.kdoherty.chess;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Deque;
 import java.util.List;
 
 /**
@@ -38,8 +36,12 @@ public final class Board {
 	/** All the black Pieces on this Board */
 	private final List<Piece> blackPieces;
 
-	/** Keeps track of all the moves played so far on this Board */
-	private final Deque<Move> moveList;
+	/**
+	 * Keeps track of all the moves played so far on this Board. Note: Not using
+	 * a Deque here because com.kdoherty.android.MoveListAdapter requires access
+	 * to its elements at any index not just first or last.
+	 */
+	private final List<Move> moveList;
 
 	/** The Color of whose turn it is */
 	private Color sideToMove = Color.WHITE;
@@ -54,7 +56,7 @@ public final class Board {
 		pieces = new Piece[NUM_ROWS][NUM_COLS];
 		whitePieces = new ArrayList<Piece>();
 		blackPieces = new ArrayList<Piece>();
-		moveList = new ArrayDeque<Move>();
+		moveList = new ArrayList<Move>();
 	}
 
 	/**
@@ -65,9 +67,9 @@ public final class Board {
 	 * @return A Board with all Pieces in their starting locations
 	 */
 	public static Board defaultBoard() {
-		Board b = new Board();
-		b.fillWithDefaultPieces();
-		return b;
+		Board board = new Board();
+		board.fillWithDefaultPieces();
+		return board;
 	}
 
 	/**
@@ -99,6 +101,7 @@ public final class Board {
 	public static boolean sameDiagonal(int row, int col, int row2, int col2) {
 		double colDif = col2 - col;
 		if (colDif != 0) {
+			// Note: double compare with == is OK here
 			return Math.abs((row2 - row) / colDif) == 1.0;
 		}
 		return false;
@@ -242,7 +245,7 @@ public final class Board {
 	 * @param list
 	 *            The List to clone
 	 * 
-	 * @return An ArrayList containing all the same elements as the input list
+	 * @return A List containing all the same elements as the input list
 	 */
 	private static <T> List<T> cloneList(List<? extends T> list) {
 		List<T> clone = new ArrayList<T>();
@@ -302,7 +305,7 @@ public final class Board {
 	 *            The Move to add
 	 */
 	public void addMove(Move move) {
-		moveList.push(move);
+		moveList.add(move);
 	}
 
 	/**
@@ -310,7 +313,9 @@ public final class Board {
 	 * this Board
 	 */
 	public void undoMove() {
-		moveList.pop();
+		if (!moveList.isEmpty()) {
+			moveList.remove(moveList.size() - 1).unmake();
+		}
 	}
 
 	/**
@@ -320,7 +325,10 @@ public final class Board {
 	 * @return The last move played on this Board
 	 */
 	public Move getLastMove() {
-		return moveList.peek();
+		if (moveList.isEmpty()) {
+			return null;
+		}
+		return moveList.get(moveList.size() - 1);
 	}
 
 	/**
@@ -388,7 +396,6 @@ public final class Board {
 	 */
 	public Piece remove(int r, int c) {
 		Piece removed = getOccupant(r, c);
-		pieces[r][c] = null;
 		if (removed != null) {
 			if (removed.getColor() == Color.WHITE) {
 				whitePieces.remove(removed);
@@ -396,6 +403,7 @@ public final class Board {
 				blackPieces.remove(removed);
 			}
 		}
+		pieces[r][c] = null;
 		return removed;
 	}
 
@@ -422,7 +430,7 @@ public final class Board {
 		p.setCol(c);
 		if (p.getColor() == Color.WHITE) {
 			whitePieces.add(p);
-		} else {
+		} else if (p.getColor() == Color.BLACK) {
 			blackPieces.add(p);
 		}
 		return removed;
@@ -584,7 +592,7 @@ public final class Board {
 	 * @return true if the input color is in checkMate
 	 */
 	public boolean isCheckMate(Color color) {
-		return kingInCheck(color) && getMoves(color).size() == 0;
+		return kingInCheck(color) && getMoves(color).isEmpty();
 	}
 
 	/**
@@ -596,7 +604,7 @@ public final class Board {
 	 * @return true if the input color is causing a draw
 	 */
 	public boolean isDraw(Color color) {
-		return !kingInCheck(color) && getMoves(color).size() == 0;
+		return !kingInCheck(color) && getMoves(color).isEmpty();
 	}
 
 	/**
@@ -636,7 +644,6 @@ public final class Board {
 	 *            Object The object to test equality with this Board
 	 * @return Does this Board equal that object?
 	 */
-
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) {
@@ -651,8 +658,8 @@ public final class Board {
 
 		return Arrays.deepEquals(pieces, thatBoard.pieces)
 				&& sideToMove == thatSideToMove
-				&& (enPoissantSq == thatEnPoissantSq || (enPoissantSq != null && enPoissantSq
-						.equals(thatEnPoissantSq)))
+				&& (enPoissantSq == thatEnPoissantSq ||
+				   (enPoissantSq != null && enPoissantSq.equals(thatEnPoissantSq)))
 				&& sameElements(whitePieces, thatBoard.whitePieces)
 				&& sameElements(blackPieces, thatBoard.blackPieces);
 	}
@@ -684,29 +691,35 @@ public final class Board {
 	 */
 	@Override
 	public String toString() {
-		String b = "";
-		String colNum = "  ";
+		StringBuilder sb = new StringBuilder();
+		StringBuilder colNum = new StringBuilder("  ");
 		for (int j = 0; j < NUM_COLS; j++) {
-			colNum += j + " ";
+			colNum.append(j);
+			colNum.append(" ");
 		}
-		colNum += "\n";
+		colNum.append("\n");
 		for (int i = 0; i < NUM_ROWS; i++) {
-			b = b + i + "|";
+			sb.append(i);
+			sb.append("|");
 			for (int j = 0; j < NUM_COLS; j++) {
-				if (pieces[i][j] != null)
-					b = b + pieces[i][j];
-				else
-					b = b + " ";
-				b = b + "|";
+				if (isOccupied(i, j)) {
+					sb.append(getOccupant(i, j));
+				} else {
+					sb.append(" ");
+				}
+				sb.append("|");
 			}
-			b = b + "\n";
+			sb.append("\n");
 		}
-		b = b + "\n";
-		b = colNum + b;
-		b += "enPoissant Square: " + enPoissantSq;
-		b += " side toMove: " + sideToMove;
-		b += " moveList: " + moveList;
-		return b;
+		sb.append("\n");
+		sb.insert(0, colNum.toString());
+		sb.append("enPoissant Square: ");
+		sb.append(enPoissantSq);
+		sb.append(" side toMove: ");
+		sb.append(sideToMove);
+		sb.append(" moveList: ");
+		sb.append(moveList);
+		return sb.toString();
 	}
 
 	/**
