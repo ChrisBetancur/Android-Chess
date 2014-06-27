@@ -16,6 +16,10 @@
         <activity
             android:name="com.kdoherty.android.ChessActivity"
             android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="com.kdoherty.android.HomeActivity"
+            android:label="@string/title_activity_home" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
