@@ -8,28 +8,37 @@ import com.kdoherty.chess.Move;
 
 /**
  * This class represents a Computer player and its though process.
- * 
+ * Enum ensures only one instance of each player is created.
  * @author Kevin Doherty
  */
-public final class CpuPlayer {
-
+public enum CpuPlayer {
+	
+	/** White computer player */
+	WHITE_INSTANCE(Color.WHITE),
+	
+	/** Black computer player */
+	BLACK_INSTANCE(Color.BLACK); 
+	
 	/** The Color which this computer CpuPlayer will make moves for */
 	private Color color;
-
-	/** The number of moves this CpuPlayer will think ahead */
-	private int depth;
 
 	/**
 	 * Constructor for CpuPlayer.
 	 * 
 	 * @param color
 	 *            The Color which this computer CpuPlayer will make moves for
-	 * @param depth
-	 *            The number of moves this CpuPlayer will think ahead
 	 */
-	public CpuPlayer(Color color, int depth) {
+	private CpuPlayer(Color color) {
 		this.color = color;
-		this.depth = depth;
+	}
+	
+	/**
+	 * Factory method for a CpuPlayer
+	 * @param color The Color of the Piece's this player will be controlling
+	 * @return A CpuPlayer which will play moves for the input Color.
+	 */
+	public static CpuPlayer getInstance(Color color) {
+		return color == Color.WHITE ? WHITE_INSTANCE : BLACK_INSTANCE;
 	}
 
 	/**
@@ -46,7 +55,7 @@ public final class CpuPlayer {
 	 *            The Board determine the best move on
 	 * @return Move What was determined to be the best move.
 	 */
-	public Move negaMaxMove(Board board) {
+	public Move negaMaxMove(Board board, long millisRemaining) {
 		if (board.getMoveCount() == 1) {
 			Move lastMove = board.getLastMove();
 			if (lastMove.toString().equals("pe4")) {
@@ -64,12 +73,23 @@ public final class CpuPlayer {
 		if (!mateMoves.isEmpty()) {
 			return mateMoves.get(0);
 		}
+		int depth = 1;
+		if (millisRemaining > 600000) {
+			depth = 3;
+		} else if (millisRemaining > 60000) {
+			depth = 2;
+		}
 
 		int max = Integer.MIN_VALUE;
 		Move bestMove = null;
 
-		for (Move move : MoveSorter.sort(board, board.getMoves(color))) {
+		List<Move> sortedMoves = MoveSorter.sort(board, board.getMoves(color));
+		for (Move move : sortedMoves) {
 			move.make();
+			if (!MateSolver.findMateUpToN(board, color.opp(), 1).isEmpty()) {
+				move.unmake();
+				continue;
+			}
 			int score = -negaMaxWithPruning(board, color.opp(),
 					Integer.MIN_VALUE, Integer.MAX_VALUE, depth);
 			if (score > max) {
@@ -77,6 +97,10 @@ public final class CpuPlayer {
 				bestMove = move;
 			}
 			move.unmake();
+		}
+		
+		if (bestMove == null && !sortedMoves.isEmpty()) {
+			bestMove = sortedMoves.get(0);
 		}
 
 		return bestMove;
@@ -99,7 +123,7 @@ public final class CpuPlayer {
 	 * @return The maximum rating obtained by playing the best move in the
 	 *         position.
 	 */
-	int negaMaxWithPruning(Board board, Color color, int alpha, int beta,
+	private int negaMaxWithPruning(Board board, Color color, int alpha, int beta,
 			int moveDepth) {
 		if (moveDepth == 0) {
 			return Evaluate.evaluate(board, color, false);
@@ -122,5 +146,9 @@ public final class CpuPlayer {
 		}
 
 		return max;
+	}
+
+	public Move negaMaxMove(Board board) {
+		return negaMaxMove(board, 1000000);
 	}
 }
