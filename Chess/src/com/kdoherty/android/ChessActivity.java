@@ -19,9 +19,7 @@ import com.kdoherty.androidchess.R;
 import com.kdoherty.chess.Board;
 import com.kdoherty.chess.Color;
 import com.kdoherty.chess.Move;
-import com.kdoherty.chess.Pawn;
 import com.kdoherty.chess.Piece;
-import com.kdoherty.chess.Queen;
 import com.kdoherty.chess.Square;
 import com.kdoherty.engine.CpuPlayer;
 
@@ -34,19 +32,20 @@ import com.kdoherty.engine.CpuPlayer;
  */
 public class ChessActivity extends Activity {
 
+	// TODO: Boarder
 	// TODO: Pawn Promotion
-	// TODO: Show move list
+	// TODO: Show game moves
 	// TODO: Wood images for Squares
 	// TODO: Get configuration data from previous Activity
 	// TODO: Landscape orientation view
-	// TODO: White taken Piece #8 gets a tiny bit cut off
+	// TODO: White taken Piece #8 gets a tiny bit cut off. Padding?
 
 	private boolean isCpuPlayer = true;
 	private static final Color cpuColor = Color.BLACK;
-	private static final int cpuDepth = 1;
-	private CpuPlayer player = new CpuPlayer(cpuColor, cpuDepth);
+	private CpuPlayer player = CpuPlayer.getInstance(cpuColor);
 	/** The starting game time for each player in milliseconds */
-	private long startTime = 900000; // 5 minutes
+	 private long startTime = 300000; // 2 minutes //
+	//private long startTime = 900000; // 15 minutes
 
 	/**
 	 * The timer which is currently ticking down. Also represents whose side it
@@ -84,6 +83,15 @@ public class ChessActivity extends Activity {
 	/** Adapter used to display a List of black Pieces */
 	private TakenPieceAdapter blackTakenAdapter;
 
+	/**
+	 * Holds all Moves in the moveList. This is useful for undo and displaying
+	 * all Moves played. Note: GridView was chosen for screen wrapping.
+	 */
+	// private GridView moveList;
+
+	/** Adapter used to display all Moves played on the chess board */
+	// private MoveListAdapter moveListAdapter;
+
 	/** Keeps track of if its the first or second click on the Board */
 	private boolean isFirstClick = true;
 
@@ -105,9 +113,16 @@ public class ChessActivity extends Activity {
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		setContentView(R.layout.activity_chess);
 
+		Bundle extras = getIntent().getExtras();
+		if (extras != null && extras.containsKey("isCpuPlayer")) {
+			boolean isCpuPlayer = extras.getBoolean("isCpuPlayer");
+			this.isCpuPlayer = isCpuPlayer;
+		}
+
 		initTimers();
 		initBoard();
 		initPieceHolders();
+		// initMoveList();
 
 		if (isCpuMove()) {
 			new GetCpuMove().execute();
@@ -193,6 +208,15 @@ public class ChessActivity extends Activity {
 	}
 
 	/**
+	 * Initializes the view displaying the list of all Moves played so far.
+	 */
+	// private void initMoveList() {
+	// moveList = (GridView) findViewById(R.id.moveList);
+	// moveListAdapter = new MoveListAdapter(this);
+	// moveList.setAdapter(moveListAdapter);
+	// }
+
+	/**
 	 * Responsible for the following functionality: 1. Makes the input move on
 	 * the Board 2. Refreshes the Board so it is displaying the most up to date
 	 * version 3. Toggles the timers 4. Toggles the side to move 5. Adds the
@@ -207,11 +231,7 @@ public class ChessActivity extends Activity {
 	void passTurn(Move move) {
 		Board board = adapter.getBoard();
 		move.make(board);
-		Piece piece = move.getPiece();
-		if (piece instanceof Pawn && ((Pawn) piece).isPromoting()) {
-			Piece promotedTo = askPromotion(piece.getColor());
-			board.setPiece(move.getRow(), move.getCol(), promotedTo);
-		}
+		// moveListAdapter.addMove(move);
 		setActivePiece(null);
 		refreshAdapter(board);
 		board.toggleSideToMove();
@@ -237,11 +257,35 @@ public class ChessActivity extends Activity {
 	 *            The Color of the Pawn which is promoting
 	 * @return The Piece which the user choice to Promote their Piece to
 	 */
-	private Piece askPromotion(Color color) {
-		
-		
-		return new Queen(color);
-	}
+	// private Piece askPromotion(Move move) {
+
+	// GridLayout promotionOptions = (GridLayout)
+	// getLayoutInflater().inflate(R.id.promotion_options, null);
+	//
+	// LayoutInflater inflater = (LayoutInflater)
+	// this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+	//
+	// PopupWindow pw = new PopupWindow(
+	// inflater.inflate(R.layout.promotion_options, null, false),
+	// 100,
+	// 100,
+	// true);
+	//
+	//
+	// PopupWindow popupMessage = new PopupWindow(promotionOptions,
+	// LayoutParams.WRAP_CONTENT,
+	// LayoutParams.WRAP_CONTENT);
+	//
+	// GridView chessBoard = (GridView) findViewById(R.id.chessboard);
+	// Color color = move.getPiece().getColor();
+	// int xOffset = move.getCol() * chessBoard.getColumnWidth();
+	// int gravity = color == Color.WHITE ? Gravity.TOP : Gravity.BOTTOM;
+	//
+	// popupMessage.setContentView(promotionOptions);
+	// pw.showAtLocation(findViewById(R.id.chessboard), gravity, 0, 0);
+
+	// return new Queen(color);
+	// }
 
 	/**
 	 * Updates the UI to represent the input Board
@@ -305,10 +349,8 @@ public class ChessActivity extends Activity {
 		takenPieceView.setImageResource(resId);
 		if (piece.getColor() == Color.WHITE) {
 			whiteTakenAdapter.addPiece(piece);
-			whiteTakenPieces.setAdapter(whiteTakenAdapter);
 		} else {
 			blackTakenAdapter.addPiece(piece);
-			blackTakenPieces.setAdapter(blackTakenAdapter);
 		}
 	}
 
@@ -338,7 +380,8 @@ public class ChessActivity extends Activity {
 		@Override
 		protected Move doInBackground(Void... params) {
 			Board board = adapter.getBoard();
-			return player.negaMaxMove(board.clone());
+			long millisRemaining = getTimer(activeTimer).getMillisRemaining();
+			return player.negaMaxMove(board.clone(), millisRemaining);
 		}
 
 		/**
@@ -391,8 +434,8 @@ public class ChessActivity extends Activity {
 			for (Move move : moves) {
 				activePieceSquares.add(move.getSq());
 			}
-		}	
-		refreshAdapter(adapter.getBoard());
+		}
+		adapter.notifyDataSetChanged();
 	}
 
 	/**
@@ -406,7 +449,27 @@ public class ChessActivity extends Activity {
 	}
 
 	/**
+	 * Is there a computer player
+	 * 
+	 * @return true if there is a computer player and false otherwise
+	 */
+	boolean isCpuPlayer() {
+		return isCpuPlayer;
+	}
+
+	/**
+	 * The Color of the computer player
+	 * 
+	 * @return The Color of the computer player
+	 */
+	Color getCpuColor() {
+		assert isCpuPlayer;
+		return cpuColor;
+	}
+
+	/**
 	 * Gets all Squares the active Piece can move to
+	 * 
 	 * @return A list of Squares the active Piece can move to
 	 */
 	List<Square> getActivePieceSquares() {
