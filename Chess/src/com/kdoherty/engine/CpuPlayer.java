@@ -8,7 +8,7 @@ import com.kdoherty.chess.Move;
 
 /**
  * This class represents a Computer player and its though process.
- * Enum ensures only one instance of each player is created.
+ * Using Enum to ensure only one instance of each player is created.
  * @author Kevin Doherty
  */
 public enum CpuPlayer {
@@ -74,11 +74,11 @@ public enum CpuPlayer {
 			return mateMoves.get(0);
 		}
 		int depth = 1;
-		if (millisRemaining > 600000) {
-			depth = 3;
-		} else if (millisRemaining > 60000) {
-			depth = 2;
-		}
+//		if (millisRemaining > 600000) {
+//			depth = 3;
+//		} else if (millisRemaining > 60000) {
+//			depth = 2;
+//		}
 
 		int max = Integer.MIN_VALUE;
 		Move bestMove = null;
@@ -146,9 +146,5 @@ public enum CpuPlayer {
 		}
 
 		return max;
-	}
-
-	public Move negaMaxMove(Board board) {
-		return negaMaxMove(board, 1000000);
 	}
 }

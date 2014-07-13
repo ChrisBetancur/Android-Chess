@@ -37,6 +37,17 @@ public final class BishopEval extends PieceEval {
 		-10,   0,   0,   0,   0,   0,   0, -10,
 		-20, -10, -10, -10, -10, -10, -10, -20
 	};
+	
+	private static int[][] BOARD_VALUES2D = { 
+		{-20, -10, -10, -10, -10, -10, -10, -20},
+		{-10,   5,   0,   0,  0,   0,    5, -10},
+		{-10,  10,  10,  10,  10,  10,  10, -10},
+		{-10,   0,  10,  10,  10,  10,   0, -10},
+		{-10,   5,   5,  10,  10,   5,   5, -10},
+		{-10,   0,   5,  10,  10,   5,   0, -10},
+		{-10,   0,   0,   0,   0,   0,   0, -10},
+		{-20, -10, -10, -10, -10, -10, -10, -20}
+	};
 
 	/**
 	 * Constructor for BishopEval
@@ -60,9 +71,9 @@ public final class BishopEval extends PieceEval {
 	public int evaluate() {
 		Square s = piece.getSq();
 		int index = color == Color.WHITE ? s.toNum() : 63 - s.toNum();
-
+		
 		int value = START_VALUE;
-		value += BOARD_VALUES[index];
+		value += BOARD_VALUES2D[piece.getRow()][piece.getCol()];
 
 		if (isBlockingCenterPawn()) {
 			value += BLOCKING_CNTR_PAWN_PENALTY;
