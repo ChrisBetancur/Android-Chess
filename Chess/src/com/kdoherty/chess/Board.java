@@ -515,12 +515,12 @@ public final class Board {
 	 * @return A List of all moves Pieces of the input Color can make
 	 */
 	public List<Move> getMoves(Color color) {
-		List<Move> moves = new ArrayList<Move>();
+		List<Move> moves = new ArrayList<>();
 		List<Move> pMoves;
 		List<Piece> pieces = getPieces(color);
 		for (Piece p : pieces) {
 			pMoves = p.getMoves(this);
-			if (pMoves != null && pMoves.size() != 0) {
+			if (!pMoves.isEmpty()) {
 				moves.addAll(pMoves);
 			}
 		}
