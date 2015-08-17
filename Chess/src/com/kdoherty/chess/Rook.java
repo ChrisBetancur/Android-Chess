@@ -39,6 +39,7 @@ public final class Rook extends Piece {
 	 * @return true if the Piece can move to the input square and false
 	 *         otherwise
 	 */
+	@Override
 	public boolean canMove(Board b, int r, int c, boolean testCheck) {
 		return Board.isInbounds(r, c) && row == r ^ col == c
 				&& (b.isEmpty(r, c) || isTaking(b, r, c))
