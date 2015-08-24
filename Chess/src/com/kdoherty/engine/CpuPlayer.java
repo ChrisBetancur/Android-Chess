@@ -74,11 +74,11 @@ public enum CpuPlayer {
 			return mateMoves.get(0);
 		}
 		int depth = 1;
-//		if (millisRemaining > 600000) {
-//			depth = 3;
-//		} else if (millisRemaining > 60000) {
-//			depth = 2;
-//		}
+		if (millisRemaining > 600000) {
+			depth = 3;
+		} else if (millisRemaining > 60000) {
+			depth = 2;
+		}
 
 		int max = Integer.MIN_VALUE;
 		Move bestMove = null;
