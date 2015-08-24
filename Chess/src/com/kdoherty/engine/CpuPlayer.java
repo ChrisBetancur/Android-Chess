@@ -45,13 +45,17 @@ public enum CpuPlayer {
 		return color == Color.WHITE ? WHITE_INSTANCE : BLACK_INSTANCE;
 	}
 	
-	private int getDepth(long millisRemaining) {
+	private int getMoveDepth(long millisRemaining) {
 		if (millisRemaining > THREE_DEPTH_THRESHOLD) {
 			return 3;
 		} else if (millisRemaining > TWO_DEPTH_THRESHOLD) {
 			return 2;
 		}
 		return 1;
+	}
+	
+	private int getMateSearchDepth(Board board) {
+		return Evaluate.queenCloseToKing(board, color) ? 3 : 2;
 	}
 
 	/**
@@ -71,7 +75,7 @@ public enum CpuPlayer {
 	 * @return Move What was determined to be the best move
 	 */
 	public Move negaMaxMove(Board board, long millisRemaining) {
-		int mateDepth = Evaluate.queenCloseToKing(board, color) ? 3 : 2;
+		int mateDepth = getMateSearchDepth(board);
 		List<Move> mateMoves = MateSolver
 				.findMateUpToN(board, color, mateDepth);
 		if (!mateMoves.isEmpty()) {
@@ -79,7 +83,7 @@ public enum CpuPlayer {
 			return mateMoves.get(0);
 		}
 		
-		int depth = getDepth(millisRemaining);
+		int depth = getMoveDepth(millisRemaining);
 		int max = Integer.MIN_VALUE;
 		Move bestMove = null;
 		List<Move> sortedMoves = MoveSorter.sort(board, board.getMoves(color));
