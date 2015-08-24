@@ -129,7 +129,7 @@ public enum CpuPlayer {
 	private int negaMaxWithPruning(Board board, Color color, int alpha, int beta,
 			int moveDepth) {
 		if (moveDepth == 0) {
-			return Evaluate.evaluate(board, color, false);
+			return Evaluate.evaluate(board, color);
 		}
 
 		int max = Integer.MIN_VALUE;
