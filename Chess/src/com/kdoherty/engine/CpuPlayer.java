@@ -19,6 +19,10 @@ public enum CpuPlayer {
 	/** Black computer player */
 	BLACK_INSTANCE(Color.BLACK); 
 	
+	private static final long THREE_DEPTH_THRESHOLD = 60 * 10 * 1000;
+	
+	private static final long TWO_DEPTH_THRESHOLD = 60 * 1000;
+	
 	/** The Color which this computer CpuPlayer will make moves for */
 	private Color color;
 
@@ -65,9 +69,9 @@ public enum CpuPlayer {
 			return mateMoves.get(0);
 		}
 		int depth = 1;
-		if (millisRemaining > 600000) {
+		if (millisRemaining > THREE_DEPTH_THRESHOLD) {
 			depth = 3;
-		} else if (millisRemaining > 60000) {
+		} else if (millisRemaining > TWO_DEPTH_THRESHOLD) {
 			depth = 2;
 		}
 
