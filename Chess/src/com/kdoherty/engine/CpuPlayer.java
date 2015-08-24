@@ -56,17 +56,6 @@ public enum CpuPlayer {
 	 * @return Move What was determined to be the best move.
 	 */
 	public Move negaMaxMove(Board board, long millisRemaining) {
-		if (board.getMoveCount() == 1) {
-			Move lastMove = board.getLastMove();
-			if (lastMove.toString().equals("pe4")) {
-				return new Move(board, board.getOccupant(1, 4), 3, 4,
-						Move.Type.NORMAL);
-			} else if (lastMove.toString().equals("pd4")) {
-				return new Move(board, board.getOccupant(1, 3), 3, 3,
-						Move.Type.NORMAL);
-			}
-		}
-
 		int mateDepth = Evaluate.queenCloseToKing(board, color) ? 3 : 2;
 		List<Move> mateMoves = MateSolver
 				.findMateUpToN(board, color, mateDepth);
