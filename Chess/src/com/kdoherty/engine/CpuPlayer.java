@@ -46,14 +46,16 @@ public enum CpuPlayer {
 	 * forced checkmate in the position at a depth varying depending on how
 	 * close our Queen is to the other player's King. If it does not find
 	 * anything, it will try each move on the Board, and then evaluate it at
-	 * this CpuPlayer's depth. This assumes that the opponent makes the best
+	 * a depth based on the remaining time. This assumes that the opponent makes the best
 	 * possible reply to each Move. Whichever Move has the worst best reply is
 	 * chosen.
 	 * 
 	 * 
 	 * @param board
 	 *            The Board determine the best move on
-	 * @return Move What was determined to be the best move.
+	 * @param millisRemaining
+	 * 	      The amount of time remaining to make a move
+	 * @return Move What was determined to be the best move
 	 */
 	public Move negaMaxMove(Board board, long millisRemaining) {
 		int mateDepth = Evaluate.queenCloseToKing(board, color) ? 3 : 2;
