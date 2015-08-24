@@ -86,8 +86,8 @@ public enum CpuPlayer {
 		int depth = getMoveDepth(millisRemaining);
 		int max = Integer.MIN_VALUE;
 		Move bestMove = null;
-		List<Move> sortedMoves = MoveSorter.sort(board, board.getMoves(color));
-		for (Move move : sortedMoves) {
+		List<Move> availableMoves = board.getMoves(color)
+		for (Move move : availableMoves) {
 			move.make();
 			if (!MateSolver.findMateUpToN(board, color.opp(), 1).isEmpty()) {
 				move.unmake();
@@ -102,8 +102,8 @@ public enum CpuPlayer {
 			move.unmake();
 		}
 		
-		if (bestMove == null && !sortedMoves.isEmpty()) {
-			bestMove = sortedMoves.get(0);
+		if (bestMove == null && !availableMoves.isEmpty()) {
+			bestMove = availableMoves.get(0);
 		}
 
 		return bestMove;
