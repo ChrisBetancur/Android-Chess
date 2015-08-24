@@ -63,7 +63,7 @@ final class Evaluate {
 	 * @return A rating of the Board from the input Color's perspective. The
 	 *         higher the rating the better the position is for the input Color.
 	 */
-	static int evaluate(Board b, Color color, boolean debug) {
+	static int evaluate(Board b, Color color) {
 		if (b.isCheckMate(color.opp())) {
 			return Integer.MAX_VALUE;
 		}
